@@ -1,0 +1,8 @@
+{
+  "resolution": "---",
+  "query_format": "advanced",
+  "field0-0-0": "blocked",
+  "type0-0-0": "equals",
+  "value0-0-0": "724444",
+  "include_fields": "_default"
+}

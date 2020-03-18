@@ -1,0 +1,22 @@
+{
+  "product": "Core",
+  "resolution": "FIXED",
+  "chfieldto": "Now",
+  "chfieldfrom": "-90d",
+  "chfield": "resolution",
+  "chfieldvalue": "FIXED",
+  "query_format": "advanced",
+  "field0-0-0": "bug_group",
+  "type0-0-0": "substring",
+  "value0-0-0": "core-security",
+  "type0-0-1": "regexp",
+  "field0-0-1": "keywords",
+  "value0-0-1": "(sec-critical|sec-high|sec-moderate|sec-low)",
+  "type0-0-2": "substring",
+  "field0-0-2": "keywords",
+  "value0-0-2": "verifyme",
+  "type1-0-0": "regexp",
+  "field1-0-0": "component",
+  "value1-0-0": "^JavaScript.*",
+  "include_fields": "id"
+}
