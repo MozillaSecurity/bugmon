@@ -409,6 +409,43 @@ class BugMonitor:
                     prefs_path = os.path.join(self.working_dir, filename)
         return prefs_path
 
+    def _needs_confirm(self):
+        """
+        Helper function to determine eligibility for 'bisect'
+        """
+        if "bisected" in self.commands:
+            return False
+        elif "bisect" in self.commands:
+            return True
+
+        return False
+
+    def _needs_bisect(self):
+        """
+        Helper function to determine eligibility for 'confirm'
+        """
+        if "confirmed" in self.commands:
+            return False
+        elif "confirm" in self.commands:
+            return True
+        elif self.bug.status in ["ASSIGNED", "NEW", "UNCONFIRMED", "REOPENED"]:
+            return True
+
+        return False
+
+    def _needs_verify(self):
+        """
+        Helper function to determine eligibility for 'verify'
+        """
+        if "verified" in self.commands:
+            return False
+        if "verify" in self.commands:
+            return True
+        if self.bug.status == "RESOLVED" and self.bug.resolution == "FIXED":
+            return True
+
+        return False
+
     def _confirm_open(self, baseline):
         """
         Attempt to confirm open test cases
@@ -553,22 +590,13 @@ class BugMonitor:
             return
 
         actions = []
-        if "verified" not in self.commands:
-            if "verify" in self.commands or (
-                self.bug.status == "RESOLVED" and self.bug.resolution == "FIXED"
-            ):
-                actions.append(RequestedActions.VERIFY_FIXED)
+        if self._needs_verify():
+            actions.append(RequestedActions.VERIFY_FIXED)
 
-        if "confirmed" not in self.commands:
-            if "confirm" in self.commands or self.bug.status in {
-                "ASSIGNED",
-                "NEW",
-                "UNCONFIRMED",
-                "REOPENED",
-            }:
-                actions.append(RequestedActions.CONFIRM_OPEN)
+        if self._needs_confirm():
+            actions.append(RequestedActions.CONFIRM_OPEN)
 
-        if "bisected" not in self.commands and "bisect" in self.commands:
+        if self._needs_bisect():
             actions.append(RequestedActions.BISECT)
 
         if not len(actions):
