@@ -1,69 +1,73 @@
-== What JSBugMon is ==
+# Bugmon
 
-JSBugMon is a tool for automated tracking of JavaScript engine bug reports in
-Mozilla's Bugzilla database. It is capable of automatically extracting tests
-from bug reports that crash or assert. It is also able to extract the affected
-revision, guess required runtime options and architecture and determine what
-build type is required to reproduce.
+Bugmon is a tool for the automatic analysis of bugs filed against Firefox or Spidermonkey in Mozilla's Bugzilla database. It is capable of automatically confirming open bugs, verifying closed bugs, and bisecting the bugs introduction or fix.
 
-== What JSBugMon needs to track a bug ==
+## Table of Contents
+  - [Installation](#installation)
+  - [Basic Usage](#basic-usage)
+  - [Overview](#overview)
+    - [Automatic Actions](#actions)
+      - [Confirmation](#confirmation)
+      - [Verification](#verification)
+  - [Manual Analysis](#manual-analysis)
+    * [Valid Commands](#valid-commands)
+    * [Status Flags](#status-flags)
+  - [Bug Requirements](#bug-requirements)
+    * [Flags and Environment Variables](#flags-and-environment-variables)
+    * [Testcase Identification](#testcase-identification)
 
-In order to track a bug, JSBugMon must first be able to find a working test
-(that crashes or asserts). The test can be an attachment to the bug or be part
-of the first comment (comment 0), even if the comment includes other text that
-does not belong to the test. The second requirement is an HG revision specified
-in comment 0.
+## Installation
+```shell script
+git clone https://github.com/MozillaSecurity/bugmon
+cd bugmon
+poetry install
+```
+## Basic Usage
+```shell script
+python -m bugmon --bugs [bug_num...]
+```
 
-Using this data, JSBugMon will try to build a JS shell with the specified HG
-revision and try to reproduce the problem using the given test. It try different
-build types, runtime options and architectures, but will prefer the architecture
-specified in the bug. If tracking for a bug was requested, but JSBugMon was not
-able to reproduce/track the bug, it will state this in the bug comments.
+## Overview
+Bugmon will automatically analyse bugs that have the `bugmon` keyword.  The actions performed are based on the current status of the bug.
 
-== How JSBugMon can be used ==
+### Automatic Actions
+#### Confirmation
+- Bugmon will automatically confirm the reproducibility of bugs where the status is ASSIGNED, NEW, UNCONFIRMED, or REOPENED.
+- Bugs that are confirmed as open will also be bisected.
+- If the bug cannot be confirmed using the latest available build, Bugmon will attempt to confirm the bug using a build matching the original revision or a revision closest to the bug creation date.  If this succeeds, Bugmon will attempt to bisect which changeset introduced the fix. 
+#### Verification
+- Bugmon will automatically confirm that the bug has been fixed where the bug status is RESOLVED and the resolution is FIXED.
+- Bugmon will also iterate over the tracking flags and attempt to verify each branch marked as FIXED.
+       
+## Manual Analysis
 
-While Mozilla's JSBugMon instance performs several tasks on its own and fully
-automatic (e.g. verification of fixed security bugs), most interaction needs to
-be explicitly requested using the whiteboard. Commands for JSBugMon are added in
-the whiteboard with a special tag that looks like this:
+In addition to Bugmon's automatic analysis, specific actions can be requested via the bug whiteboard using the `bugmon` identifier.  The whiteboard should match the following format:
+```
+[bugmon:cmd1,cmd2,cmd3...]
+```
 
-[jsbugmon:cmd1,cmd2,cmd3...]
+### Valid Commands
 
+- `confirm` - Request manual bug confirmation
+- `verify` - Request manual verification
+- `bisect` - Request manual bisection
 
-Valid commands are:
+### Status Flags
+In addition to requesting manual actions, some actions can be excluded by adding the following status flags to the bugmon whiteboard. 
 
-update - The most basic command, it requests tracking for the bug. JSBugMon will
-  first attempt to reproduce the bug. If reproduction fails, it will comment and
-  unset the update flag. If reproduction succeeds, it will remain quiet and
-  comment once the bug no longer reproduces.
+- `confirmed` - Bug has already been confirmed
+- `verified` - Bug has already been verified
+- `bisected` - Bug has already been bisected*
 
-reconfirm - Only valid together with the update command. It will perform the
-  same steps as for tracking, but even on successful reproduction, it will comment
-  in the bug. After doing so, it will ignore the bug (by setting the ignore flag,
-  see below) until otherwise requested.
+*Bisection may still be performed if a previously unconfirmed bug is confirmed.*
 
-ignore - JSBugMon will ignore any bug that has this command in it, regardless of
-  other commands. JSBugMon also sets this flag automatically after certain
-  commands.
+## Bug Requirements
+To ensure that your bug is analysed correctly, Bugmon requires specific information to be present.
 
-bisect - This command will cause JSBugMon to perform a bisection to find the
-  regressing changeset (the changeset that introduced the bug).
+### Flags and Environment Variables
+Bugmon expects comment 0 to include any build flags, runtime flags, or environment variables required to reproduce the bug.
 
-bisectfix - This command will cause JSBugMon to perform a bisection to find the
-  fixing changeset in case the bug does no longer reproduce.
+### Testcase Identification
+Bugmon will download all non-obsolete attachments and attempt to determine which file to use as a testcase.  Key indicators of testcases are attachment filenames or descriptions that match `/^testcase.*$/`. 
 
-verify-branch=b1;b2;b3.. - Using this command, it is possible to check if the
-  test reproduces on one or more specified branches (e.g. mozilla-aurora).
-  JSBugMon will comment with the result for every branch in the bug.
-
-
-
-== What JSBugMon currently supports (or does not support) ==
-
-JSBugMon currently only works with regular 32 and 64 bit Linux builds. It does
-not support:
-
-  * Threadsafe builds 
-  * Builds with additional flags like --enable-more-determinism
-    or --enable-root-analysis
-  * Checking a test with Valgrind or ASan
+Testcases that span multiple files can either be included as individual attachments or via a single zip file.  However, the filename or description of the testcase entrypoint must match the regex above.
