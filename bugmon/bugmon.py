@@ -24,7 +24,8 @@ import os
 import platform
 import re
 import zipfile
-from datetime import datetime, timedelta
+from datetime import datetime as dt
+from datetime import timedelta
 from enum import Enum
 
 import requests
@@ -456,10 +457,8 @@ class BugMonitor:
                 self.report(f"Verified bug as reproducible on {baseline.build_str}.")
                 self._bisect(find_fix=False)
             else:
-                last_change = datetime.strptime(
-                    self.bug.last_change_time, "%Y-%m-%dT%H:%M:%SZ"
-                )
-                if datetime.now() - timedelta(days=30) > last_change:
+                change = dt.strptime(self.bug.last_change_time, "%Y-%m-%dT%H:%M:%SZ")
+                if dt.now() - timedelta(days=30) > change:
                     self.report(f"Bug remains reproducible on {baseline.build_str}")
         elif baseline.status == ReproductionResult.PASSED:
             orig = self.reproduce_bug(self.branch, self.initial_build_id)
@@ -489,23 +488,22 @@ class BugMonitor:
         All other bugs will be tested to determine if the bug still reproduces
 
         """
+        build_str = baseline.build_str
         if baseline.status == ReproductionResult.PASSED:
             initial = self.reproduce_bug(self.branch, self.initial_build_id)
             if initial.status != ReproductionResult.CRASHED:
                 self.report(
-                    f"Bug appears to be fixed on rev {baseline.build_str} but "
+                    f"Bug appears to be fixed on rev {build_str} but "
                     f"BugMon was unable to reproduce using {self.initial_build_id}."
                 )
             else:
-                self.report(f"Verified bug as fixed on rev {baseline.build_str}.")
+                self.report(f"Verified bug as fixed on rev {build_str}.")
                 self.bug.status = "VERIFIED"
 
             # Remove from further analysis
             self._close_bug = True
         elif baseline.status == ReproductionResult.CRASHED:
-            self.report(
-                f"Bug is marked as resolved but still reproduces using {baseline.build_str}."
-            )
+            self.report(f"Bug is marked as FIXED but still reproduces on {build_str}.")
 
         for alias, rel_num in self.branches.items():
             if isinstance(rel_num, int):
