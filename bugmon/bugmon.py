@@ -409,7 +409,7 @@ class BugMonitor:
                     prefs_path = os.path.join(self.working_dir, filename)
         return prefs_path
 
-    def _needs_confirm(self):
+    def _needs_bisect(self):
         """
         Helper function to determine eligibility for 'bisect'
         """
@@ -420,7 +420,7 @@ class BugMonitor:
 
         return False
 
-    def _needs_bisect(self):
+    def _needs_confirm(self):
         """
         Helper function to determine eligibility for 'confirm'
         """
