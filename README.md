@@ -6,9 +6,6 @@ Bugmon is a tool for the automatic analysis of bugs filed against Firefox or Spi
   - [Installation](#installation)
   - [Basic Usage](#basic-usage)
   - [Overview](#overview)
-    - [Automatic Actions](#actions)
-      - [Confirmation](#confirmation)
-      - [Verification](#verification)
   - [Manual Analysis](#manual-analysis)
     * [Valid Commands](#valid-commands)
     * [Status Flags](#status-flags)
@@ -30,12 +27,12 @@ python -m bugmon --bugs [bug_num...]
 ## Overview
 Bugmon will automatically analyse bugs that have the `bugmon` keyword.  The actions performed are based on the current status of the bug.
 
-### Automatic Actions
-#### Confirmation
+**Confirmation**
 - Bugmon will automatically confirm the reproducibility of bugs where the status is ASSIGNED, NEW, UNCONFIRMED, or REOPENED.
 - Bugs that are confirmed as open will also be bisected.
 - If the bug cannot be confirmed using the latest available build, Bugmon will attempt to confirm the bug using a build matching the original revision or a revision closest to the bug creation date.  If this succeeds, Bugmon will attempt to bisect which changeset introduced the fix. 
-#### Verification
+
+**Verification**
 - Bugmon will automatically confirm that the bug has been fixed where the bug status is RESOLVED and the resolution is FIXED.
 - Bugmon will also iterate over the tracking flags and attempt to verify each branch marked as FIXED.
        
