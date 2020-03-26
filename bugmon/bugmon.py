@@ -489,22 +489,22 @@ class BugMonitor:
 
         """
         build_str = baseline.build_str
-        if baseline.status == ReproductionResult.PASSED:
-            initial = self.reproduce_bug(self.branch, self.initial_build_id)
-            if initial.status != ReproductionResult.CRASHED:
-                self.report(
-                    f"Bug appears to be fixed on rev {build_str} but "
-                    f"BugMon was unable to reproduce using {self.initial_build_id}."
-                )
-            else:
-                self.report(f"Verified bug as fixed on rev {build_str}.")
-                self.bug.status = "VERIFIED"
+        if self.bug.status != "VERIFIED":
+            if baseline.status == ReproductionResult.PASSED:
+                initial = self.reproduce_bug(self.branch, self.initial_build_id)
+                if initial.status != ReproductionResult.CRASHED:
+                    self.report(
+                        f"Bug appears to be fixed on {build_str} but "
+                        f"BugMon was unable to reproduce using {initial.build_str}."
+                    )
+                else:
+                    self.report(f"Verified bug as fixed on rev {build_str}.")
+                    self.bug.status = "VERIFIED"
 
-            # Remove from further analysis
-            self._close_bug = True
-        elif baseline.status == ReproductionResult.CRASHED:
-            self.report(f"Bug is marked as FIXED but still reproduces on {build_str}.")
+            elif baseline.status == ReproductionResult.CRASHED:
+                self.report(f"Bug marked as FIXED but still reproduces on {build_str}.")
 
+        branches_verified = True
         for alias, rel_num in self.branches.items():
             if isinstance(rel_num, int):
                 flag = f"cf_status_firefox{rel_num}"
@@ -520,6 +520,11 @@ class BugMonitor:
                 elif baseline.status == ReproductionResult.CRASHED:
                     log.info(f"Bug remains vulnerable on {flag}")
                     setattr(self.bug, flag, "affected")
+                    branches_verified = False
+
+        if self.bug.status == "VERIFIED" and branches_verified:
+            # Remove from further analysis
+            self._close_bug = True
 
     def _bisect(self, find_fix):
         """
