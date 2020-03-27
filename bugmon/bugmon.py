@@ -55,7 +55,7 @@ def enum(*sequential, **named):
     return type("Enum", (), enums)
 
 
-class RequestedActions(Enum):
+class BugActions(Enum):
     VERIFY_FIXED = 1
     CONFIRM_OPEN = 2
     BISECT = 3
@@ -448,28 +448,35 @@ class BugMonitor:
 
         return False
 
-    def _confirm_open(self, baseline):
+    def _confirm_open(self):
         """
         Attempt to confirm open test cases
-        :param baseline: A reproduction result
         """
-        if baseline.status == ReproductionResult.CRASHED:
+        tip = self.reproduce_bug(self.branch)
+        if tip.status == ReproductionResult.NO_BUILD:
+            log.warning(f"Failed to confirm bug (no build found)")
+            return
+        if tip.status == ReproductionResult.FAILED:
+            log.warning(f"Failed to confirm bug (bad build)")
+            return
+
+        if tip.status == ReproductionResult.CRASHED:
             if "confirmed" not in self.commands:
-                self.report(f"Verified bug as reproducible on {baseline.build_str}.")
-                self._bisect(find_fix=False)
+                self.report(f"Verified bug as reproducible on {tip.build_str}.")
+                self._bisect()
             else:
                 change = dt.strptime(self.bug.last_change_time, "%Y-%m-%dT%H:%M:%SZ")
                 if dt.now() - timedelta(days=30) > change:
-                    self.report(f"Bug remains reproducible on {baseline.build_str}")
-        elif baseline.status == ReproductionResult.PASSED:
+                    self.report(f"Bug remains reproducible on {tip.build_str}")
+        elif tip.status == ReproductionResult.PASSED:
             orig = self.reproduce_bug(self.branch, self.initial_build_id)
             if orig.status == ReproductionResult.CRASHED:
                 log.info(f"Testcase crashes using the initial build ({orig.build_str})")
-                self._bisect(find_fix=True)
+                self._bisect()
             else:
                 self.report(
                     f"Unable to reproduce bug using the following builds:",
-                    f"> {baseline.build_str}",
+                    f"> {tip.build_str}",
                     f"> {orig.build_str}",
                 )
 
@@ -481,7 +488,7 @@ class BugMonitor:
         if "confirm" in self.commands:
             self.remove_command("confirm")
 
-    def _verify_fixed(self, baseline):
+    def _verify_fixed(self):
         """
         Attempt to verify the bug state
 
@@ -489,9 +496,11 @@ class BugMonitor:
         All other bugs will be tested to determine if the bug still reproduces
 
         """
-        build_str = baseline.build_str
         if self.bug.status != "VERIFIED":
-            if baseline.status == ReproductionResult.PASSED:
+            tip = self.reproduce_bug(self.branch)
+            build_str = tip.build_str
+
+            if tip.status == ReproductionResult.PASSED:
                 initial = self.reproduce_bug(self.branch, self.initial_build_id)
                 if initial.status != ReproductionResult.CRASHED:
                     self.report(
@@ -502,7 +511,7 @@ class BugMonitor:
                     self.report(f"Verified bug as fixed on rev {build_str}.")
                     self.bug.status = "VERIFIED"
 
-            elif baseline.status == ReproductionResult.CRASHED:
+            elif tip.status == ReproductionResult.CRASHED:
                 self.report(f"Bug marked as FIXED but still reproduces on {build_str}.")
 
         branches_verified = True
@@ -514,11 +523,11 @@ class BugMonitor:
 
             # Only check branches if bug is marked as fixed
             if getattr(self.bug, flag) == "fixed":
-                baseline = self.reproduce_bug(alias)
-                if baseline.status == ReproductionResult.PASSED:
+                branch = self.reproduce_bug(alias)
+                if branch.status == ReproductionResult.PASSED:
                     log.info(f"Verified fixed on {flag}")
                     setattr(self.bug, flag, "verified")
-                elif baseline.status == ReproductionResult.CRASHED:
+                elif branch.status == ReproductionResult.CRASHED:
                     log.info(f"Bug remains vulnerable on {flag}")
                     setattr(self.bug, flag, "affected")
                     branches_verified = False
@@ -527,19 +536,26 @@ class BugMonitor:
             # Remove from further analysis
             self._close_bug = True
 
-    def _bisect(self, find_fix):
+    def _bisect(self):
         """
-        Attempt to enumerate the changeset that introduced the bug or,
-        if find_fix=True, the changeset that fixed it.
+        Attempt to enumerate the changeset that introduced or fixed the bug
+        """
+        tip = self.reproduce_bug(self.branch)
+        if tip.status == ReproductionResult.NO_BUILD:
+            log.warning(f"Failed to bisect bug (no build found)")
+            return
+        if tip.status == ReproductionResult.FAILED:
+            log.warning(f"Failed to bisect bug (bad build)")
+            return
 
-        :param find_fix: Boolean to indicate whether to search for a bug or fix
-        """
+        # If tip doesn't crash, bisect the fix
+        find_fix = tip.status != ReproductionResult.CRASHED
         if not find_fix:
-            start = None
-            end = self.initial_build_id
-        else:
             start = self.initial_build_id
             end = "latest"
+        else:
+            start = None
+            end = self.initial_build_id
 
         bisector = Bisector(
             self.evaluator,
