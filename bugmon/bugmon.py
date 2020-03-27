@@ -197,7 +197,7 @@ class BugMonitor:
         return self._comment_zero
 
     @property
-    def env_vars(self):
+    def env(self):
         """
         Attempt to enumerate any env_variables required
         """
@@ -271,6 +271,18 @@ class BugMonitor:
             self._platform = Platform(os_, arch)
 
         return self._platform
+
+    @property
+    def prefs(self):
+        """
+        Identify prefs in working_dir
+        """
+        prefs_path = None
+        for filename in os.listdir(self.working_dir):
+            with open(os.path.join(self.working_dir, filename)) as f:
+                if filename.endswith(".js") and "user_pref" in f.read():
+                    prefs_path = os.path.join(self.working_dir, filename)
+        return prefs_path
 
     @property
     def runtime_opts(self):
@@ -391,17 +403,6 @@ class BugMonitor:
                         testcase = file.name
 
         return testcase
-
-    def identify_prefs(self):
-        """
-        Identify prefs in working_dir
-        """
-        prefs_path = None
-        for filename in os.listdir(self.working_dir):
-            with open(os.path.join(self.working_dir, filename)) as f:
-                if filename.endswith(".js") and "user_pref" in f.read():
-                    prefs_path = os.path.join(self.working_dir, filename)
-        return prefs_path
 
     def _needs_bisect(self):
         """
@@ -619,9 +620,7 @@ class BugMonitor:
             self.evaluator = JSEvaluator(testcase, flags=self.runtime_opts)
         else:
             self.target = "firefox"
-            self.evaluator = BrowserEvaluator(
-                testcase, env=self.env_vars, prefs=self.identify_prefs()
-            )
+            self.evaluator = BrowserEvaluator(testcase, env=self.env, prefs=self.prefs)
 
         # Some testcases require setting the cwd to the parent dir
         previous_path = os.getcwd()
