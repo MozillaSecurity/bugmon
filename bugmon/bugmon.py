@@ -601,12 +601,14 @@ class BugMonitor:
         verify - Attempt to verify the bug state
         bisect - Attempt to bisect the bug regression or, if RESOLVED, the bug fix
         """
+        # Check that the branch is available on taskcluster
         if self.branch is None:
             self.report([f"Bug filed against non-supported branch ({self.version})"])
             self._close_bug = True
             self.update()
             return
 
+        # Check that we can parse the testcase
         testcase = self.fetch_attachments()
         if testcase is None:
             self.report(
@@ -620,6 +622,7 @@ class BugMonitor:
             self.update()
             return
 
+        # Setup the evaluators
         if self.bug.component.startswith("JavaScript"):
             self.target = "js"
             self.evaluator = JSEvaluator(testcase, flags=self.runtime_opts)
