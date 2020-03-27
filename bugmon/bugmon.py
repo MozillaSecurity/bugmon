@@ -38,7 +38,12 @@ from fuzzfetch.fetch import Platform
 log = logging.getLogger("bugmon")
 
 AVAILABLE_BRANCHES = ["mozilla-central", "mozilla-beta", "mozilla-release"]
+
 TESTCASE_URL = "https://github.com/MozillaSecurity/bugmon#testcase-identification"
+MILESTONE_URL = (
+    "https://hg.mozilla.org/mozilla-central/raw-file/tip/config/milestone.txt"
+)
+
 HTTP_SESSION = requests.Session()
 
 
@@ -49,6 +54,12 @@ def _get_url(url):
     data = HTTP_SESSION.get(url, stream=True)
     data.raise_for_status()
     return data
+
+
+def _get_milestone():
+    milestone = _get_url(MILESTONE_URL)
+    version = milestone.text.splitlines()[-1]
+    return int(version.split(".", 1)[0])
 
 
 def enum(*sequential, **named):
@@ -106,13 +117,7 @@ class BugMonitor:
         self.evaluator = None
 
         self.build_manager = BuildManager()
-
-        # Identify mozilla-central version number
-        milestone = _get_url(
-            "https://hg.mozilla.org/mozilla-central/raw-file/tip/config/milestone.txt"
-        )
-        version = milestone.text.splitlines()[-1]
-        self.central_version = int(version.split(".", 1)[0])
+        self.central_version = _get_milestone()
 
     @property
     def version(self):
