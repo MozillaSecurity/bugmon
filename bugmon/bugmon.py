@@ -90,6 +90,7 @@ class BugMonitor:
         self.working_dir = working_dir
         self.dry_run = dry_run
         self.queue = []
+        self.results = {}
 
         # Initialize placeholders
         self._branch = None
@@ -592,64 +593,41 @@ class BugMonitor:
             self.update()
             return
 
-        actions = []
-        if self._needs_verify():
-            actions.append(RequestedActions.VERIFY_FIXED)
-
-        if self._needs_confirm():
-            actions.append(RequestedActions.CONFIRM_OPEN)
-
-        if self._needs_bisect():
-            actions.append(RequestedActions.BISECT)
-
-        if not len(actions):
-            log.info(f"Nothing to do for bug {self.bug.id}")
-            return
-
-        baseline = self.reproduce_bug(self.branch)
-        if baseline.status == ReproductionResult.NO_BUILD:
-            log.warning(f"Could not find matching build to verify status")
-            return
-        if baseline.status == ReproductionResult.FAILED:
-            log.warning(f"Unable to verify status due to bad build")
-            return
-
         # Some testcases require setting the cwd to the parent dir
         previous_path = os.getcwd()
         os.chdir(self.working_dir)
         try:
-            baseline = self.reproduce_bug(self.branch)
-            if baseline.status == ReproductionResult.NO_BUILD:
-                log.warning(f"Could not find matching build to verify status")
-                return
-            if baseline.status == ReproductionResult.FAILED:
-                log.warning(f"Unable to verify status due to bad build")
-                return
+            if self._needs_verify():
+                self._verify_fixed()
+            elif self._needs_confirm():
+                self._confirm_open()
 
-            for action in actions:
-                if action == RequestedActions.VERIFY_FIXED:
-                    self._verify_fixed(baseline)
-                elif action == RequestedActions.CONFIRM_OPEN:
-                    self._confirm_open(baseline)
-                elif action == RequestedActions.BISECT:
-                    self._bisect(baseline.status == ReproductionResult.PASSED)
+            if self._needs_bisect():
+                self._bisect()
         finally:
             os.chdir(previous_path)
 
         # Post updates and comments
         self.update()
 
-    def reproduce_bug(self, branch, build_id=None):
+    def reproduce_bug(self, branch, bid=None):
+        """
+        Method for evaluating testcase using the supplied branch and optional build ID
+        Caches previous results
+
+        :param branch: Branch where build is found
+        :param bid: Build id (rev or date)
+        """
         try:
             direction = Fetcher.BUILD_ORDER_ASC
-            if build_id is None:
-                build_id = "latest"
+            if bid is None:
+                bid = "latest"
                 direction = None
 
             build = Fetcher(
                 self.target,
                 branch,
-                build_id,
+                bid,
                 self.build_flags,
                 self.platform,
                 nearest=direction,
@@ -658,18 +636,32 @@ class BugMonitor:
             log.error(f"Error fetching build: {e}")
             return ReproductionResult(ReproductionResult.NO_BUILD)
 
-        log.info(
-            f"Attempting to reproduce bug on mozilla-{branch} {build.build_id}-{build.changeset[:12]}"
-        )
+        # Check if this branch and build was already tested
+        if branch in self.results:
+            if bid in self.results[branch]:
+                return self.results[branch][build.build_id]
+        else:
+            self.results[branch] = {}
+
+        build_str = f"mozilla-{self.branch} {build.build_id}-{build.changeset[:12]}"
+        log.info(f"Attempting to reproduce bug on {build_str}")
+
         with self.build_manager.get_build(build) as build_path:
             status = self.evaluator.evaluate_testcase(build_path)
-            build_str = f"mozilla-{self.branch} {build.build_id}-{build.changeset[:12]}"
             if status == Bisector.BUILD_CRASHED:
-                return ReproductionResult(ReproductionResult.CRASHED, build_str)
+                self.results[branch][build.build_id] = ReproductionResult(
+                    ReproductionResult.CRASHED, build_str
+                )
             elif status == Bisector.BUILD_PASSED:
-                return ReproductionResult(ReproductionResult.PASSED, build_str)
+                self.results[branch][build.build_id] = ReproductionResult(
+                    ReproductionResult.PASSED, build_str
+                )
             else:
-                return ReproductionResult(ReproductionResult.FAILED, build_str)
+                self.results[branch][build.build_id] = ReproductionResult(
+                    ReproductionResult.FAILED, build_str
+                )
+
+            return self.results[branch][build.build_id]
 
     def report(self, *messages):
         """
