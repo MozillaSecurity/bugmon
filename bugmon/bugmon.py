@@ -38,6 +38,7 @@ from fuzzfetch.fetch import Platform
 log = logging.getLogger("bugmon")
 
 AVAILABLE_BRANCHES = ["mozilla-central", "mozilla-beta", "mozilla-release"]
+TESTCASE_URL = "https://github.com/MozillaSecurity/bugmon#testcase-identification"
 HTTP_SESSION = requests.Session()
 
 
@@ -101,20 +102,8 @@ class BugMonitor:
         self._platform = None
         self._close_bug = False
 
-        self.testcase = None
-        self.fetch_attachments()
-        if self.testcase is None:
-            raise BugException("Failed to identify testcase!")
-
-        # Determine what type of bug we're evaluating
-        if self.bug.component.startswith("JavaScript"):
-            self.target = "js"
-            self.evaluator = JSEvaluator(self.testcase, flags=self.runtime_opts)
-        else:
-            self.target = "firefox"
-            self.evaluator = BrowserEvaluator(
-                self.testcase, env=self.env_vars, prefs=self.identify_prefs()
-            )
+        self.target = None
+        self.evaluator = None
 
         self.build_manager = BuildManager()
 
@@ -362,6 +351,7 @@ class BugMonitor:
         """
         Download all attachments and store them in self.working_dir
         """
+        testcase = None
         attachments = list(
             filter(lambda a: not a.is_obsolete, self.bug.get_attachments())
         )
@@ -384,9 +374,9 @@ class BugMonitor:
                         log.warning("Duplicate filename identified: ", filename)
                     z.extract(filename, self.working_dir)
                     if filename.lower().startswith("testcase"):
-                        if self.testcase is not None:
+                        if testcase is not None:
                             raise BugException("Multiple testcases identified!")
-                        self.testcase = os.path.join(self.working_dir, filename)
+                        testcase = os.path.join(self.working_dir, filename)
             else:
                 with open(
                     os.path.join(self.working_dir, attachment.file_name), "wb"
@@ -396,9 +386,11 @@ class BugMonitor:
                     if list(
                         filter(r.match, [attachment.file_name, attachment.description])
                     ):
-                        if self.testcase is not None:
+                        if testcase is not None:
                             raise BugException("Multiple testcases identified!")
-                        self.testcase = file.name
+                        testcase = file.name
+
+        return testcase
 
     def identify_prefs(self):
         """
@@ -608,6 +600,28 @@ class BugMonitor:
             self._close_bug = True
             self.update()
             return
+
+        testcase = self.fetch_attachments()
+        if testcase is None:
+            self.report(
+                [
+                    f"Failed to identify testcase."
+                    f"Please ensure that the testcase meets the requirements identified here: "
+                    f"https://github.com/MozillaSecurity/bugmon#testcase-identification",
+                ]
+            )
+            self._close_bug = True
+            self.update()
+            return
+
+        if self.bug.component.startswith("JavaScript"):
+            self.target = "js"
+            self.evaluator = JSEvaluator(testcase, flags=self.runtime_opts)
+        else:
+            self.target = "firefox"
+            self.evaluator = BrowserEvaluator(
+                testcase, env=self.env_vars, prefs=self.identify_prefs()
+            )
 
         # Some testcases require setting the cwd to the parent dir
         previous_path = os.getcwd()
