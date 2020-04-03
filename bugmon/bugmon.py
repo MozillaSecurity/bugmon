@@ -548,7 +548,7 @@ class BugMonitor:
 
         # If tip doesn't crash, bisect the fix
         find_fix = tip.status != ReproductionResult.CRASHED
-        if not find_fix:
+        if find_fix:
             start = self.initial_build_id
             end = "latest"
         else:
