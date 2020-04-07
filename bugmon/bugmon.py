@@ -730,6 +730,6 @@ class BugMonitor:
                 self.bugsy.put(self.bug)
                 self.bug.update()
 
-        if not self.dry_run:
+        if not self.dry_run and self.queue:
             self.bug.add_comment("Bugmon Analysis:\n%s" % "\n".join(self.queue))
             self.queue = []
