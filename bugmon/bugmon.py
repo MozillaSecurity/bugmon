@@ -675,7 +675,7 @@ class BugMonitor:
 
         # Check if this branch and build was already tested
         if branch in self.results:
-            if bid in self.results[branch]:
+            if build.build_id in self.results[branch]:
                 return self.results[branch][build.build_id]
         else:
             self.results[branch] = {}
