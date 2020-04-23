@@ -13,6 +13,11 @@ log = logging.getLogger("bugmon")
 
 
 def parse_args(argv=None):
+    """
+    Arg parser
+
+    :param argv: Command line to use instead of sys.argv (optional)
+    """
     parser = argparse.ArgumentParser()
 
     # Optional args
@@ -40,6 +45,9 @@ def parse_args(argv=None):
 
 
 def console_init_logging():
+    """
+    Enable logging when called from console
+    """
     log_level = logging.INFO
     log_fmt = "[%(asctime)s] %(message)s"
     if bool(os.getenv("DEBUG")):
@@ -49,6 +57,12 @@ def console_init_logging():
 
 
 def main(argv=None):
+    """
+    Launch Bugmon
+
+    :param argv: Command line to use instead of sys.argv (optional)
+    :return:
+    """
     console_init_logging()
     args = parse_args(argv)
 

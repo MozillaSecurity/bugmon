@@ -59,16 +59,25 @@ def _get_url(url):
 
 
 def _get_milestone():
+    """
+    Fetch current milestone
+    """
     milestone = _get_url(MSTONE_URL)
     version = milestone.text.splitlines()[-1]
     return int(version.split(".", 1)[0])
 
 
 class BugException(Exception):
-    pass
+    """
+    Exception for Bugmon related issues
+    """
 
 
 class ReproductionResult(object):
+    """
+    Class for storing reproduction results
+    """
+
     PASSED = 0
     CRASHED = 1
     FAILED = 2
@@ -80,6 +89,10 @@ class ReproductionResult(object):
 
 
 class BugMonitor:
+    """
+    Main bugmon clas
+    """
+
     def __init__(self, bugsy, bug_num, working_dir, dry_run=False):
         """
 
@@ -112,6 +125,9 @@ class BugMonitor:
 
     @property
     def version(self):
+        """
+        Attempt to enumerate the version the bug was filed against
+        """
         match = re.match(r"\d+", self.bug.version)
         if match:
             return match.group(0)
