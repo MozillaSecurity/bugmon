@@ -244,7 +244,7 @@ class BugMonitor:
                         # Match 12 or 40 character revs
                         self._initial_build_id = token
                         break
-                    elif re.match(r"^([0-9]{8}-)([a-f0-9]{12})$", token, re.IGNORECASE):
+                    if re.match(r"^([0-9]{8}-)([a-f0-9]{12})$", token, re.IGNORECASE):
                         # Match fuzzfetch build identifiers
                         self._initial_build_id = token.split("-")[1]
                         break
@@ -334,9 +334,9 @@ class BugMonitor:
     @commands.setter
     def commands(self, value):
         parts = ",".join([f"{k}={v}" if v is not None else k for k, v in value.items()])
-        if len(parts):
+        if len(parts) != 0:
             if re.search(r"(?<=\[bugmon:)(.[^\]]*)", self.bug.whiteboard):
-                if len(self.commands.keys()):
+                if len(self.commands.keys()) != 0:
                     self.bug.whiteboard = re.sub(
                         r"(?<=\[bugmon:)(.[^\]]*)", parts, self.bug.whiteboard
                     )
@@ -383,19 +383,19 @@ class BugMonitor:
             try:
                 data = base64.decodebytes(attachment.data.encode("utf-8"))
             except binascii.Error as e:
-                log.warning("Failed to decode attachment: ", e)
+                log.warning("Failed to decode attachment: %s", e)
                 continue
 
             if attachment.file_name.endswith(".zip"):
                 try:
                     z = zipfile.ZipFile(io.BytesIO(data))
                 except zipfile.BadZipFile as e:
-                    log.warning("Failed to decompress attachment: ", e)
+                    log.warning("Failed to decompress attachment: %s", e)
                     continue
 
                 for filename in z.namelist():
                     if os.path.exists(filename):
-                        log.warning("Duplicate filename identified: ", filename)
+                        log.warning("Duplicate filename identified: %s", filename)
                     z.extract(filename, self.working_dir)
                     if filename.lower().startswith("test"):
                         if testcase is not None:
@@ -422,7 +422,7 @@ class BugMonitor:
         """
         if "bisected" in self.commands:
             return False
-        elif "bisect" in self.commands:
+        if "bisect" in self.commands:
             return True
 
         return False
@@ -433,9 +433,9 @@ class BugMonitor:
         """
         if "confirmed" in self.commands:
             return False
-        elif "confirm" in self.commands:
+        if "confirm" in self.commands:
             return True
-        elif self.bug.status in ["ASSIGNED", "NEW", "UNCONFIRMED", "REOPENED"]:
+        if self.bug.status in ["ASSIGNED", "NEW", "UNCONFIRMED", "REOPENED"]:
             return True
 
         return False
@@ -451,7 +451,7 @@ class BugMonitor:
         if self.bug.status == "RESOLVED":
             if self.bug.resolution == "FIXED":
                 return True
-            elif self.bug.resolution == "DUPLICATE":
+            if self.bug.resolution == "DUPLICATE":
                 removed = re.sub(r"\[bugmon:.[^\]]*]", "", self.bug.whiteboard)
                 self.bug.whiteboard = removed
                 self._close_bug = True
@@ -464,10 +464,10 @@ class BugMonitor:
         """
         tip = self.reproduce_bug(self.branch)
         if tip.status == ReproductionResult.NO_BUILD:
-            log.warning(f"Failed to confirm bug (no build found)")
+            log.warning("Failed to confirm bug (no build found)")
             return
         if tip.status == ReproductionResult.FAILED:
-            log.warning(f"Failed to confirm bug (bad build)")
+            log.warning("Failed to confirm bug (bad build)")
             return
 
         if tip.status == ReproductionResult.CRASHED:
