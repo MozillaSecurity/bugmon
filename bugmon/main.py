@@ -31,7 +31,7 @@ def parse_args(argv=None):
     bugs.add_argument("-s", "--search", help="Path to advanced search parameters")
     args = parser.parse_args(argv)
 
-    if args.search_params and not os.path.isfile(args.search_params):
+    if args.search and not os.path.isfile(args.search):
         raise parser.error("Search parameter path does not exist!")
 
     return args
@@ -72,7 +72,7 @@ def main(argv=None):
     if args.bugs:
         bug_ids.extend(args.bugs)
     else:
-        with open(args.search_params) as f:
+        with open(args.search) as f:
             params = json.load(f)
             response = bugsy.request("bug", params=params)
             bugs = [Bug(bugsy, **bug) for bug in response["bugs"]]
