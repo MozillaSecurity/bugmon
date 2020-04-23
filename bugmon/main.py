@@ -7,7 +7,7 @@ import tempfile
 
 from bugsy import Bug, Bugsy
 
-from bugmon import BugMonitor, BugException
+from bugmon import BugException, BugMonitor
 
 log = logging.getLogger("bugmon")
 
@@ -22,20 +22,13 @@ def parse_args(argv=None):
 
     # Optional args
     parser.add_argument(
-        "-d",
-        "--dry-run",
-        action="store_true",
-        help="If enabled, don't make any remote changes",
+        "-d", "--dry-run", action="store_true", help="Disable bug modification",
     )
 
     # Bug selection
-    bug_list = parser.add_mutually_exclusive_group(required=True)
-    bug_list.add_argument(
-        "--bugs", nargs="+", help="Space separated list of bug numbers"
-    )
-    bug_list.add_argument(
-        "-s", "--search-params", help="Path to advanced search parameters"
-    )
+    bugs = parser.add_mutually_exclusive_group(required=True)
+    bugs.add_argument("--bugs", nargs="+", help="Space separated list of bug numbers")
+    bugs.add_argument("-s", "--search", help="Path to advanced search parameters")
     args = parser.parse_args(argv)
 
     if args.search_params and not os.path.isfile(args.search_params):
@@ -90,7 +83,9 @@ def main(argv=None):
             try:
                 bugmon = BugMonitor(bugsy, bug_id, temp_dir, args.dry_run)
                 log.info(
-                    f"Analyzing bug {bug_id} (Status: {bugmon.bug.status}, Resolution: {bugmon.bug.resolution})"
+                    f"Analyzing bug {bug_id} "
+                    f"(Status: {bugmon.bug.status}, "
+                    f"Resolution: {bugmon.bug.resolution})"
                 )
                 bugmon.process()
             except BugException as e:
