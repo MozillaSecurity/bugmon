@@ -34,17 +34,20 @@ from autobisect.build_manager import BuildManager
 from autobisect.evaluator import BrowserEvaluator, JSEvaluator
 from fuzzfetch import BuildFlags, Fetcher, FetcherException
 from fuzzfetch.fetch import Platform
+from requests.adapters import HTTPAdapter
+from urllib3 import Retry
 
 log = logging.getLogger("bugmon")
 
 AVAILABLE_BRANCHES = ["mozilla-central", "mozilla-beta", "mozilla-release"]
 
 TESTCASE_URL = "https://github.com/MozillaSecurity/bugmon#testcase-identification"
-MILESTONE_URL = (
-    "https://hg.mozilla.org/mozilla-central/raw-file/tip/config/milestone.txt"
-)
+MSTONE_URL = "https://hg.mozilla.org/mozilla-central/raw-file/tip/config/milestone.txt"
 
 HTTP_SESSION = requests.Session()
+HTTP_ADAPTER = HTTPAdapter(max_retries=Retry(connect=3, backoff_factor=0.5))
+HTTP_SESSION.mount("http://", HTTP_ADAPTER)
+HTTP_SESSION.mount("https://", HTTP_ADAPTER)
 
 
 def _get_url(url):
@@ -57,7 +60,7 @@ def _get_url(url):
 
 
 def _get_milestone():
-    milestone = _get_url(MILESTONE_URL)
+    milestone = _get_url(MSTONE_URL)
     version = milestone.text.splitlines()[-1]
     return int(version.split(".", 1)[0])
 
