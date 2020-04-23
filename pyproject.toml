@@ -51,6 +51,8 @@ pytest-flake8 = "^1.0.4"
 pytest-black = "^0.3.8"
 pre-commit = "^2.1.1"
 tox = "^3.14.5"
+pylint = "^2.4.4"
+pytest-pylint = "^0.15.1"
 
 [tool.poetry.scripts]
 bugmon = "bugmon.main:main"
