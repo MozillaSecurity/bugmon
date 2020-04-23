@@ -1,6 +1,9 @@
 # Bugmon
+==========
+[![Build Status](https://travis-ci.org/MozillaSecurity/bugmon.svg?branch=master)](https://travis-ci.org/MozillaSecurity/bugmon)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Bugmon is a tool for the automatic analysis of bugs filed against Firefox or Spidermonkey in Mozilla's Bugzilla database. It is capable of automatically confirming open bugs, verifying closed bugs, and bisecting the bugs introduction or fix.
+Bugmon is a tool for the automatic analysis of bugs filed against Firefox or Spidermonkey in Mozilla's Bugzilla database. It is capable of automatically confirming open bugs, verifying closed bugs, and bisecting the bug's introduction or fix.
 
 ## Table of Contents
   - [Installation](#installation)
