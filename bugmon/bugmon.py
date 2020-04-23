@@ -642,13 +642,15 @@ class BugMonitor:
         previous_path = os.getcwd()
         os.chdir(self.working_dir)
         try:
+            # If verify is required, don't do anything else
             if self._needs_verify():
                 self._verify_fixed()
-            elif self._needs_confirm():
-                self._confirm_open()
-
-            if self._needs_bisect():
-                self._bisect()
+            else:
+                # If confirm is required, testcase will be bisected
+                if self._needs_confirm():
+                    self._confirm_open()
+                elif self._needs_bisect():
+                    self._bisect()
         finally:
             os.chdir(previous_path)
 
