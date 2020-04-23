@@ -393,7 +393,7 @@ class BugMonitor:
                     if os.path.exists(filename):
                         log.warning("Duplicate filename identified: ", filename)
                     z.extract(filename, self.working_dir)
-                    if filename.lower().startswith("testcase"):
+                    if filename.lower().startswith("test"):
                         if testcase is not None:
                             raise BugException("Multiple testcases identified!")
                         testcase = os.path.join(self.working_dir, filename)
