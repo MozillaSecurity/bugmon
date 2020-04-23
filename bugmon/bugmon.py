@@ -519,6 +519,8 @@ class BugMonitor:
 
             elif tip.status == ReproductionResult.CRASHED:
                 self.report(f"Bug marked as FIXED but still reproduces on {build_str}.")
+                self.bug.status = "REOPENED"
+                self.add_command("confirmed")
 
         branches_verified = True
         for alias, rel_num in self.branches.items():
