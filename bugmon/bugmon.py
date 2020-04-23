@@ -631,7 +631,7 @@ class BugMonitor:
             return
 
         # Setup the evaluators
-        if self.bug.component.startswith("JavaScript"):
+        if self.bug.component.lower().startswith("javascript"):
             self.target = "js"
             self.evaluator = JSEvaluator(testcase, flags=self.runtime_opts)
         else:
