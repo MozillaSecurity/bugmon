@@ -26,7 +26,6 @@ import re
 import zipfile
 from datetime import datetime as dt
 from datetime import timedelta
-from enum import Enum
 
 import requests
 from autobisect.bisect import BisectionResult, Bisector
@@ -63,17 +62,6 @@ def _get_milestone():
     milestone = _get_url(MSTONE_URL)
     version = milestone.text.splitlines()[-1]
     return int(version.split(".", 1)[0])
-
-
-def enum(*sequential, **named):
-    enums = dict(list(zip(sequential, list(range(len(sequential))))), **named)
-    return type("Enum", (), enums)
-
-
-class BugActions(Enum):
-    VERIFY_FIXED = 1
-    CONFIRM_OPEN = 2
-    BISECT = 3
 
 
 class BugException(Exception):
