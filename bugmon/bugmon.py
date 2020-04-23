@@ -613,7 +613,7 @@ class BugMonitor:
         """
         # Check that the branch is available on taskcluster
         if self.branch is None:
-            self.report([f"Bug filed against non-supported branch ({self.version})"])
+            self.report(f"Bug filed against non-supported branch ({self.version})")
             self._close_bug = True
             self.update()
             return
@@ -622,11 +622,9 @@ class BugMonitor:
         testcase = self.fetch_attachments()
         if testcase is None:
             self.report(
-                [
-                    f"Failed to identify testcase."
-                    f"Please ensure that the testcase meets the requirements identified here: "
-                    f"https://github.com/MozillaSecurity/bugmon#testcase-identification",
-                ]
+                f"Failed to identify testcase.  "
+                f"Please ensure that the testcase meets the requirements identified here: "
+                f"https://github.com/MozillaSecurity/bugmon#testcase-identification",
             )
             self._close_bug = True
             self.update()
