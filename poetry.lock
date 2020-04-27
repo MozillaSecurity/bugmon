@@ -63,10 +63,9 @@ prefpicker = "branch master"
 toml = "^0.9"
 
 [package.source]
-reference = "17668f776bf969ba6f615b7a12cd880187f201b1"
+reference = "7fda7ac9fa1036356d19356efd711dfd5e70a1bf"
 type = "git"
 url = "https://github.com/MozillaSecurity/autobisect.git"
-
 [[package]]
 category = "main"
 description = "The uncompromising code formatter."
@@ -102,7 +101,6 @@ requests = ">=1.1.0"
 reference = "5f1b30e6e9dd8f1aea11c8c6fddc565a74dbcb2c"
 type = "git"
 url = "https://github.com/AutomatedTester/Bugsy.git"
-
 [[package]]
 category = "main"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -254,7 +252,7 @@ description = "Downloader for firefox/jsshell builds."
 name = "fuzzfetch"
 optional = false
 python-versions = ">=2.7"
-version = "0.9.6"
+version = "0.9.7"
 
 [package.dependencies]
 configparser = ">=3.5.0"
@@ -299,23 +297,22 @@ psutil = "*"
 six = "*"
 
 [package.extras]
-all = ["boto3", "jsbeautifier", "lithium-reducer"]
-reduce = ["jsbeautifier", "lithium-reducer"]
+all = ["boto3", "lithium-reducer", "jsbeautifier"]
+reduce = ["lithium-reducer", "jsbeautifier"]
 s3 = ["boto3"]
-test = ["pytest-cov", "pytest-mock", "pytest (>=3.9)"]
+test = ["pytest (>=3.9)", "pytest-cov", "pytest-mock"]
 
 [package.source]
-reference = "0a709377536ebebce8cea2dd46e2661eb1344953"
+reference = "fc65849c2db517a7d00633f68551d2a3a99a5672"
 type = "git"
 url = "https://github.com/MozillaSecurity/grizzly.git"
-
 [[package]]
 category = "dev"
 description = "File identification library for Python"
 name = "identify"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
-version = "1.4.14"
+version = "1.4.15"
 
 [package.extras]
 license = ["editdistance"]
@@ -507,10 +504,9 @@ version = "0.1.0"
 pyyaml = "*"
 
 [package.source]
-reference = "dd6f9d1d0e38829fc1c7224c1747a0bcd21d14c6"
+reference = "ff1a58847d824b2a8616005d9067b3116a15a8c2"
 type = "git"
 url = "https://github.com/MozillaSecurity/prefpicker.git"
-
 [[package]]
 category = "main"
 description = "Cross-platform lib for process and system monitoring in Python."
@@ -616,7 +612,7 @@ description = "pytest plugin to check FLAKE8 requirements"
 name = "pytest-flake8"
 optional = false
 python-versions = "*"
-version = "1.0.4"
+version = "1.0.5"
 
 [package.dependencies]
 flake8 = ">=3.5"
@@ -690,7 +686,7 @@ description = "A collection of helpers and mock objects for unit tests and doc t
 name = "testfixtures"
 optional = false
 python-versions = "*"
-version = "6.14.0"
+version = "6.14.1"
 
 [package.extras]
 build = ["setuptools-git", "wheel", "twine"]
@@ -898,8 +894,8 @@ flake8-quotes = [
     {file = "flake8-quotes-2.1.2.tar.gz", hash = "sha256:c844c9592940c8926c60f00bc620808912ff2acd34923ab5338f3a5ca618a331"},
 ]
 fuzzfetch = [
-    {file = "fuzzfetch-0.9.6-py2.py3-none-any.whl", hash = "sha256:aa68cdb5837350d65ad58651779d13be3b2b51e0fb044602b3389a9f8c8d9e15"},
-    {file = "fuzzfetch-0.9.6.tar.gz", hash = "sha256:c58896d610b6a1c67b5ac9cc638bc964968a03ccf42359471c6cb80c97670ec8"},
+    {file = "fuzzfetch-0.9.7-py2.py3-none-any.whl", hash = "sha256:47c7494b7e8e40fa9b4577ea8b215aa8d674033660de7f6af7f06cac0e9eda3c"},
+    {file = "fuzzfetch-0.9.7.tar.gz", hash = "sha256:63b7790d74a03f65bab0460efa8d876152faade379a21241ef43f1aa14768f51"},
 ]
 fuzzmanager = [
     {file = "FuzzManager-0.3.3-py2.py3-none-any.whl", hash = "sha256:20b8cb52851d4b621c70d112a15e0f0d3c3850c809038e9320c650728cb0843c"},
@@ -907,8 +903,8 @@ fuzzmanager = [
 ]
 grizzly-framework = []
 identify = [
-    {file = "identify-1.4.14-py2.py3-none-any.whl", hash = "sha256:2bb8760d97d8df4408f4e805883dad26a2d076f04be92a10a3e43f09c6060742"},
-    {file = "identify-1.4.14.tar.gz", hash = "sha256:faffea0fd8ec86bb146ac538ac350ed0c73908326426d387eded0bcc9d077522"},
+    {file = "identify-1.4.15-py2.py3-none-any.whl", hash = "sha256:88ed90632023e52a6495749c6732e61e08ec9f4f04e95484a5c37b9caf40283c"},
+    {file = "identify-1.4.15.tar.gz", hash = "sha256:23c18d97bb50e05be1a54917ee45cc61d57cb96aedc06aabb2b02331edf0dbf0"},
 ]
 idna = [
     {file = "idna-2.9-py2.py3-none-any.whl", hash = "sha256:a068a21ceac8a4d63dbfd964670474107f541babbd2250d61922f029858365fa"},
@@ -1051,8 +1047,8 @@ pytest-black = [
     {file = "pytest-black-0.3.8.tar.gz", hash = "sha256:01a9a7acc69e618ebf3f834932a4d7a81909f6911051d0871b0ed4de3cbe9712"},
 ]
 pytest-flake8 = [
-    {file = "pytest-flake8-1.0.4.tar.gz", hash = "sha256:4d225c13e787471502ff94409dcf6f7927049b2ec251c63b764a4b17447b60c0"},
-    {file = "pytest_flake8-1.0.4-py2.py3-none-any.whl", hash = "sha256:d7e2b6b274a255b7ae35e9224c85294b471a83b76ecb6bd53c337ae977a499af"},
+    {file = "pytest-flake8-1.0.5.tar.gz", hash = "sha256:d85efaafbdb9580791cfa8671799dd40d482fc30bd4476c1ca5efd661e751333"},
+    {file = "pytest_flake8-1.0.5-py2.py3-none-any.whl", hash = "sha256:6e26d94ad41184d9a5113a90179b303efddb53eda505f827418ca78f5b39403a"},
 ]
 pytest-pylint = [
     {file = "pytest-pylint-0.15.1.tar.gz", hash = "sha256:dd3e232da5703e7fd14c610247dbe25dfd8e3278069b4b8bcf9778ba06b77569"},
@@ -1107,8 +1103,8 @@ six = [
     {file = "six-1.14.0.tar.gz", hash = "sha256:236bdbdce46e6e6a3d61a337c0f8b763ca1e8717c03b369e87a7ec7ce1319c0a"},
 ]
 testfixtures = [
-    {file = "testfixtures-6.14.0-py2.py3-none-any.whl", hash = "sha256:799144b3cbef7b072452d9c36cbd024fef415ab42924b96aad49dfd9c763de66"},
-    {file = "testfixtures-6.14.0.tar.gz", hash = "sha256:cdfc3d73cb6d3d4dc3c67af84d912e86bf117d30ae25f02fe823382ef99383d2"},
+    {file = "testfixtures-6.14.1-py2.py3-none-any.whl", hash = "sha256:30566e24a1b34e4d3f8c13abf62557d01eeb4480bcb8f1745467bfb0d415a7d9"},
+    {file = "testfixtures-6.14.1.tar.gz", hash = "sha256:58d2b3146d93bc5ddb0cd24e0ccacb13e29bdb61e5c81235c58f7b8ee4470366"},
 ]
 toml = [
     {file = "toml-0.9.6-py2.py3-none-any.whl", hash = "sha256:a7901919d3e4f92ffba7ff40a9d697e35bbbc8a8049fe8da742f34c83606d957"},

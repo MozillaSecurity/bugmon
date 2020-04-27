@@ -30,7 +30,7 @@ from datetime import timedelta
 import requests
 from autobisect.bisect import BisectionResult, Bisector
 from autobisect.build_manager import BuildManager
-from autobisect.evaluator import BrowserEvaluator, JSEvaluator
+from autobisect.evaluators import BrowserEvaluator, JSEvaluator
 from fuzzfetch import BuildFlags, Fetcher, FetcherException
 from fuzzfetch.fetch import Platform
 from requests.adapters import HTTPAdapter
