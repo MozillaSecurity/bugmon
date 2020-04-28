@@ -177,11 +177,11 @@ class BugMonitor:
         """
         if self._build_flags is None:
             asan = (
-                "AddressSanitizer: " in self.comment_zero
+                "AddressSanitizer" in self.comment_zero
                 or "--enable-address-sanitizer" in self.comment_zero
             )
             tsan = (
-                "ThreadSanitizer: " in self.comment_zero
+                "ThreadSanitizer" in self.comment_zero
                 or "--enable-thread-sanitizer" in self.comment_zero
             )
             debug = (
