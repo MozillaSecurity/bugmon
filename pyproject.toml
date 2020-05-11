@@ -37,7 +37,7 @@ homepage = "https://github.com/MozillaSecurity/autobisect"
 python = "^3.6"
 toml = "^0.9"
 ffpuppet = "^0.7.0"
-fuzzfetch = "^0.9.5"
+fuzzfetch = "^0.9.9"
 autobisect = {git = "https://github.com/MozillaSecurity/autobisect.git"}
 bugsy = {git = "https://github.com/AutomatedTester/Bugsy.git"}
 black = "^19.10b0"
