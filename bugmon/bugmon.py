@@ -28,6 +28,7 @@ from datetime import datetime as dt
 from datetime import timedelta
 
 import requests
+from autobisect import EvaluatorResult
 from autobisect.bisect import BisectionResult, Bisector
 from autobisect.build_manager import BuildManager
 from autobisect.evaluators import BrowserEvaluator, JSEvaluator
@@ -589,15 +590,15 @@ class BugMonitor:
         if result.status != BisectionResult.SUCCESS:
             output = [
                 f"Failed to bisect testcase ({result.message}):",
-                f"> Start: {result.start.changeset} ({result.start.build_id})",
-                f"> End: {result.end.changeset} ({result.end.build_id})",
+                f"> Start: {result.start.changeset} ({result.start.id})",
+                f"> End: {result.end.changeset} ({result.end.id})",
                 f"> BuildFlags: {str(self.build_flags)}",
             ]
             self.report(*output)
         else:
             output = [
-                f"> Start: {result.start.changeset} ({result.start.build_id})",
-                f"> End: {result.end.changeset} ({result.end.build_id})",
+                f"> Start: {result.start.changeset} ({result.start.id})",
+                f"> End: {result.end.changeset} ({result.end.id})",
                 f"> Pushlog: {result.pushlog}",
             ]
 
@@ -689,30 +690,30 @@ class BugMonitor:
 
         # Check if this branch and build was already tested
         if branch in self.results:
-            if build.build_id in self.results[branch]:
-                return self.results[branch][build.build_id]
+            if build.id in self.results[branch]:
+                return self.results[branch][build.id]
         else:
             self.results[branch] = {}
 
-        build_str = f"mozilla-{self.branch} {build.build_id}-{build.changeset[:12]}"
+        build_str = f"mozilla-{self.branch} {build.id}-{build.changeset[:12]}"
         log.info(f"Attempting to reproduce bug on {build_str}")
 
         with self.build_manager.get_build(build) as build_path:
             status = self.evaluator.evaluate_testcase(build_path)
-            if status == Bisector.BUILD_CRASHED:
-                self.results[branch][build.build_id] = ReproductionResult(
+            if status == EvaluatorResult.BUILD_CRASHED:
+                self.results[branch][build.id] = ReproductionResult(
                     ReproductionResult.CRASHED, build_str
                 )
-            elif status == Bisector.BUILD_PASSED:
-                self.results[branch][build.build_id] = ReproductionResult(
+            elif status == EvaluatorResult.BUILD_PASSED:
+                self.results[branch][build.id] = ReproductionResult(
                     ReproductionResult.PASSED, build_str
                 )
             else:
-                self.results[branch][build.build_id] = ReproductionResult(
+                self.results[branch][build.id] = ReproductionResult(
                     ReproductionResult.FAILED, build_str
                 )
 
-            return self.results[branch][build.build_id]
+            return self.results[branch][build.id]
 
     def report(self, *messages):
         """
