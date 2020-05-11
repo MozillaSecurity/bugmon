@@ -90,7 +90,7 @@ class ReproductionResult(object):
 
 class BugMonitor:
     """
-    Main bugmon clas
+    Main bugmon class
     """
 
     def __init__(self, bugsy, bug_num, working_dir, dry_run=False):
