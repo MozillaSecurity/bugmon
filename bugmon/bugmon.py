@@ -486,7 +486,7 @@ class BugMonitor:
                 self._bisect()
             else:
                 self.report(
-                    f"Unable to reproduce bug using the following builds:",
+                    "Unable to reproduce bug using the following builds:",
                     f"> {tip.build_str}",
                     f"> {orig.build_str}",
                 )
@@ -555,10 +555,10 @@ class BugMonitor:
         """
         tip = self.reproduce_bug(self.branch)
         if tip.status == ReproductionResult.NO_BUILD:
-            log.warning(f"Failed to bisect bug (no build found)")
+            log.warning("Failed to bisect bug (no build found)")
             return
         if tip.status == ReproductionResult.FAILED:
-            log.warning(f"Failed to bisect bug (bad build)")
+            log.warning("Failed to bisect bug (bad build)")
             return
 
         # If tip doesn't crash, bisect the fix
@@ -627,9 +627,9 @@ class BugMonitor:
         testcase = self.fetch_attachments()
         if testcase is None:
             self.report(
-                f"Failed to identify testcase.  "
-                f"Please ensure that the testcase meets the requirements identified here: "
-                f"https://github.com/MozillaSecurity/bugmon#testcase-identification",
+                "Failed to identify testcase.  "
+                "Please ensure that the testcase meets the requirements identified here: "
+                "https://github.com/MozillaSecurity/bugmon#testcase-identification",
             )
             self._close_bug = True
             self.update()
