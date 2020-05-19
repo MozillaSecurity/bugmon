@@ -1,5 +1,4 @@
 # Bugmon
-==========
 [![Build Status](https://travis-ci.org/MozillaSecurity/bugmon.svg?branch=master)](https://travis-ci.org/MozillaSecurity/bugmon)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
