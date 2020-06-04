@@ -29,8 +29,8 @@ maintainers = [
 license = "MPL-2.0"
 # readme = "README.md"
 
-repository = "https://github.com/MozillaSecurity/autobisect"
-homepage = "https://github.com/MozillaSecurity/autobisect"
+repository = "https://github.com/MozillaSecurity/bugmon"
+homepage = "https://github.com/MozillaSecurity/bugmon"
 
 
 [tool.poetry.dependencies]
