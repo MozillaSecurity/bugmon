@@ -236,8 +236,7 @@ class BugMonitor:
             ):
                 self._initial_build_id = ["origRev"]
             else:
-                tokens = self.comment_zero.split(" ")
-                for token in tokens:
+                for token in re.findall(r"([A-Za-z0-9_-]+)", self.comment_zero):
                     if token.startswith("`") and token.endswith("`"):
                         token = token[1:-1]
 
