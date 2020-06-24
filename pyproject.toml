@@ -5,7 +5,7 @@ build-backend = "poetry.masonry.api"
 [tool.poetry]
 name = "bugmon"
 description = "A python module for analyzing SpiderMonkey and Firefox bugs"
-version = "0.7.0"
+version = "0.7.1"
 
 classifiers=[
     "Intended Audience :: Developers",
@@ -36,7 +36,6 @@ homepage = "https://github.com/MozillaSecurity/bugmon"
 [tool.poetry.dependencies]
 python = "^3.6"
 toml = "^0.9"
-ffpuppet = "^0.7.0"
 fuzzfetch = "^0.9.9"
 bugsy = {git = "https://github.com/AutomatedTester/Bugsy.git"}
 black = "^19.10b0"
