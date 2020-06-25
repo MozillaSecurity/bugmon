@@ -240,12 +240,19 @@ class BugMonitor:
                     if token.startswith("`") and token.endswith("`"):
                         token = token[1:-1]
 
+                    # Match 12 or 40 character revs
                     if re.match(r"^([a-f0-9]{12}|[a-f0-9]{40})$", token, re.IGNORECASE):
-                        # Match 12 or 40 character revs
-                        self._initial_build_id = token
-                        break
+                        try:
+                            _get_url(
+                                f"https://hg.mozilla.org/{self.branch}/json-rev/{token}"
+                            )
+                            self._initial_build_id = token
+                            break
+                        except requests.exceptions.HTTPError:
+                            pass
+
+                    # Match fuzzfetch build identifiers
                     if re.match(r"^([0-9]{8}-)([a-f0-9]{12})$", token, re.IGNORECASE):
-                        # Match fuzzfetch build identifiers
                         self._initial_build_id = token.split("-")[1]
                         break
                 else:
