@@ -458,7 +458,7 @@ class BugMonitor:
         if self.bug.status == "RESOLVED":
             if self.bug.resolution == "FIXED":
                 return True
-            if self.bug.resolution == "DUPLICATE":
+            if self.bug.resolution in ("DUPLICATE", "INVALID", "WORKSFORME", "WONTFIX"):
                 removed = re.sub(r"\[bugmon:.[^\]]*]", "", self.bug.whiteboard)
                 self.bug.whiteboard = removed
                 self._close_bug = True
