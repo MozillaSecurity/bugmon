@@ -42,7 +42,12 @@ log = logging.getLogger("bugmon")
 AVAILABLE_BRANCHES = ["mozilla-central", "mozilla-beta", "mozilla-release"]
 
 TESTCASE_URL = "https://github.com/MozillaSecurity/bugmon#testcase-identification"
-MSTONE_URL = "https://hg.mozilla.org/mozilla-central/raw-file/tip/config/milestone.txt"
+
+HG_BASE = "https://hg.mozilla.org"
+MSTONE_URL = f"{HG_BASE}/mozilla-central/raw-file/tip/config/milestone.txt"
+
+REV_MATCH = r"([a-f0-9]{12}|[a-f0-9]{40})"
+BID_MATCH = r"([0-9]{8}-)([a-f0-9]{12})"
 
 HTTP_SESSION = requests.Session()
 HTTP_ADAPTER = HTTPAdapter(max_retries=Retry(connect=3, backoff_factor=0.5))
@@ -232,7 +237,7 @@ class BugMonitor:
         """
         if self._initial_build_id is None:
             if "origRev" in self.commands and re.match(
-                "^([a-f0-9]{12}|[a-f0-9]{40})$", self.commands["origRev"]
+                rf"^{REV_MATCH}$", self.commands["origRev"]
             ):
                 self._initial_build_id = ["origRev"]
             else:
@@ -241,18 +246,16 @@ class BugMonitor:
                         token = token[1:-1]
 
                     # Match 12 or 40 character revs
-                    if re.match(r"^([a-f0-9]{12}|[a-f0-9]{40})$", token, re.IGNORECASE):
+                    if re.match(rf"^{REV_MATCH}$", token, re.IGNORECASE):
                         try:
-                            _get_url(
-                                f"https://hg.mozilla.org/{self.branch}/json-rev/{token}"
-                            )
+                            _get_url(f"{HG_BASE}/{self.branch}/json-rev/{token}")
                             self._initial_build_id = token
                             break
                         except requests.exceptions.HTTPError:
                             pass
 
                     # Match fuzzfetch build identifiers
-                    if re.match(r"^([0-9]{8}-)([a-f0-9]{12})$", token, re.IGNORECASE):
+                    if re.match(rf"^{BID_MATCH}$", token, re.IGNORECASE):
                         self._initial_build_id = token.split("-")[1]
                         break
                 else:
@@ -344,19 +347,16 @@ class BugMonitor:
         if len(parts) != 0:
             if re.search(r"(?<=\[bugmon:)(.[^\]]*)", self.bug.whiteboard):
                 if len(self.commands.keys()) != 0:
-                    self.bug.whiteboard = re.sub(
-                        r"(?<=\[bugmon:)(.[^\]]*)", parts, self.bug.whiteboard
-                    )
+                    pattern = re.compile(r"(?<=\[bugmon:)(.[^\]]*)")
+                    self.bug.whiteboard = pattern.sub(parts, self.bug.whiteboard)
                 else:
-                    self.bug.whiteboard = re.sub(
-                        r"([bugmon:.[^\]]*)", "", self.bug.whiteboard
-                    )
+                    pattern = re.compile(r"([bugmon:.[^\]]*)")
+                    self.bug.whiteboard = pattern.sub("", self.bug.whiteboard)
             else:
                 self.bug.whiteboard += f"[bugmon:{parts}]"
         else:
-            self.bug.whiteboard = re.sub(
-                r"(?<=\[bugmon:)(.[^\]]*)", parts, self.bug.whiteboard
-            )
+            pattern = re.compile(r"(?<=\[bugmon:)(.[^\]]*)")
+            self.bug.whiteboard = pattern.sub(parts, self.bug.whiteboard)
 
     def add_command(self, key, value=None):
         """
