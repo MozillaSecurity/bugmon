@@ -465,6 +465,65 @@ class BugMonitor:
 
         return False
 
+    def bisect(self):
+        """
+        Attempt to enumerate the changeset that introduced or fixed the bug
+        """
+        tip = self.reproduce_bug(self.branch)
+        if tip.status == ReproductionResult.NO_BUILD:
+            log.warning("Failed to bisect bug (no build found)")
+            return
+        if tip.status == ReproductionResult.FAILED:
+            log.warning("Failed to bisect bug (bad build)")
+            return
+
+        # If tip doesn't crash, bisect the fix
+        find_fix = tip.status != ReproductionResult.CRASHED
+        if find_fix:
+            start = self.initial_build_id
+            end = "latest"
+        else:
+            start = None
+            end = self.initial_build_id
+
+        bisector = Bisector(
+            self.evaluator,
+            self.target,
+            self.branch,
+            start,
+            end,
+            self.build_flags,
+            self.platform,
+            find_fix,
+        )
+        result = bisector.bisect()
+
+        # Set bisected status and remove the bisect command
+        self.add_command("bisected")
+        if "bisect" in self.commands:
+            self.remove_command("bisect")
+
+        if result.status != BisectionResult.SUCCESS:
+            output = [
+                f"Failed to bisect testcase ({result.message}):",
+                f"> Start: {result.start.changeset} ({result.start.id})",
+                f"> End: {result.end.changeset} ({result.end.id})",
+                f"> BuildFlags: {str(self.build_flags)}",
+            ]
+            self.report(*output)
+        else:
+            output = [
+                f"> Start: {result.start.changeset} ({result.start.id})",
+                f"> End: {result.end.changeset} ({result.end.id})",
+                f"> Pushlog: {result.pushlog}",
+            ]
+
+            verb = "fixed" if find_fix else "introduced"
+            self.report(
+                f"The bug appears to have been {verb} in the following build range:",
+                *output,
+            )
+
     def confirm_open(self):
         """
         Attempt to confirm open test cases
@@ -554,65 +613,6 @@ class BugMonitor:
         if self.bug.status == "VERIFIED" and branches_verified:
             # Remove from further analysis
             self._close_bug = True
-
-    def bisect(self):
-        """
-        Attempt to enumerate the changeset that introduced or fixed the bug
-        """
-        tip = self.reproduce_bug(self.branch)
-        if tip.status == ReproductionResult.NO_BUILD:
-            log.warning("Failed to bisect bug (no build found)")
-            return
-        if tip.status == ReproductionResult.FAILED:
-            log.warning("Failed to bisect bug (bad build)")
-            return
-
-        # If tip doesn't crash, bisect the fix
-        find_fix = tip.status != ReproductionResult.CRASHED
-        if find_fix:
-            start = self.initial_build_id
-            end = "latest"
-        else:
-            start = None
-            end = self.initial_build_id
-
-        bisector = Bisector(
-            self.evaluator,
-            self.target,
-            self.branch,
-            start,
-            end,
-            self.build_flags,
-            self.platform,
-            find_fix,
-        )
-        result = bisector.bisect()
-
-        # Set bisected status and remove the bisect command
-        self.add_command("bisected")
-        if "bisect" in self.commands:
-            self.remove_command("bisect")
-
-        if result.status != BisectionResult.SUCCESS:
-            output = [
-                f"Failed to bisect testcase ({result.message}):",
-                f"> Start: {result.start.changeset} ({result.start.id})",
-                f"> End: {result.end.changeset} ({result.end.id})",
-                f"> BuildFlags: {str(self.build_flags)}",
-            ]
-            self.report(*output)
-        else:
-            output = [
-                f"> Start: {result.start.changeset} ({result.start.id})",
-                f"> End: {result.end.changeset} ({result.end.id})",
-                f"> Pushlog: {result.pushlog}",
-            ]
-
-            verb = "fixed" if find_fix else "introduced"
-            self.report(
-                f"The bug appears to have been {verb} in the following build range:",
-                *output,
-            )
 
     def process(self):
         """
