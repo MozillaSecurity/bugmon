@@ -383,9 +383,7 @@ class BugMonitor:
         Download all attachments and store them in self.working_dir
         """
         testcase = None
-        attachments = list(
-            filter(lambda a: not a.is_obsolete, self.bug.get_attachments())
-        )
+        attachments = filter(lambda a: not a.is_obsolete, self.bug.get_attachments())
         for attachment in sorted(attachments, key=lambda a: a.creation_time):
             try:
                 data = base64.decodebytes(attachment.data.encode("utf-8"))
@@ -414,9 +412,7 @@ class BugMonitor:
                 ) as file:
                     file.write(data)
                     r = re.compile(r"^testcase.*$", re.IGNORECASE)
-                    if list(
-                        filter(r.match, [attachment.file_name, attachment.description])
-                    ):
+                    if filter(r.match, [attachment.file_name, attachment.description]):
                         if testcase is not None:
                             raise BugException("Multiple testcases identified!")
                         testcase = file.name
