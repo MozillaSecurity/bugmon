@@ -423,7 +423,7 @@ class BugMonitor:
 
         return testcase
 
-    def _needs_bisect(self):
+    def needs_bisect(self):
         """
         Helper function to determine eligibility for 'bisect'
         """
@@ -434,7 +434,7 @@ class BugMonitor:
 
         return False
 
-    def _needs_confirm(self):
+    def needs_confirm(self):
         """
         Helper function to determine eligibility for 'confirm'
         """
@@ -447,7 +447,7 @@ class BugMonitor:
 
         return False
 
-    def _needs_verify(self):
+    def needs_verify(self):
         """
         Helper function to determine eligibility for 'verify'
         """
@@ -465,7 +465,7 @@ class BugMonitor:
 
         return False
 
-    def _confirm_open(self):
+    def confirm_open(self):
         """
         Attempt to confirm open test cases
         """
@@ -480,7 +480,7 @@ class BugMonitor:
         if tip.status == ReproductionResult.CRASHED:
             if "confirmed" not in self.commands:
                 self.report(f"Verified bug as reproducible on {tip.build_str}.")
-                self._bisect()
+                self.bisect()
             else:
                 change = dt.strptime(self.bug.last_change_time, "%Y-%m-%dT%H:%M:%SZ")
                 if dt.now() - timedelta(days=30) > change:
@@ -489,7 +489,7 @@ class BugMonitor:
             orig = self.reproduce_bug(self.branch, self.initial_build_id)
             if orig.status == ReproductionResult.CRASHED:
                 log.info(f"Testcase crashes using the initial build ({orig.build_str})")
-                self._bisect()
+                self.bisect()
             else:
                 self.report(
                     "Unable to reproduce bug using the following builds:",
@@ -505,7 +505,7 @@ class BugMonitor:
         if "confirm" in self.commands:
             self.remove_command("confirm")
 
-    def _verify_fixed(self):
+    def verify_fixed(self):
         """
         Attempt to verify the bug state
 
@@ -555,7 +555,7 @@ class BugMonitor:
             # Remove from further analysis
             self._close_bug = True
 
-    def _bisect(self):
+    def bisect(self):
         """
         Attempt to enumerate the changeset that introduced or fixed the bug
         """
@@ -654,14 +654,14 @@ class BugMonitor:
         os.chdir(self.working_dir)
         try:
             # If verify is required, don't do anything else
-            if self._needs_verify():
-                self._verify_fixed()
+            if self.needs_verify():
+                self.verify_fixed()
             else:
                 # If confirm is required, testcase will be bisected
-                if self._needs_confirm():
-                    self._confirm_open()
-                elif self._needs_bisect():
-                    self._bisect()
+                if self.needs_confirm():
+                    self.confirm_open()
+                elif self.needs_bisect():
+                    self.bisect()
         finally:
             os.chdir(previous_path)
 
