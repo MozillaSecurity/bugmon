@@ -407,9 +407,8 @@ class BugMonitor:
                             raise BugException("Multiple testcases identified!")
                         testcase = os.path.join(self.working_dir, filename)
             else:
-                with open(
-                    os.path.join(self.working_dir, attachment.file_name), "wb"
-                ) as file:
+                dest = os.path.join(self.working_dir, attachment.file_name)
+                with open(dest, "wb") as file:
                     file.write(data)
                     r = re.compile(r"^testcase.*$", re.IGNORECASE)
                     if filter(r.match, [attachment.file_name, attachment.description]):
