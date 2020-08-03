@@ -97,6 +97,7 @@ requests = ">=1.1.0"
 reference = "5f1b30e6e9dd8f1aea11c8c6fddc565a74dbcb2c"
 type = "git"
 url = "https://github.com/AutomatedTester/Bugsy.git"
+
 [[package]]
 category = "main"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -243,7 +244,7 @@ description = "Downloader for firefox/jsshell builds."
 name = "fuzzfetch"
 optional = false
 python-versions = ">=2.7"
-version = "1.0.1"
+version = "1.0.2"
 
 [package.dependencies]
 configparser = ">=3.5.0"
@@ -865,8 +866,8 @@ flake8-quotes = [
     {file = "flake8-quotes-2.1.2.tar.gz", hash = "sha256:c844c9592940c8926c60f00bc620808912ff2acd34923ab5338f3a5ca618a331"},
 ]
 fuzzfetch = [
-    {file = "fuzzfetch-1.0.1-py2.py3-none-any.whl", hash = "sha256:2c1e1a5dec76729be47274bef9cebd1b982f93ad52979f5c5a9a621304ee561e"},
-    {file = "fuzzfetch-1.0.1.tar.gz", hash = "sha256:dc900dbf7a83c8bb549d59e3409cb924a9634510bdea010f9604b8b0536d607d"},
+    {file = "fuzzfetch-1.0.2-py2.py3-none-any.whl", hash = "sha256:cc7e68b746a8e75786d7758cee75e2d0a9a57a007a8347a5604b24e89115288e"},
+    {file = "fuzzfetch-1.0.2.tar.gz", hash = "sha256:d9ebe719f1bb6b5761ae083bfa1287ed7bb3c0c374bf7fa0faded6d0c25f1049"},
 ]
 fuzzmanager = [
     {file = "FuzzManager-0.4.0-py2.py3-none-any.whl", hash = "sha256:cd8780bf4b45d768d21cfe00d0297afde3ef1c5ff6d403aba147526b034d2e97"},
