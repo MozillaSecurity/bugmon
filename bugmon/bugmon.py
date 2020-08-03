@@ -411,7 +411,8 @@ class BugMonitor:
                 with open(dest, "wb") as file:
                     file.write(data)
                     r = re.compile(r"^testcase.*$", re.IGNORECASE)
-                    if filter(r.match, [attachment.file_name, attachment.description]):
+                    targets = [attachment.file_name, attachment.description]
+                    if any(r.match(target) for target in targets):
                         if testcase is not None:
                             raise BugException("Multiple testcases identified!")
                         testcase = file.name
