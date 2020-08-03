@@ -419,6 +419,25 @@ class BugMonitor:
 
         return testcase
 
+    def find_patch_rev(self, branch):
+        """
+        Attempt to determine patch rev for the supplied branch
+
+        :param branch: Branch name
+        :return: Patch revision
+        """
+        alias = f"mozilla-{branch}"
+        if branch == "central":
+            pattern = re.compile(rf"(?:{HG_BASE}/{alias}/rev/){REV_MATCH}")
+        else:
+            pattern = re.compile(rf"(?:{HG_BASE}/releases/{alias}/rev/){REV_MATCH}")
+
+        comments = self.bug.get_comments()
+        for comment in sorted(comments, key=lambda c: c.creation_time, reverse=True):
+            match = pattern.match(comment.text)
+            if match:
+                return match.group(1)
+
     def needs_bisect(self):
         """
         Helper function to determine eligibility for 'bisect'
@@ -569,7 +588,8 @@ class BugMonitor:
 
         """
         if self.bug.status != "VERIFIED":
-            tip = self.reproduce_bug(self.branch)
+            patch_rev = self.find_patch_rev(self.branch)
+            tip = self.reproduce_bug(self.branch, patch_rev)
             build_str = tip.build_str
 
             if tip.status == ReproductionResult.PASSED:
@@ -597,14 +617,17 @@ class BugMonitor:
 
             # Only check branches if bug is marked as fixed
             if getattr(self.bug, flag) == "fixed":
-                branch = self.reproduce_bug(alias)
+                patch_rev = self.find_patch_rev(alias)
+                branch = self.reproduce_bug(alias, patch_rev)
                 if branch.status == ReproductionResult.PASSED:
                     log.info(f"Verified fixed on {flag}")
                     setattr(self.bug, flag, "verified")
-                elif branch.status == ReproductionResult.CRASHED:
+                    continue
+
+                branches_verified = False
+                if branch.status == ReproductionResult.CRASHED:
                     log.info(f"Bug remains vulnerable on {flag}")
                     setattr(self.bug, flag, "affected")
-                    branches_verified = False
 
         if self.bug.status == "VERIFIED" and branches_verified:
             # Remove from further analysis
