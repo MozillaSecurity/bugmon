@@ -667,7 +667,9 @@ class BugMonitor:
             self.evaluator = JSEvaluator(testcase, flags=self.runtime_opts)
         else:
             self.target = "firefox"
-            self.evaluator = BrowserEvaluator(testcase, env=self.env, prefs=self.prefs)
+            self.evaluator = BrowserEvaluator(
+                testcase, env=self.env, prefs=self.prefs, repeat=10
+            )
 
         # Some testcases require setting the cwd to the parent dir
         previous_path = os.getcwd()
