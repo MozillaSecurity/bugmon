@@ -52,14 +52,13 @@ description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 name = "autobisect"
 optional = false
 python-versions = ">=3.6,<4.0"
-version = "0.7.7"
+version = "0.7.8"
 
 [package.dependencies]
 black = ">=19.10b0,<20.0"
 fuzzfetch = ">=1.0.1,<2.0.0"
 grizzly-framework = ">=0.9.5,<0.10.0"
 lithium-reducer = ">=0.3.3,<0.4.0"
-prefpicker = ">=1.0.4,<2.0.0"
 toml = ">=0.9,<0.10"
 
 [[package]]
@@ -785,7 +784,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "7cd0f719db206297d847d63559f584dfd436308c718e24f9b5b4945177ab4eed"
+content-hash = "a0e21750b888780f53a30dc91f45496c4ab058a9f0ce89ab7a8e5a2cd08709d5"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -806,8 +805,8 @@ attrs = [
     {file = "attrs-19.3.0.tar.gz", hash = "sha256:f7b7ce16570fe9965acd6d30101a28f62fb4a7f9e926b3bbc9b61f8b04247e72"},
 ]
 autobisect = [
-    {file = "autobisect-0.7.7-py3-none-any.whl", hash = "sha256:221d48aab6eeb8700364eb6ae77a93ca2010e00c97ca53008361cd6997e099aa"},
-    {file = "autobisect-0.7.7.tar.gz", hash = "sha256:885ed2552d5e93d98136515a8a219187867060b213ea815efd6e122f8ebcf9e2"},
+    {file = "autobisect-0.7.8-py3-none-any.whl", hash = "sha256:b763812818963179727625263f37f367a18ca6b84062ab1d4a58d945e3ef101f"},
+    {file = "autobisect-0.7.8.tar.gz", hash = "sha256:fd6e72f03d9572c88d672bf105daaad86622300c7ca748bc9a83dea40a210792"},
 ]
 black = [
     {file = "black-19.10b0-py36-none-any.whl", hash = "sha256:1b30e59be925fafc1ee4565e5e08abef6b03fe455102883820fe5ee2e4734e0b"},
