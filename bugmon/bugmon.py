@@ -439,6 +439,8 @@ class BugMonitor:
             if match:
                 return match.group(1)
 
+        return None
+
     def needs_bisect(self):
         """
         Helper function to determine eligibility for 'bisect'
