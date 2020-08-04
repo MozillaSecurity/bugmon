@@ -17,6 +17,7 @@
 
 import base64
 import binascii
+import copy
 import io
 import json
 import logging
@@ -372,7 +373,7 @@ class BugMonitor:
         Remove a bugmon command to the whiteboard
         :return:
         """
-        commands = self.commands
+        commands = copy.copy(self.commands)
         if key in commands:
             del commands[key]
 
