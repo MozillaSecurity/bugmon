@@ -52,7 +52,7 @@ description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 name = "autobisect"
 optional = false
 python-versions = ">=3.6,<4.0"
-version = "0.7.6"
+version = "0.7.7"
 
 [package.dependencies]
 black = ">=19.10b0,<20.0"
@@ -97,6 +97,7 @@ requests = ">=1.1.0"
 reference = "468c98eab2c93e9fb3c0c93be61ebd1fda5059f6"
 type = "git"
 url = "https://github.com/AutomatedTester/Bugsy.git"
+
 [[package]]
 category = "main"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -805,8 +806,8 @@ attrs = [
     {file = "attrs-19.3.0.tar.gz", hash = "sha256:f7b7ce16570fe9965acd6d30101a28f62fb4a7f9e926b3bbc9b61f8b04247e72"},
 ]
 autobisect = [
-    {file = "autobisect-0.7.6-py3-none-any.whl", hash = "sha256:38ef075d75236f002d414896f66b86e6b8c8113d6acc64bab683ac564fc705f0"},
-    {file = "autobisect-0.7.6.tar.gz", hash = "sha256:4e6e25065f88791b0859a32b3af8f0fe93f24a1833e3e7ea94198666330446aa"},
+    {file = "autobisect-0.7.7-py3-none-any.whl", hash = "sha256:221d48aab6eeb8700364eb6ae77a93ca2010e00c97ca53008361cd6997e099aa"},
+    {file = "autobisect-0.7.7.tar.gz", hash = "sha256:885ed2552d5e93d98136515a8a219187867060b213ea815efd6e122f8ebcf9e2"},
 ]
 black = [
     {file = "black-19.10b0-py36-none-any.whl", hash = "sha256:1b30e59be925fafc1ee4565e5e08abef6b03fe455102883820fe5ee2e4734e0b"},
