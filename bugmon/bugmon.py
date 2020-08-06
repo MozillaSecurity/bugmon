@@ -757,13 +757,13 @@ class BugMonitor:
                     "Please review the bug and re-add the keyword for further analysis.",
                 )
 
+        if self.queue:
+            self.bug.comment = "Bugmon Analysis:\n%s" % "\n".join(self.queue)
+            self.queue = []
+
         diff = self.bug.diff()
         if diff:
             log.info(f"Changes: {json.dumps(diff)}")
             if not self.dry_run:
                 self.bugsy.put(self.bug)
                 self.bug.update()
-
-        if not self.dry_run and self.queue:
-            self.bug.add_comment("Bugmon Analysis:\n%s" % "\n".join(self.queue))
-            self.queue = []
