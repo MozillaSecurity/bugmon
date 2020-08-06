@@ -68,28 +68,28 @@ def main(argv=None):
 
     bugsy = Bugsy(api_key=api_key, bugzilla_url=api_root)
 
-    bug_ids = []
+    bugs = []
     if args.bugs:
-        bug_ids.extend(args.bugs)
+        bugs.extend([bugsy.get(bug_num, "_default") for bug_num in args.bugs])
     else:
         with open(args.search) as f:
             params = json.load(f)
+            params["include_fields"] = "_default"
             response = bugsy.request("bug", params=params)
             bugs = [Bug(bugsy, **bug) for bug in response["bugs"]]
-            bug_ids.extend(sorted([bug.id for bug in bugs]))
 
-    for bug_id in bug_ids:
+    for bug in bugs:
         with tempfile.TemporaryDirectory() as temp_dir:
             try:
-                bugmon = BugMonitor(bugsy, bug_id, temp_dir, args.dry_run)
+                bugmon = BugMonitor(bugsy, bug, temp_dir, args.dry_run)
                 log.info(
-                    f"Analyzing bug {bug_id} "
+                    f"Analyzing bug {bug.id} "
                     f"(Status: {bugmon.bug.status}, "
                     f"Resolution: {bugmon.bug.resolution})"
                 )
                 bugmon.process()
             except BugException as e:
-                log.error(f"Error processing bug {bug_id}: {e}")
+                log.error(f"Error processing bug {bug.id}: {e}")
 
 
 if __name__ == "__main__":

@@ -89,7 +89,7 @@ class BugMonitor:
     Main bugmon class
     """
 
-    def __init__(self, bugsy, bug_num, working_dir, dry_run=False):
+    def __init__(self, bugsy, bug, working_dir, dry_run=False):
         """
 
         :param bugsy: Bugsy instance used for retrieving bugs
@@ -98,7 +98,7 @@ class BugMonitor:
         :param dry_run: Boolean indicating if changes should be made to the bug
         """
         self.bugsy = bugsy
-        self.bug = self.bugsy.get(bug_num, "_default")
+        self.bug = bug
         self.working_dir = working_dir
         self.dry_run = dry_run
         self.queue = []
