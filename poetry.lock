@@ -52,11 +52,11 @@ description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 name = "autobisect"
 optional = false
 python-versions = ">=3.6,<4.0"
-version = "0.7.8"
+version = "0.7.9"
 
 [package.dependencies]
 black = ">=19.10b0,<20.0"
-fuzzfetch = ">=1.0.1,<2.0.0"
+fuzzfetch = ">=1.0.3,<2.0.0"
 grizzly-framework = ">=0.9.5,<0.10.0"
 lithium-reducer = ">=0.3.3,<0.4.0"
 toml = ">=0.9,<0.10"
@@ -96,7 +96,6 @@ requests = ">=1.1.0"
 reference = "468c98eab2c93e9fb3c0c93be61ebd1fda5059f6"
 type = "git"
 url = "https://github.com/AutomatedTester/Bugsy.git"
-
 [[package]]
 category = "main"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -132,7 +131,7 @@ version = "7.1.2"
 [[package]]
 category = "dev"
 description = "Cross-platform colored terminal text."
-marker = "platform_system == \"Windows\" or sys_platform == \"win32\""
+marker = "sys_platform == \"win32\" or platform_system == \"Windows\""
 name = "colorama"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
@@ -352,6 +351,11 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "4.3.21"
 
+[package.dependencies]
+[package.dependencies.toml]
+optional = true
+version = "*"
+
 [package.extras]
 pipfile = ["pipreqs", "requirementslib"]
 pyproject = ["toml"]
@@ -472,7 +476,7 @@ description = "PrefPicker - Manage & generate prefs.js files"
 name = "prefpicker"
 optional = false
 python-versions = "*"
-version = "1.0.4"
+version = "1.0.6"
 
 [package.dependencies]
 pyyaml = "*"
@@ -725,7 +729,7 @@ description = "Virtual Python Environment builder"
 name = "virtualenv"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
-version = "20.0.29"
+version = "20.0.30"
 
 [package.dependencies]
 appdirs = ">=1.4.3,<2"
@@ -784,7 +788,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "ea7353f7d76f5916a408ad64682ba4f3f8055e6df314a6c924c77dc1001489ee"
+content-hash = "b81d5662541b1f1a7d90336d1aeee6875e048b665b2f0d04e70b5ec447548b84"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -805,8 +809,8 @@ attrs = [
     {file = "attrs-19.3.0.tar.gz", hash = "sha256:f7b7ce16570fe9965acd6d30101a28f62fb4a7f9e926b3bbc9b61f8b04247e72"},
 ]
 autobisect = [
-    {file = "autobisect-0.7.8-py3-none-any.whl", hash = "sha256:b763812818963179727625263f37f367a18ca6b84062ab1d4a58d945e3ef101f"},
-    {file = "autobisect-0.7.8.tar.gz", hash = "sha256:fd6e72f03d9572c88d672bf105daaad86622300c7ca748bc9a83dea40a210792"},
+    {file = "autobisect-0.7.9-py3-none-any.whl", hash = "sha256:8e9d5d6c09d79cbd515ce25850b7941c73554f3088b86f24c106e08e6884389d"},
+    {file = "autobisect-0.7.9.tar.gz", hash = "sha256:a0719df72706d5a10cd610f1caca0ad6ba4eeb12c7ac1c8f640b3283eb61c8cc"},
 ]
 black = [
     {file = "black-19.10b0-py36-none-any.whl", hash = "sha256:1b30e59be925fafc1ee4565e5e08abef6b03fe455102883820fe5ee2e4734e0b"},
@@ -955,8 +959,8 @@ pre-commit = [
     {file = "pre_commit-2.1.1.tar.gz", hash = "sha256:f8d555e31e2051892c7f7b3ad9f620bd2c09271d87e9eedb2ad831737d6211eb"},
 ]
 prefpicker = [
-    {file = "prefpicker-1.0.4-py2.py3-none-any.whl", hash = "sha256:64f5031629add25fcee8b4200896a476d6042bb1b041289a5af195b8736be1ea"},
-    {file = "prefpicker-1.0.4.tar.gz", hash = "sha256:ee3bd24e837fa6eae06d5f0b1bbf57ae3c1e92260aadcafb0ac5b25c7882cd93"},
+    {file = "prefpicker-1.0.6-py2.py3-none-any.whl", hash = "sha256:ad6705108dadb73e0006626f9833375de4b49462b6ad7bbd81b6edfb65f42a9b"},
+    {file = "prefpicker-1.0.6.tar.gz", hash = "sha256:c683dc9f8c2c072732734ebbba1b414db65253a16608b91dbfde5b9f8198d807"},
 ]
 psutil = [
     {file = "psutil-5.7.2-cp27-none-win32.whl", hash = "sha256:f2018461733b23f308c298653c8903d32aaad7873d25e1d228765e91ae42c3f2"},
@@ -1094,8 +1098,8 @@ urllib3 = [
     {file = "urllib3-1.25.10.tar.gz", hash = "sha256:91056c15fa70756691db97756772bb1eb9678fa585d9184f24534b100dc60f4a"},
 ]
 virtualenv = [
-    {file = "virtualenv-20.0.29-py2.py3-none-any.whl", hash = "sha256:8aa9c37b082664dbce2236fa420759c02d64109d8e6013593ad13914718a30fd"},
-    {file = "virtualenv-20.0.29.tar.gz", hash = "sha256:f14a0a98ea4397f0d926cff950361766b6a73cd5975ae7eb259d12919f819a25"},
+    {file = "virtualenv-20.0.30-py2.py3-none-any.whl", hash = "sha256:8cd7b2a4850b003a11be2fc213e206419efab41115cc14bca20e69654f2ac08e"},
+    {file = "virtualenv-20.0.30.tar.gz", hash = "sha256:7b54fd606a1b85f83de49ad8d80dbec08e983a2d2f96685045b262ebc7481ee5"},
 ]
 wcwidth = [
     {file = "wcwidth-0.2.5-py2.py3-none-any.whl", hash = "sha256:beb4802a9cebb9144e99086eff703a642a13d6a0052920003a230f3294bbe784"},
