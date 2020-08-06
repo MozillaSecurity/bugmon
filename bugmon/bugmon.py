@@ -1,19 +1,8 @@
-#!/usr/bin/env python
-# ***** BEGIN LICENSE BLOCK *****
-# Version: MPL 2.0
-#
-# This Source Code Form is subject to the terms of the Mozilla Public
-# License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
-#
-# The Original Code is ADBFuzz.
-#
-# The Initial Developer of the Original Code is Christian Holler (decoder).
-#
-# Contributors:
-#  Christian Holler <decoder@mozilla.com> (Original Developer)
-#
-# ***** END LICENSE BLOCK *****
+# -*- coding: utf-8 -*-
+
+# This Source Code Form is subject to the terms of the Mozilla Public License,
+# v. 2.0. If a copy of the MPL was not distributed with this file, You can
+# obtain one at http://mozilla.org/MPL/2.0/.
 
 import base64
 import binascii
