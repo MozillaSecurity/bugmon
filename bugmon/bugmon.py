@@ -24,8 +24,8 @@ from autobisect.build_manager import BuildManager
 from autobisect.evaluators import BrowserEvaluator, JSEvaluator
 from fuzzfetch import BuildFlags, Fetcher, FetcherException
 from fuzzfetch.fetch import Platform
-from requests.adapters import HTTPAdapter
-from urllib3 import Retry
+
+from bugmon.utils import _get_milestone, _get_url
 
 log = logging.getLogger("bugmon")
 
@@ -33,34 +33,9 @@ AVAILABLE_BRANCHES = ["mozilla-central", "mozilla-beta", "mozilla-release"]
 
 TESTCASE_URL = "https://github.com/MozillaSecurity/bugmon#testcase-identification"
 
-HG_BASE = "https://hg.mozilla.org"
-MSTONE_URL = f"{HG_BASE}/mozilla-central/raw-file/tip/config/milestone.txt"
 
 REV_MATCH = r"([a-f0-9]{12}|[a-f0-9]{40})"
 BID_MATCH = r"([0-9]{8}-)([a-f0-9]{12})"
-
-HTTP_SESSION = requests.Session()
-HTTP_ADAPTER = HTTPAdapter(max_retries=Retry(connect=3, backoff_factor=0.5))
-HTTP_SESSION.mount("http://", HTTP_ADAPTER)
-HTTP_SESSION.mount("https://", HTTP_ADAPTER)
-
-
-def _get_url(url):
-    """
-    Retrieve requested URL
-    """
-    data = HTTP_SESSION.get(url, stream=True)
-    data.raise_for_status()
-    return data
-
-
-def _get_milestone():
-    """
-    Fetch current milestone
-    """
-    milestone = _get_url(MSTONE_URL)
-    version = milestone.text.splitlines()[-1]
-    return int(version.split(".", 1)[0])
 
 
 class BugException(Exception):
