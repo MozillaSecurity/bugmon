@@ -351,11 +351,6 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "4.3.21"
 
-[package.dependencies]
-[package.dependencies.toml]
-optional = true
-version = "*"
-
 [package.extras]
 pipfile = ["pipreqs", "requirementslib"]
 pyproject = ["toml"]
@@ -595,15 +590,30 @@ pytest = ">=3.5"
 
 [[package]]
 category = "dev"
+description = "Thin-wrapper around the mock package for easier use with pytest"
+name = "pytest-mock"
+optional = false
+python-versions = ">=3.5"
+version = "3.2.0"
+
+[package.dependencies]
+pytest = ">=2.7"
+
+[package.extras]
+dev = ["pre-commit", "tox", "pytest-asyncio"]
+
+[[package]]
+category = "dev"
 description = "pytest plugin to check source code with pylint"
 name = "pytest-pylint"
 optional = false
 python-versions = ">=3.5"
-version = "0.15.1"
+version = "0.17.0"
 
 [package.dependencies]
-pylint = ">=2.0.0"
-pytest = ">=5.0"
+pylint = ">=2.3.0"
+pytest = ">=5.4"
+toml = ">=0.7.1"
 
 [[package]]
 category = "main"
@@ -682,7 +692,7 @@ description = "tox is a generic virtualenv management and test command line tool
 name = "tox"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
-version = "3.18.1"
+version = "3.19.0"
 
 [package.dependencies]
 colorama = ">=0.4.1"
@@ -788,7 +798,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "b81d5662541b1f1a7d90336d1aeee6875e048b665b2f0d04e70b5ec447548b84"
+content-hash = "90cc015e5dfb60023521fc4471e09d83da8cbfa61b4a25f66204fcadc9ce9083"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -1006,9 +1016,13 @@ pytest-flake8 = [
     {file = "pytest-flake8-1.0.6.tar.gz", hash = "sha256:1b82bb58c88eb1db40524018d3fcfd0424575029703b4e2d8e3ee873f2b17027"},
     {file = "pytest_flake8-1.0.6-py2.py3-none-any.whl", hash = "sha256:2e91578ecd9b200066f99c1e1de0f510fbb85bcf43712d46ea29fe47607cc234"},
 ]
+pytest-mock = [
+    {file = "pytest-mock-3.2.0.tar.gz", hash = "sha256:7122d55505d5ed5a6f3df940ad174b3f606ecae5e9bc379569cdcbd4cd9d2b83"},
+    {file = "pytest_mock-3.2.0-py3-none-any.whl", hash = "sha256:5564c7cd2569b603f8451ec77928083054d8896046830ca763ed68f4112d17c7"},
+]
 pytest-pylint = [
-    {file = "pytest-pylint-0.15.1.tar.gz", hash = "sha256:dd3e232da5703e7fd14c610247dbe25dfd8e3278069b4b8bcf9778ba06b77569"},
-    {file = "pytest_pylint-0.15.1-py3-none-any.whl", hash = "sha256:cac5d565182f39fbb7fa7f4ef1bbcc979e8f5cc260450ec72dc5aafeb782531f"},
+    {file = "pytest-pylint-0.17.0.tar.gz", hash = "sha256:b0c177d63f6e3f5b82fa2720a6570dd2ecff1616c26ed6d02d0cbf75fd98ddf9"},
+    {file = "pytest_pylint-0.17.0-py3-none-any.whl", hash = "sha256:c6a1b9ad7dc819ea56ebd45fc1f5a611f0848b9a5b85fdcd8deafd07b22e7f2e"},
 ]
 pytz = [
     {file = "pytz-2020.1-py2.py3-none-any.whl", hash = "sha256:a494d53b6d39c3c6e44c3bec237336e14305e4f29bbf800b599253057fbb79ed"},
@@ -1067,8 +1081,8 @@ toml = [
     {file = "toml-0.9.6.tar.gz", hash = "sha256:380178cde50a6a79f9d2cf6f42a62a5174febe5eea4126fe4038785f1d888d42"},
 ]
 tox = [
-    {file = "tox-3.18.1-py2.py3-none-any.whl", hash = "sha256:3d914480c46232c2d1a035482242535a26d76cc299e4fd28980c858463206f45"},
-    {file = "tox-3.18.1.tar.gz", hash = "sha256:5c82e40046a91dbc80b6bd08321b13b4380d8ce3bcb5b62616cb17aaddefbb3a"},
+    {file = "tox-3.19.0-py2.py3-none-any.whl", hash = "sha256:3d94b6921a0b6dc90fd8128df83741f30bb41ccd6cd52d131a6a6944ca8f16e6"},
+    {file = "tox-3.19.0.tar.gz", hash = "sha256:17e61a93afe5c49281fb969ab71f7a3f22d7586d1c56f9a74219910f356fe7d3"},
 ]
 typed-ast = [
     {file = "typed_ast-1.4.1-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:73d785a950fc82dd2a25897d525d003f6378d1cb23ab305578394694202a58c3"},
