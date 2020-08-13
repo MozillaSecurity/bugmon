@@ -5,9 +5,10 @@ import os
 import sys
 import tempfile
 
-from bugsy import Bug, Bugsy
+from bugsy import Bugsy
 
 from bugmon import BugException, BugMonitor
+from bugmon.bug import EnhancedBug
 
 log = logging.getLogger("bugmon")
 
@@ -68,15 +69,16 @@ def main(argv=None):
 
     bugsy = Bugsy(api_key=api_key, bugzilla_url=api_root)
 
-    bugs = []
     if args.bugs:
-        bugs.extend([bugsy.get(bug_num, "_default") for bug_num in args.bugs])
+        bug_list = ",".join(args.bugs)
+        params = {"id": bug_list}
     else:
         with open(args.search) as f:
             params = json.load(f)
             params["include_fields"] = "_default"
-            response = bugsy.request("bug", params=params)
-            bugs = [Bug(bugsy, **bug) for bug in response["bugs"]]
+
+    response = bugsy.request("bug", params=params)
+    bugs = [EnhancedBug(bugsy, **bug) for bug in response["bugs"]]
 
     for bug in bugs:
         with tempfile.TemporaryDirectory() as temp_dir:

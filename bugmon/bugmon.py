@@ -11,31 +11,22 @@ import io
 import json
 import logging
 import os
-import platform
 import re
 import zipfile
 from datetime import datetime as dt
 from datetime import timedelta
 
-import requests
 from autobisect import EvaluatorResult
 from autobisect.bisect import BisectionResult, Bisector
 from autobisect.build_manager import BuildManager
 from autobisect.evaluators import BrowserEvaluator, JSEvaluator
-from fuzzfetch import BuildFlags, Fetcher, FetcherException
-from fuzzfetch.fetch import Platform
-
-from bugmon.utils import _get_milestone, _get_url
+from fuzzfetch import Fetcher, FetcherException
 
 log = logging.getLogger("bugmon")
 
 AVAILABLE_BRANCHES = ["mozilla-central", "mozilla-beta", "mozilla-release"]
 
 TESTCASE_URL = "https://github.com/MozillaSecurity/bugmon#testcase-identification"
-
-
-REV_MATCH = r"([a-f0-9]{12}|[a-f0-9]{40})"
-BID_MATCH = r"([0-9]{8}-)([a-f0-9]{12})"
 
 
 class BugException(Exception):
@@ -68,7 +59,7 @@ class BugMonitor:
         """
 
         :param bugsy: Bugsy instance used for retrieving bugs
-        :param bug_num: Bug number to analyze
+        :param bug: Bug to analyze
         :param working_dir: Path to working directory
         :param dry_run: Boolean indicating if changes should be made to the bug
         """
@@ -79,185 +70,10 @@ class BugMonitor:
         self.queue = []
         self.results = {}
 
-        # Initialize placeholders
-        self._branch = None
-        self._branches = None
-        self._build_flags = None
-        self._comment_zero = None
-        self._initial_build_id = None
-        self._platform = None
         self._close_bug = False
-
         self.target = None
         self.evaluator = None
-
         self.build_manager = BuildManager()
-        self.central_version = _get_milestone()
-
-    @property
-    def version(self):
-        """
-        Attempt to enumerate the version the bug was filed against
-        """
-        match = re.match(r"\d+", self.bug.version)
-        if match:
-            return match.group(0)
-
-        return self.central_version
-
-    @property
-    def branch(self):
-        """
-        Attempt to enumerate the branch the bug was filed against
-        """
-        if self._branch is None:
-            for alias, actual in self.branches.items():
-                if self.version == actual:
-                    self._branch = alias
-                    break
-
-        return self._branch
-
-    @property
-    def branches(self):
-        """
-        Create map of fuzzfetch branch aliases and bugzilla version tags
-        :return:
-        """
-        if self._branches is None:
-            self._branches = {
-                "central": self.central_version,
-                "beta": self.central_version - 1,
-                "release": self.central_version - 2,
-            }
-
-            for alias in ["esr-next", "esr-stable"]:
-                try:
-                    rel_num = Fetcher.resolve_esr(alias)
-                    if rel_num is not None:
-                        self._branches[rel_num] = rel_num
-                except FetcherException:
-                    pass
-
-        return self._branches
-
-    @property
-    def build_flags(self):
-        """
-        Attempt to enumerate build type based on flags listed in comment 0
-        """
-        if self._build_flags is None:
-            asan = (
-                "AddressSanitizer" in self.comment_zero
-                or "--enable-address-sanitizer" in self.comment_zero
-            )
-            tsan = (
-                "ThreadSanitizer" in self.comment_zero
-                or "--enable-thread-sanitizer" in self.comment_zero
-            )
-            debug = (
-                "--enable-debug" in self.comment_zero
-                or "assertion" in self.bug.keywords
-            )
-            fuzzing = "--enable-fuzzing" in self.comment_zero
-            coverage = "--enable-coverage" in self.comment_zero
-            valgrind = False  # Ignore valgrind for now
-            self._build_flags = BuildFlags(
-                asan, tsan, debug, fuzzing, coverage, valgrind
-            )
-
-        return self._build_flags
-
-    @property
-    def comment_zero(self):
-        """
-        Helper function for retrieving comment zero
-        """
-        if self._comment_zero is None:
-            comments = self.bug.get_comments()
-            self._comment_zero = comments[0].text
-
-        return self._comment_zero
-
-    @property
-    def env(self):
-        """
-        Attempt to enumerate any env_variables required
-        """
-        variables = {}
-        tokens = self.comment_zero.split(" ")
-        for token in tokens:
-            if token.startswith("`") and token.endswith("`"):
-                token = token[1:-1]
-            if re.match(r"([a-z0-9_]+=[a-z0-9])", token, re.IGNORECASE):
-                name, value = token.split("=")
-                variables[name] = value
-
-        return variables
-
-    @property
-    def initial_build_id(self):
-        """
-        Attempt to enumerate the original rev specified in comment 0 or bugmon origRev command
-        """
-        if self._initial_build_id is None:
-            if "origRev" in self.commands and re.match(
-                rf"^{REV_MATCH}$", self.commands["origRev"]
-            ):
-                self._initial_build_id = ["origRev"]
-            else:
-                for token in re.findall(r"([A-Za-z0-9_-]+)", self.comment_zero):
-                    if token.startswith("`") and token.endswith("`"):
-                        token = token[1:-1]
-
-                    # Match 12 or 40 character revs
-                    if re.match(rf"^{REV_MATCH}$", token, re.IGNORECASE):
-                        try:
-                            _get_url(f"{HG_BASE}/{self.branch}/json-rev/{token}")
-                            self._initial_build_id = token
-                            break
-                        except requests.exceptions.HTTPError:
-                            pass
-
-                    # Match fuzzfetch build identifiers
-                    if re.match(rf"^{BID_MATCH}$", token, re.IGNORECASE):
-                        self._initial_build_id = token.split("-")[1]
-                        break
-                else:
-                    # If original rev isn't specified, use the date the bug was created
-                    self._initial_build_id = self.bug.creation_time.split("T")[0]
-
-        return self._initial_build_id
-
-    @property
-    def platform(self):
-        """
-        Attempt to enumerate the target platform
-        :return:
-        """
-        if self._platform is None:
-            os_ = platform.system()
-            if "Linux" in self.bug.op_sys:
-                os_ = "Linux"
-            elif "Windows" in self.bug.op_sys:
-                os_ = "Windows"
-            elif "Mac OS" in self.bug.op_sys:
-                os_ = "Darwin"
-
-            if os_ != platform.system():
-                raise BugException("Cannot process non-native bug (%s)" % os_)
-
-            arch = platform.machine()
-            if self.bug.platform == "ARM":
-                arch = "ARM64"
-            elif self.bug.platform == "x86":
-                arch = "i686"
-            elif self.bug.platform == "x86_64":
-                arch = "AMD64"
-
-            self._platform = Platform(os_, arch)
-
-        return self._platform
 
     @property
     def prefs(self):
@@ -271,77 +87,25 @@ class BugMonitor:
                     prefs_path = os.path.join(self.working_dir, filename)
         return prefs_path
 
-    @property
-    def runtime_opts(self):
-        """
-        Attempt to enumerate the runtime flags specified in comment 0
-        """
-        all_flags = JSEvaluator.get_valid_flags("tip")
-        flags = []
-        for flag in all_flags:
-            if flag in self.comment_zero:
-                match = re.search(
-                    rf"(--{flag}[a-z0-9=-]*)", self.comment_zero, re.IGNORECASE
-                )
-                if match is not None:
-                    flags.append(match.group(0))
-
-        return flags
-
-    @property
-    def commands(self):
-        """
-        Attempt to extract commands from whiteboard
-        """
-        commands = {}
-        if self.bug.whiteboard:
-            match = re.search(r"(?<=\[bugmon:).[^\]]*", self.bug.whiteboard)
-            if match is not None:
-                for command in match.group(0).split(","):
-                    if "=" in command:
-                        name, value = command.split("=")
-                        commands[name] = value
-                    else:
-                        commands[command] = None
-
-        return commands
-
-    @commands.setter
-    def commands(self, value):
-        parts = ",".join([f"{k}={v}" if v is not None else k for k, v in value.items()])
-        if len(parts) != 0:
-            if re.search(r"(?<=\[bugmon:)(.[^\]]*)", self.bug.whiteboard):
-                if len(self.commands.keys()) != 0:
-                    pattern = re.compile(r"(?<=\[bugmon:)(.[^\]]*)")
-                    self.bug.whiteboard = pattern.sub(parts, self.bug.whiteboard)
-                else:
-                    pattern = re.compile(r"([bugmon:.[^\]]*)")
-                    self.bug.whiteboard = pattern.sub("", self.bug.whiteboard)
-            else:
-                self.bug.whiteboard += f"[bugmon:{parts}]"
-        else:
-            pattern = re.compile(r"(?<=\[bugmon:)(.[^\]]*)")
-            self.bug.whiteboard = pattern.sub(parts, self.bug.whiteboard)
-
     def add_command(self, key, value=None):
         """
         Add a bugmon command to the whiteboard
         :return:
         """
-        commands = self.commands
+        commands = copy.deepcopy(self.bug.commands)
         commands[key] = value
-        self.commands = commands
+        self.bug.commands = commands
 
     def remove_command(self, key):
         """
         Remove a bugmon command to the whiteboard
         :return:
         """
-        commands = copy.copy(self.commands)
+        commands = copy.deepcopy(self.bug.commands)
         if key in commands:
             del commands[key]
 
-        self.commands = commands
+        self.bug.commands = commands
 
     def fetch_attachments(self):
         """
@@ -384,34 +148,13 @@ class BugMonitor:
 
         return testcase
 
-    def find_patch_rev(self, branch):
-        """
-        Attempt to determine patch rev for the supplied branch
-
-        :param branch: Branch name
-        :return: Patch revision
-        """
-        alias = f"mozilla-{branch}"
-        if branch == "central":
-            pattern = re.compile(rf"(?:{HG_BASE}/{alias}/rev/){REV_MATCH}")
-        else:
-            pattern = re.compile(rf"(?:{HG_BASE}/releases/{alias}/rev/){REV_MATCH}")
-
-        comments = self.bug.get_comments()
-        for comment in sorted(comments, key=lambda c: c.creation_time, reverse=True):
-            match = pattern.match(comment.text)
-            if match:
-                return match.group(1)
-
-        return None
-
     def needs_bisect(self):
         """
         Helper function to determine eligibility for 'bisect'
         """
-        if "bisected" in self.commands:
+        if "bisected" in self.bug.commands:
             return False
-        if "bisect" in self.commands:
+        if "bisect" in self.bug.commands:
             return True
 
         return False
@@ -420,9 +163,9 @@ class BugMonitor:
         """
         Helper function to determine eligibility for 'confirm'
         """
-        if "confirmed" in self.commands:
+        if "confirmed" in self.bug.commands:
             return False
-        if "confirm" in self.commands:
+        if "confirm" in self.bug.commands:
             return True
         if self.bug.status in ["ASSIGNED", "NEW", "UNCONFIRMED", "REOPENED"]:
             return True
@@ -433,15 +176,15 @@ class BugMonitor:
         """
         Helper function to determine eligibility for 'verify'
         """
-        if "verified" in self.commands:
+        if "verified" in self.bug.commands:
             return False
-        if "verify" in self.commands:
+        if "verify" in self.bug.commands:
             return True
         if self.bug.status == "RESOLVED":
             if self.bug.resolution == "FIXED":
                 return True
             if self.bug.resolution in ("DUPLICATE", "INVALID", "WORKSFORME", "WONTFIX"):
-                removed = re.sub(r"\[bugmon:.[^\]]*]", "", self.bug.whiteboard)
+                removed = re.sub(r"\[bugmon:.[^]]*]", "", self.bug.whiteboard)
                 self.bug.whiteboard = removed
                 self._close_bug = True
 
@@ -451,7 +194,7 @@ class BugMonitor:
         """
         Attempt to enumerate the changeset that introduced or fixed the bug
         """
-        tip = self.reproduce_bug(self.branch)
+        tip = self.reproduce_bug(self.bug.branch)
         if tip.status == ReproductionResult.NO_BUILD:
             log.warning("Failed to bisect bug (no build found)")
             return
@@ -462,27 +205,27 @@ class BugMonitor:
         # If tip doesn't crash, bisect the fix
         find_fix = tip.status != ReproductionResult.CRASHED
         if find_fix:
-            start = self.initial_build_id
+            start = self.bug.initial_build_id
             end = "latest"
         else:
             start = None
-            end = self.initial_build_id
+            end = self.bug.initial_build_id
 
         bisector = Bisector(
             self.evaluator,
             self.target,
-            self.branch,
+            self.bug.branch,
             start,
             end,
-            self.build_flags,
-            self.platform,
+            self.bug.build_flags,
+            self.bug.platform,
             find_fix,
         )
         result = bisector.bisect()
 
         # Set bisected status and remove the bisect command
         self.add_command("bisected")
-        if "bisect" in self.commands:
+        if "bisect" in self.bug.commands:
             self.remove_command("bisect")
 
         if result.status != BisectionResult.SUCCESS:
@@ -490,7 +233,7 @@ class BugMonitor:
                 f"Failed to bisect testcase ({result.message}):",
                 f"> Start: {result.start.changeset} ({result.start.id})",
                 f"> End: {result.end.changeset} ({result.end.id})",
-                f"> BuildFlags: {str(self.build_flags)}",
+                f"> BuildFlags: {str(self.bug.build_flags)}",
             ]
             self.report(*output)
         else:
@@ -510,7 +253,7 @@ class BugMonitor:
         """
         Attempt to confirm open test cases
         """
-        tip = self.reproduce_bug(self.branch)
+        tip = self.reproduce_bug(self.bug.branch)
         if tip.status == ReproductionResult.NO_BUILD:
             log.warning("Failed to confirm bug (no build found)")
             return
@@ -519,7 +262,7 @@ class BugMonitor:
             return
 
         if tip.status == ReproductionResult.CRASHED:
-            if "confirmed" not in self.commands:
+            if "confirmed" not in self.bug.commands:
                 self.report(f"Verified bug as reproducible on {tip.build_str}.")
                 self.bisect()
             else:
@@ -527,7 +270,7 @@ class BugMonitor:
                 if dt.now() - timedelta(days=30) > change:
                     self.report(f"Bug remains reproducible on {tip.build_str}")
         elif tip.status == ReproductionResult.PASSED:
-            orig = self.reproduce_bug(self.branch, self.initial_build_id)
+            orig = self.reproduce_bug(self.bug.branch, self.bug.initial_build_id)
             if orig.status == ReproductionResult.CRASHED:
                 log.info(f"Testcase crashes using the initial build ({orig.build_str})")
                 self.bisect()
@@ -543,7 +286,7 @@ class BugMonitor:
 
         # Set confirmed status and remove the confirm command
         self.add_command("confirmed")
-        if "confirm" in self.commands:
+        if "confirm" in self.bug.commands:
             self.remove_command("confirm")
 
     def verify_fixed(self):
@@ -555,12 +298,12 @@ class BugMonitor:
 
         """
         if self.bug.status != "VERIFIED":
-            patch_rev = self.find_patch_rev(self.branch)
-            tip = self.reproduce_bug(self.branch, patch_rev)
+            patch_rev = self.bug.find_patch_rev(self.bug.branch)
+            tip = self.reproduce_bug(self.bug.branch, patch_rev)
             build_str = tip.build_str
 
             if tip.status == ReproductionResult.PASSED:
-                initial = self.reproduce_bug(self.branch, self.initial_build_id)
+                initial = self.reproduce_bug(self.bug.branch, self.bug.initial_build_id)
                 if initial.status != ReproductionResult.CRASHED:
                     self.report(
                         f"Bug appears to be fixed on {build_str} but "
@@ -576,7 +319,7 @@ class BugMonitor:
                 self.add_command("confirmed")
 
         branches_verified = True
-        for alias, rel_num in self.branches.items():
+        for alias, rel_num in self.bug.branches.items():
             if isinstance(rel_num, int):
                 flag = f"cf_status_firefox{rel_num}"
             else:
@@ -584,7 +327,7 @@ class BugMonitor:
 
             # Only check branches if bug is marked as fixed
             if getattr(self.bug, flag) == "fixed":
-                patch_rev = self.find_patch_rev(alias)
+                patch_rev = self.bug.find_patch_rev(alias)
                 branch = self.reproduce_bug(alias, patch_rev)
                 if branch.status == ReproductionResult.PASSED:
                     log.info(f"Verified fixed on {flag}")
@@ -609,8 +352,8 @@ class BugMonitor:
         bisect - Attempt to bisect the bug regression or, if RESOLVED, the bug fix
         """
         # Check that the branch is available on taskcluster
-        if self.branch is None:
-            self.report(f"Bug filed against non-supported branch ({self.version})")
+        if self.bug.branch is None:
+            self.report(f"Bug filed against non-supported branch ({self.bug.version})")
             self._close_bug = True
             self.update()
             return
@@ -630,11 +373,11 @@ class BugMonitor:
         # Setup the evaluators
         if self.bug.component.lower().startswith("javascript"):
             self.target = "js"
-            self.evaluator = JSEvaluator(testcase, flags=self.runtime_opts)
+            self.evaluator = JSEvaluator(testcase, flags=self.bug.runtime_opts)
         else:
             self.target = "firefox"
             self.evaluator = BrowserEvaluator(
-                testcase, env=self.env, prefs=self.prefs, repeat=10
+                testcase, env=self.bug.env, prefs=self.prefs, repeat=10
             )
 
         # Some testcases require setting the cwd to the parent dir
@@ -674,8 +417,8 @@ class BugMonitor:
                 self.target,
                 branch,
                 bid,
-                self.build_flags,
-                self.platform,
+                self.bug.build_flags,
+                self.bug.platform,
                 nearest=direction,
             )
         except FetcherException as e:
@@ -689,7 +432,7 @@ class BugMonitor:
         else:
             self.results[branch] = {}
 
-        build_str = f"mozilla-{self.branch} {build.id}-{build.changeset[:12]}"
+        build_str = f"mozilla-{self.bug.branch} {build.id}-{build.changeset[:12]}"
         log.info(f"Attempting to reproduce bug on {build_str}")
 
         with self.build_manager.get_build(build) as build_path:
