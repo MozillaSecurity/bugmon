@@ -454,7 +454,7 @@ class BugMonitor:
 
     def report(self, *messages):
         """
-        Push changes or if dry_run, report to log
+        Output and store messages in queue
         :param messages: List of comments
         :return:
         """
