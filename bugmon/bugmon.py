@@ -385,21 +385,12 @@ class BugMonitor:
                 testcase, env=self.bug.env, prefs=self.prefs, repeat=10
             )
 
-        # Some testcases require setting the cwd to the parent dir
-        previous_path = os.getcwd()
-        os.chdir(self.working_dir)
-        try:
-            # If verify is required, don't do anything else
-            if self.needs_verify():
-                self.verify_fixed()
-            else:
-                # If confirm is required, testcase will be bisected
-                if self.needs_confirm():
-                    self.confirm_open()
-                elif self.needs_bisect():
-                    self.bisect()
-        finally:
-            os.chdir(previous_path)
+        if self.needs_verify():
+            self.verify_fixed()
+        elif self.needs_confirm:
+            self.confirm_open()
+        elif self.needs_bisect():
+            self.bisect()
 
         # Post updates and comments
         self.update()
