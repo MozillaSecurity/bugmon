@@ -52,7 +52,7 @@ description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 name = "autobisect"
 optional = false
 python-versions = ">=3.6,<4.0"
-version = "0.7.9"
+version = "0.7.10"
 
 [package.dependencies]
 black = ">=19.10b0,<20.0"
@@ -96,6 +96,7 @@ requests = ">=1.1.0"
 reference = "468c98eab2c93e9fb3c0c93be61ebd1fda5059f6"
 type = "git"
 url = "https://github.com/AutomatedTester/Bugsy.git"
+
 [[package]]
 category = "main"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -131,7 +132,7 @@ version = "7.1.2"
 [[package]]
 category = "dev"
 description = "Cross-platform colored terminal text."
-marker = "sys_platform == \"win32\" or platform_system == \"Windows\""
+marker = "platform_system == \"Windows\" or sys_platform == \"win32\""
 name = "colorama"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
@@ -819,8 +820,8 @@ attrs = [
     {file = "attrs-19.3.0.tar.gz", hash = "sha256:f7b7ce16570fe9965acd6d30101a28f62fb4a7f9e926b3bbc9b61f8b04247e72"},
 ]
 autobisect = [
-    {file = "autobisect-0.7.9-py3-none-any.whl", hash = "sha256:8e9d5d6c09d79cbd515ce25850b7941c73554f3088b86f24c106e08e6884389d"},
-    {file = "autobisect-0.7.9.tar.gz", hash = "sha256:a0719df72706d5a10cd610f1caca0ad6ba4eeb12c7ac1c8f640b3283eb61c8cc"},
+    {file = "autobisect-0.7.10-py3-none-any.whl", hash = "sha256:aa23b6d83aeaf996a8ac7c53c0e6d627554e5964b02fcad32717c198347fb8ea"},
+    {file = "autobisect-0.7.10.tar.gz", hash = "sha256:0fd2a3c54f3c35a8009d474eb0b74c69023dfb349c4d192e5ce1c0b5cba5d5da"},
 ]
 black = [
     {file = "black-19.10b0-py36-none-any.whl", hash = "sha256:1b30e59be925fafc1ee4565e5e08abef6b03fe455102883820fe5ee2e4734e0b"},
