@@ -372,7 +372,7 @@ class BugMonitor:
         confirm - Attempt to confirm that testcase reproduces
         """
         if not self.is_supported():
-            self.update()
+            self.commit()
             return
 
         # Setup the evaluators
@@ -393,7 +393,7 @@ class BugMonitor:
             self.bisect()
 
         # Post updates and comments
-        self.update()
+        self.commit()
 
     def reproduce_bug(self, branch, bid=None):
         """
@@ -459,7 +459,7 @@ class BugMonitor:
             for line in message.splitlines():
                 log.info(line)
 
-    def update(self):
+    def commit(self):
         """
         Post any changes to the bug
         """
