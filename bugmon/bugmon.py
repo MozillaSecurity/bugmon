@@ -180,13 +180,8 @@ class BugMonitor:
             return False
         if "verify" in self.bug.commands:
             return True
-        if self.bug.status == "RESOLVED":
-            if self.bug.resolution == "FIXED":
-                return True
-            if self.bug.resolution in ("DUPLICATE", "INVALID", "WORKSFORME", "WONTFIX"):
-                removed = re.sub(r"\[bugmon:.[^]]*]", "", self.bug.whiteboard)
-                self.bug.whiteboard = removed
-                self._close_bug = True
+        if self.bug.status == "RESOLVED" and self.bug.resolution == "FIXED":
+            return True
 
         return False
 
@@ -343,20 +338,16 @@ class BugMonitor:
             # Remove from further analysis
             self._close_bug = True
 
-    def process(self):
-        """
-        Process bugmon commands present in whiteboard
-
-        Available commands:
-        verify - Attempt to verify the bug state
-        bisect - Attempt to bisect the bug regression or, if RESOLVED, the bug fix
-        """
+    def is_supported(self):
         # Check that the branch is available on taskcluster
         if self.bug.branch is None:
             self.report(f"Bug filed against non-supported branch ({self.bug.version})")
             self._close_bug = True
-            self.update()
-            return
+            return False
+
+        if self.bug.resolution in ("DUPLICATE", "INVALID", "WORKSFORME", "WONTFIX"):
+            self.report(f"No valid actions for resolution ({self.bug.resolution})")
+            self._close_bug = True
 
         # Check that we can parse the testcase
         testcase = self.fetch_attachments()
@@ -367,6 +358,20 @@ class BugMonitor:
                 "https://github.com/MozillaSecurity/bugmon#testcase-identification",
             )
             self._close_bug = True
+            return False
+
+        return True
+
+    def process(self):
+        """
+        Process bugmon commands present in whiteboard
+
+        Available commands:
+        verify - Attempt to verify the bug state
+        bisect - Attempt to bisect the bug regression or, if RESOLVED, the bug fix
+        confirm - Attempt to confirm that testcase reproduces
+        """
+        if not self.is_supported():
             self.update()
             return
 
