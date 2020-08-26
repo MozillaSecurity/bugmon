@@ -3,7 +3,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-
+import json
 import platform
 import re
 from datetime import datetime
@@ -380,6 +380,15 @@ class EnhancedBug(Bug):
         """
         excluded = ["attachments", "comments"]
         return {k: v for k, v in self._bug.items() if k not in excluded}
+
+    def to_json(self):
+        """
+        Export entire bug in JSON safe format
+        May include attachments and comments
+
+        :return:
+        """
+        return json.dumps(self._bug, default=sanitize_bug)
 
 
 class LocalAttachment(Attachment):
