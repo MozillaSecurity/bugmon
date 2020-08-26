@@ -318,8 +318,11 @@ class EnhancedBug(Bug):
         """
         if self._bugsy is None:
             attachments = self._bug.get("attachments", [])
-            return [LocalAttachment(**a) for a in attachments]
-        return super().get_attachments()
+            self._bug["attachments"] = [LocalAttachment(**a) for a in attachments]
+        else:
+            self._bug["attachments"] = super().get_attachments()
+
+        return self._bug["attachments"]
 
     def add_attachment(self, attachment):
         """
@@ -338,8 +341,11 @@ class EnhancedBug(Bug):
         """
         if self._bugsy is None:
             comments = self._bug.get("comments", [])
-            return [LocalComment(**c) for c in comments]
-        return super().get_comments()
+            self._bug["comments"] = [LocalComment(**c) for c in comments]
+        else:
+            self._bug["comments"] = super().get_comments()
+
+        return self._bug["comments"]
 
     def add_comment(self, comment):
         """
