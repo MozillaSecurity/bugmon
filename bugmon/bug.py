@@ -111,9 +111,10 @@ class EnhancedBug(Bug):
 
             for alias in ["esr-next", "esr-stable"]:
                 try:
-                    rel_num = Fetcher.resolve_esr(alias)
-                    if rel_num is not None:
-                        self._branches[f"esr{rel_num}"] = rel_num
+                    release = Fetcher.resolve_esr(alias)
+                    if release is not None:
+                        version = int(release.strip("esr"))
+                        self._branches[release] = version
                 except FetcherException:
                     pass
 
