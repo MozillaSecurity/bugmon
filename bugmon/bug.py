@@ -357,6 +357,17 @@ class EnhancedBug(Bug):
             raise TypeError("Method not supported when using a cached bug")
         super().add_comment(comment)
 
+    def diff(self):
+        """
+        Overload Bug.diff() to strip attachments and comments
+        :return:
+        """
+        changed = super().diff()
+        changed.pop("attachments")
+        changed.pop("comments")
+
+        return changed
+
     def find_patch_rev(self, branch):
         """
         Attempt to determine patch rev for the supplied branch
