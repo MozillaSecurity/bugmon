@@ -117,7 +117,7 @@ def test_attachment_remote_methods(attachment_fixture, method):
 @pytest.mark.parametrize("alias, version", BRANCH_ALIAS_PAIRS)
 def test_bug_branch(mocker, bug_fixture_prefetch, alias, version):
     """ Test that branch matches alias of current version """
-    mocker.patch("bugmon.bug.Fetcher.resolve_esr", side_effect=[78, 68])
+    mocker.patch("bugmon.bug.Fetcher.resolve_esr", side_effect=["esr78", "esr68"])
     bug = EnhancedBug(bugsy=None, **bug_fixture_prefetch)
 
     # Set fixed central version and bug version
@@ -129,7 +129,7 @@ def test_bug_branch(mocker, bug_fixture_prefetch, alias, version):
 
 def test_bug_branches(mocker, bug_fixture_prefetch):
     """ Test branch enumeration """
-    mocker.patch("bugmon.bug.Fetcher.resolve_esr", side_effect=[78, 68])
+    mocker.patch("bugmon.bug.Fetcher.resolve_esr", side_effect=["esr78", "esr68"])
     bug = EnhancedBug(bugsy=None, **bug_fixture_prefetch)
     # Set fixed central version
     bug._central_version = 81
