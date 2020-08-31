@@ -329,6 +329,12 @@ class BugMonitor:
             self._close_bug = True
 
     def is_supported(self):
+        """
+        Simple checks to determine if bug is valid candidate for Bugmon
+
+        :return: Boolean
+        """
+
         # Check that the branch is available on taskcluster
         if self.bug.branch is None:
             self.report(f"Bug filed against non-supported branch ({self.bug.version})")
