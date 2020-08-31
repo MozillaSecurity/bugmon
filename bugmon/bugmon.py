@@ -382,7 +382,7 @@ class BugMonitor:
 
         if self.needs_verify():
             self.verify_fixed()
-        elif self.needs_confirm:
+        elif self.needs_confirm():
             self.confirm_open()
         elif self.needs_bisect():
             self.bisect()
