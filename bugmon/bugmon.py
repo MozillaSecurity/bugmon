@@ -40,11 +40,6 @@ class ReproductionResult(object):
     Class for storing reproduction results
     """
 
-    PASSED = 0
-    CRASHED = 1
-    FAILED = 2
-    NO_BUILD = 3
-
     def __init__(self, status, build_str=None):
         self.status = status
         self.build_str = build_str
@@ -191,15 +186,12 @@ class BugMonitor:
         Attempt to enumerate the changeset that introduced or fixed the bug
         """
         tip = self.reproduce_bug(self.bug.branch)
-        if tip.status == ReproductionResult.NO_BUILD:
-            log.warning("Failed to bisect bug (no build found)")
-            return
-        if tip.status == ReproductionResult.FAILED:
+        if tip.status == EvaluatorResult.BUILD_FAILED:
             log.warning("Failed to bisect bug (bad build)")
             return
 
         # If tip doesn't crash, bisect the fix
-        find_fix = tip.status != ReproductionResult.CRASHED
+        find_fix = tip.status != EvaluatorResult.BUILD_CRASHED
         if find_fix:
             start = self.bug.initial_build_id
             end = "latest"
@@ -250,14 +242,11 @@ class BugMonitor:
         Attempt to confirm open test cases
         """
         tip = self.reproduce_bug(self.bug.branch)
-        if tip.status == ReproductionResult.NO_BUILD:
-            log.warning("Failed to confirm bug (no build found)")
-            return
-        if tip.status == ReproductionResult.FAILED:
+        if tip.status == EvaluatorResult.BUILD_FAILED:
             log.warning("Failed to confirm bug (bad build)")
             return
 
-        if tip.status == ReproductionResult.CRASHED:
+        if tip.status == EvaluatorResult.BUILD_CRASHED:
             if "confirmed" not in self.bug.commands:
                 self.report(f"Verified bug as reproducible on {tip.build_str}.")
                 self.bisect()
@@ -265,9 +254,9 @@ class BugMonitor:
                 change = dt.strptime(self.bug.last_change_time, "%Y-%m-%dT%H:%M:%SZ")
                 if dt.now() - timedelta(days=30) > change:
                     self.report(f"Bug remains reproducible on {tip.build_str}")
-        elif tip.status == ReproductionResult.PASSED:
+        elif tip.status == EvaluatorResult.BUILD_PASSED:
             orig = self.reproduce_bug(self.bug.branch, self.bug.initial_build_id)
-            if orig.status == ReproductionResult.CRASHED:
+            if orig.status == EvaluatorResult.BUILD_CRASHED:
                 log.info(f"Testcase crashes using the initial build ({orig.build_str})")
                 self.bisect()
             else:
@@ -296,11 +285,11 @@ class BugMonitor:
         if self.bug.status != "VERIFIED":
             patch_rev = self.bug.find_patch_rev(self.bug.branch)
             tip = self.reproduce_bug(self.bug.branch, patch_rev)
-            build_str = tip.build_str
 
-            if tip.status == ReproductionResult.PASSED:
+            build_str = tip.build_str
+            if tip.status == EvaluatorResult.BUILD_PASSED:
                 initial = self.reproduce_bug(self.bug.branch, self.bug.initial_build_id)
-                if initial.status != ReproductionResult.CRASHED:
+                if initial.status != EvaluatorResult.BUILD_CRASHED:
                     self.report(
                         f"Bug appears to be fixed on {build_str} but "
                         f"BugMon was unable to reproduce using {initial.build_str}."
@@ -309,7 +298,7 @@ class BugMonitor:
                     self.report(f"Verified bug as fixed on rev {build_str}.")
                     self.bug.status = "VERIFIED"
 
-            elif tip.status == ReproductionResult.CRASHED:
+            elif tip.status == EvaluatorResult.BUILD_CRASHED:
                 self.report(f"Bug marked as FIXED but still reproduces on {build_str}.")
                 self.bug.status = "REOPENED"
                 self.add_command("confirmed")
@@ -325,13 +314,13 @@ class BugMonitor:
             if getattr(self.bug, flag) == "fixed":
                 patch_rev = self.bug.find_patch_rev(alias)
                 branch = self.reproduce_bug(alias, patch_rev)
-                if branch.status == ReproductionResult.PASSED:
+                if branch.status == EvaluatorResult.BUILD_PASSED:
                     log.info(f"Verified fixed on {flag}")
                     setattr(self.bug, flag, "verified")
                     continue
 
                 branches_verified = False
-                if branch.status == ReproductionResult.CRASHED:
+                if branch.status == EvaluatorResult.BUILD_CRASHED:
                     log.info(f"Bug remains vulnerable on {flag}")
                     setattr(self.bug, flag, "affected")
 
@@ -419,7 +408,7 @@ class BugMonitor:
             )
         except FetcherException as e:
             log.error(f"Error fetching build: {e}")
-            return ReproductionResult(ReproductionResult.NO_BUILD)
+            return ReproductionResult(EvaluatorResult.BUILD_FAILED)
 
         # Check if this branch and build was already tested
         if branch in self.results:
@@ -433,18 +422,7 @@ class BugMonitor:
 
         with self.build_manager.get_build(build) as build_path:
             status = self.evaluator.evaluate_testcase(build_path)
-            if status == EvaluatorResult.BUILD_CRASHED:
-                self.results[branch][build.id] = ReproductionResult(
-                    ReproductionResult.CRASHED, build_str
-                )
-            elif status == EvaluatorResult.BUILD_PASSED:
-                self.results[branch][build.id] = ReproductionResult(
-                    ReproductionResult.PASSED, build_str
-                )
-            else:
-                self.results[branch][build.id] = ReproductionResult(
-                    ReproductionResult.FAILED, build_str
-                )
+            self.results[branch][build.id] = ReproductionResult(status, build_str)
 
             return self.results[branch][build.id]
 
