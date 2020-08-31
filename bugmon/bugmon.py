@@ -71,6 +71,8 @@ class BugMonitor:
         self.results = {}
 
         self._close_bug = False
+        self._testcase = None
+
         self.target = None
         self.evaluator = None
         self.build_manager = BuildManager()
@@ -111,7 +113,6 @@ class BugMonitor:
         """
         Download all attachments and store them in self.working_dir
         """
-        testcase = None
         attachments = filter(lambda a: not a.is_obsolete, self.bug.get_attachments())
         for attachment in sorted(attachments, key=lambda a: a.creation_time):
             try:
@@ -132,9 +133,9 @@ class BugMonitor:
                         log.warning("Duplicate filename identified: %s", filename)
                     z.extract(filename, self.working_dir)
                     if filename.lower().startswith("test"):
-                        if testcase is not None:
+                        if self._testcase is not None:
                             raise BugException("Multiple testcases identified!")
-                        testcase = os.path.join(self.working_dir, filename)
+                        self._testcase = os.path.join(self.working_dir, filename)
             else:
                 dest = os.path.join(self.working_dir, attachment.file_name)
                 with open(dest, "wb") as file:
@@ -142,11 +143,11 @@ class BugMonitor:
                     r = re.compile(r"^testcase.*$", re.IGNORECASE)
                     targets = [attachment.file_name, attachment.description]
                     if any(r.match(target) for target in targets):
-                        if testcase is not None:
+                        if self._testcase is not None:
                             raise BugException("Multiple testcases identified!")
-                        testcase = file.name
+                        self._testcase = file.name
 
-        return testcase
+            return self._testcase
 
     def needs_bisect(self):
         """
@@ -350,8 +351,7 @@ class BugMonitor:
             self._close_bug = True
 
         # Check that we can parse the testcase
-        testcase = self.fetch_attachments()
-        if testcase is None:
+        if self.fetch_attachments() is None:
             self.report(
                 "Failed to identify testcase.  "
                 "Please ensure that the testcase meets the requirements identified here: "
@@ -378,11 +378,11 @@ class BugMonitor:
         # Setup the evaluators
         if self.bug.component.lower().startswith("javascript"):
             self.target = "js"
-            self.evaluator = JSEvaluator(testcase, flags=self.bug.runtime_opts)
+            self.evaluator = JSEvaluator(self._testcase, flags=self.bug.runtime_opts)
         else:
             self.target = "firefox"
             self.evaluator = BrowserEvaluator(
-                testcase, env=self.bug.env, prefs=self.prefs, repeat=10
+                self._testcase, env=self.bug.env, prefs=self.prefs, repeat=1, timeout=10
             )
 
         if self.needs_verify():
