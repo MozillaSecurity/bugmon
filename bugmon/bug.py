@@ -13,8 +13,8 @@ from autobisect import JSEvaluator
 from bugsy import Attachment, Bug, Comment
 from fuzzfetch import BuildFlags, Fetcher, FetcherException, Platform
 
-from bugmon import BugException
-from bugmon.utils import HG_BASE, _get_milestone, _get_url
+from . import BugException
+from .utils import HG_BASE, _get_milestone, _get_url
 
 REV_MATCH = r"([a-f0-9]{12}|[a-f0-9]{40})"
 BID_MATCH = r"([0-9]{8}-)([a-f0-9]{12})"

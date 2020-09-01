@@ -7,8 +7,8 @@ import tempfile
 
 from bugsy import Bugsy
 
-from bugmon import BugException, BugMonitor
-from bugmon.bug import EnhancedBug
+from . import BugException, BugMonitor
+from .bug import EnhancedBug
 
 log = logging.getLogger("bugmon")
 
