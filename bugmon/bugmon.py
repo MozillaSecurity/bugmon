@@ -35,7 +35,7 @@ class BugException(Exception):
     """
 
 
-class ReproductionResult(object):
+class ReproductionResult:
     """
     Class for storing reproduction results
     """
