@@ -456,7 +456,8 @@ class BugMonitor:
                 )
 
         if self.queue:
-            self.bug.comment = "Bugmon Analysis:\n%s" % "\n".join(self.queue)
+            results = "\n".join(self.queue)
+            self.bug.comment = f"Bugmon Analysis:\n{results}"
             self.queue = []
 
         diff = self.bug.diff()

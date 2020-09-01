@@ -271,7 +271,7 @@ class EnhancedBug(Bug):
                 os_ = "Darwin"
 
             if os_ != platform.system():
-                raise BugException("Cannot process non-native bug (%s)" % os_)
+                raise BugException(f"Cannot process non-native bug ({os_})")
 
             arch = platform.machine()
             if self._bug["platform"] == "ARM":
