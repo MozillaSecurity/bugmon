@@ -378,7 +378,7 @@ class EnhancedBug(Bug):
         else:
             pattern = re.compile(rf"(?:{HG_BASE}/releases/{alias}/rev/){REV_MATCH}")
 
-        comments = self.bug.get_comments()
+        comments = self.get_comments()
         for comment in sorted(comments, key=lambda c: c.creation_time, reverse=True):
             match = pattern.match(comment.text)
             if match:
