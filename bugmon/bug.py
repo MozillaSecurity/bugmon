@@ -414,6 +414,30 @@ class EnhancedBug(Bug):
 
         super().update()
 
+    @classmethod
+    def cache_bug(cls, bug):
+        """
+        Create a cached instance of EnhancedBug
+
+        :param bug: A EnhancedBug instance with Bugsy
+        :type bug: EnhancedBug
+        :return: A cached EnhancedBug instance
+        :rtype: EnhancedBug
+        """
+        # pylint: disable=protected-access
+        if bug._bugsy is None:
+            raise TypeError("Method not supported when using a cached bug")
+
+        bug_data = bug.to_dict()
+        attachments = bug.get_attachments()
+        bug_data["attachments"] = [a.to_dict() for a in attachments]
+
+        comments = bug.get_comments()
+        # pylint: disable=protected-access
+        bug_data["comments"] = [c._comment for c in comments]
+
+        return cls(None, **bug_data)
+
 
 class LocalAttachment(Attachment):
     """
