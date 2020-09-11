@@ -281,3 +281,18 @@ def test_bug_command_setter_remove_command(bug_fixture_prefetch):
     bug.commands = {}
 
     assert bug.whiteboard == "[something-else]"
+
+
+def test_bug_cache_bug(mocker, bug_fixture, comment_fixture, attachment_fixture):
+    """ Test EnhancedBug.cache_bug() """
+    data = copy.deepcopy(bug_fixture)
+    bug = EnhancedBug(bugsy=True, **data)
+
+    attachments = [LocalAttachment(**attachment_fixture)]
+    mocker.patch("bugmon.bug.EnhancedBug.get_attachments", return_value=attachments)
+    comments = [LocalComment(**comment_fixture)]
+    mocker.patch("bugmon.bug.EnhancedBug.get_comments", return_value=comments)
+
+    cached_bug = EnhancedBug.cache_bug(bug)
+    assert cached_bug.get_attachments() == attachments
+    assert cached_bug.get_comments() == comments
