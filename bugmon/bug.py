@@ -360,8 +360,10 @@ class EnhancedBug(Bug):
         :return:
         """
         changed = super().diff()
-        changed.pop("attachments")
-        changed.pop("comments")
+
+        # These keys should never occur in the diff
+        changed.pop("attachments", None)
+        changed.pop("comments", None)
 
         return changed
 
