@@ -407,6 +407,13 @@ class EnhancedBug(Bug):
         """
         return json.dumps(self._bug, default=sanitize_bug)
 
+    def update(self):
+        """Update bug when a bugsy instance is present"""
+        if self._bugsy is None:
+            raise TypeError("Method not supported when using a cached bug")
+
+        super().update()
+
 
 class LocalAttachment(Attachment):
     """
