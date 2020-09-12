@@ -457,7 +457,11 @@ class BugMonitor:
 
         if self.queue:
             results = "\n".join(self.queue)
-            self.bug.comment = f"Bugmon Analysis:\n{results}"
+            self.bug.comment = {
+                "body": f"Bugmon Analysis:\n{results}",
+                "is_private": False,
+                "is_markdown": True,
+            }
             self.queue = []
 
         diff = self.bug.diff()
