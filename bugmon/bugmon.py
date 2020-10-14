@@ -259,7 +259,7 @@ class BugMonitor:
             if orig.status == EvaluatorResult.BUILD_CRASHED:
                 log.info(f"Testcase crashes using the initial build ({orig.build_str})")
                 self.bisect()
-            else:
+            elif orig.status == EvaluatorResult.BUILD_PASSED:
                 self.report(
                     "Unable to reproduce bug using the following builds:",
                     f"> {tip.build_str}",
