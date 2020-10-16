@@ -96,6 +96,7 @@ requests = ">=1.1.0"
 reference = "468c98eab2c93e9fb3c0c93be61ebd1fda5059f6"
 type = "git"
 url = "https://github.com/AutomatedTester/Bugsy.git"
+
 [[package]]
 category = "main"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -175,7 +176,7 @@ description = "A python module that aids in the automation of Firefox at the pro
 name = "ffpuppet"
 optional = false
 python-versions = "*"
-version = "0.7.4"
+version = "0.7.5"
 
 [package.dependencies]
 psutil = ">=4.4.0"
@@ -856,8 +857,8 @@ fasteners = [
     {file = "fasteners-0.15.tar.gz", hash = "sha256:3a176da6b70df9bb88498e1a18a9e4a8579ed5b9141207762368a1017bf8f5ef"},
 ]
 ffpuppet = [
-    {file = "ffpuppet-0.7.4-py2.py3-none-any.whl", hash = "sha256:7a228fa9900456d0e0fd51e090e0332fa06b6b62bd49c0bd2722569d54cf5325"},
-    {file = "ffpuppet-0.7.4.tar.gz", hash = "sha256:94ef820439362ea8be245eaf1d5957b6e17fdd01aaa4ca49eeb37e4fd9196435"},
+    {file = "ffpuppet-0.7.5-py2.py3-none-any.whl", hash = "sha256:3e756dd52c9391d302374c9df0538e1555627e754bbd8e5c5cf278fd525d4cb3"},
+    {file = "ffpuppet-0.7.5.tar.gz", hash = "sha256:f7e10d5a38b247f49148adcfe02f951d138e280884457f22eb9679ab753f55c3"},
 ]
 filelock = [
     {file = "filelock-3.0.12-py3-none-any.whl", hash = "sha256:929b7d63ec5b7d6b71b0fa5ac14e030b3f70b75747cef1b10da9b879fef15836"},
