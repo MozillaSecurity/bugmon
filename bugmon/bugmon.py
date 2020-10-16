@@ -144,7 +144,7 @@ class BugMonitor:
                             raise BugException("Multiple testcases identified!")
                         self._testcase = file.name
 
-            return self._testcase
+        return self._testcase
 
     def needs_bisect(self):
         """
