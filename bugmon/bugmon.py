@@ -79,9 +79,11 @@ class BugMonitor:
         """
         prefs_path = None
         for filename in os.listdir(self.working_dir):
-            with open(os.path.join(self.working_dir, filename)) as f:
-                if filename.endswith(".js") and "user_pref" in f.read():
-                    prefs_path = os.path.join(self.working_dir, filename)
+            if filename.endswith(".js"):
+                with open(os.path.join(self.working_dir, filename)) as f:
+                    if "user_pref" in f.read():
+                        prefs_path = os.path.join(self.working_dir, filename)
+                        break
         return prefs_path
 
     def add_command(self, key, value=None):
