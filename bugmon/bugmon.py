@@ -379,7 +379,7 @@ class BugMonitor:
         else:
             self.target = "firefox"
             self.evaluator = BrowserEvaluator(
-                self._testcase, env=self.bug.env, prefs=self.prefs, repeat=1, timeout=10
+                self._testcase, env=self.bug.env, prefs=self.prefs, repeat=1, timeout=60
             )
 
         if self.needs_verify():
