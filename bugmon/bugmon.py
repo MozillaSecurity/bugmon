@@ -296,6 +296,7 @@ class BugMonitor:
                         f"Bug appears to be fixed on {build_str} but "
                         f"BugMon was unable to reproduce using {initial.build_str}."
                     )
+                    self._close_bug = True
                 else:
                     self.report(f"Verified bug as fixed on rev {build_str}.")
                     self.bug.status = "VERIFIED"
