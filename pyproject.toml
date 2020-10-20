@@ -5,7 +5,7 @@ build-backend = "poetry.masonry.api"
 [tool.poetry]
 name = "bugmon"
 description = "A python module for analyzing SpiderMonkey and Firefox bugs"
-version = "0.8.2"
+version = "0.8.3"
 
 classifiers=[
     "Intended Audience :: Developers",
