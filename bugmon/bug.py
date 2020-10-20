@@ -301,7 +301,7 @@ class EnhancedBug(Bug):
         """
         Attempt to enumerate the runtime flags specified in comment 0
         """
-        all_flags = JSEvaluator.get_valid_flags("tip")
+        all_flags = JSEvaluator.get_valid_flags(self.initial_build_id)
         flags = []
         for flag in all_flags:
             if flag in self.comment_zero:
