@@ -44,7 +44,7 @@ tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>
 
 [[package]]
 name = "autobisect"
-version = "0.8.2"
+version = "0.8.4"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 category = "main"
 optional = false
@@ -53,7 +53,7 @@ python-versions = ">=3.6,<4.0"
 [package.dependencies]
 black = ">=19.10b0,<20.0"
 fuzzfetch = ">=1.0.4,<2.0.0"
-grizzly-framework = ">=0.9.8,<0.10.0"
+grizzly-framework = ">=0.11.1,<0.12.0"
 lithium-reducer = ">=0.3.3,<0.4.0"
 toml = ">=0.9,<0.10"
 
@@ -250,7 +250,7 @@ test = ["boto3", "celery", "django", "django-chartjs", "djangorestframework", "l
 
 [[package]]
 name = "grizzly-framework"
-version = "0.9.8"
+version = "0.11.1"
 description = "A framework for developing and running browser fuzzers"
 category = "main"
 optional = false
@@ -264,8 +264,8 @@ prefpicker = "*"
 psutil = "*"
 
 [package.extras]
-all = ["cssbeautifier", "boto3", "lithium-reducer (<0.4)", "jsbeautifier"]
-reduce = ["cssbeautifier", "lithium-reducer (<0.4)", "jsbeautifier"]
+all = ["lithium-reducer (>=0.4.3)", "boto3", "jsbeautifier", "cssbeautifier"]
+reduce = ["cssbeautifier", "lithium-reducer (>=0.4.3)", "jsbeautifier"]
 s3 = ["boto3"]
 test = ["pytest (>=3.9)", "pytest-cov", "pytest-mock"]
 
@@ -747,7 +747,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6"
-content-hash = "14c2e39f1cfcb16086df81ee2de95894c7b6415190a324dfd13ee665924c481b"
+content-hash = "7d80ef57a737d0f1bb83d68b73309d156713565c9e79a21c839ae9a63325067e"
 
 [metadata.files]
 appdirs = [
@@ -767,8 +767,8 @@ attrs = [
     {file = "attrs-20.3.0.tar.gz", hash = "sha256:832aa3cde19744e49938b91fea06d69ecb9e649c93ba974535d08ad92164f700"},
 ]
 autobisect = [
-    {file = "autobisect-0.8.2-py3-none-any.whl", hash = "sha256:4c4827813bc606101389aad919d18035a0e979b6cc3e579ae4848a7f9f2334af"},
-    {file = "autobisect-0.8.2.tar.gz", hash = "sha256:4c93834cec3709838ff66176d80eb69da9664cc36c1ab01cd09122a4b26197dd"},
+    {file = "autobisect-0.8.4-py3-none-any.whl", hash = "sha256:680aafafb07736f1e89770a3ecf282b9370ef95eca8c76e902af4e89cb0a2ecf"},
+    {file = "autobisect-0.8.4.tar.gz", hash = "sha256:70c45a88f3dfc0972e45d803d6a7116c4c52941b7ddf4a4ff6cd361a7ab008c2"},
 ]
 black = [
     {file = "black-19.10b0-py36-none-any.whl", hash = "sha256:1b30e59be925fafc1ee4565e5e08abef6b03fe455102883820fe5ee2e4734e0b"},
@@ -831,8 +831,8 @@ fuzzmanager = [
     {file = "FuzzManager-0.4.0.tar.gz", hash = "sha256:d9a3742e278b4ae4d9f9ce0ae046d139e2b77d6a744a103776bbeee5c270678d"},
 ]
 grizzly-framework = [
-    {file = "grizzly-framework-0.9.8.tar.gz", hash = "sha256:4094eaeed24bffc1a14fd94859be0d8c8f9e1380cb02090fbda0f633561f3984"},
-    {file = "grizzly_framework-0.9.8-py2.py3-none-any.whl", hash = "sha256:5819b8364487fe9d2aa36a443db04f14f809749a19f380a13ae2f24122e40baf"},
+    {file = "grizzly-framework-0.11.1.tar.gz", hash = "sha256:56bd266bc10c2910631a9e2190a21ba47a654f56f38534b6bcdcf325e468d977"},
+    {file = "grizzly_framework-0.11.1-py2.py3-none-any.whl", hash = "sha256:0a1eef4855f03b174b73068771cd43a1d55a08b8d732c070c131fbd6385a5633"},
 ]
 identify = [
     {file = "identify-1.5.10-py2.py3-none-any.whl", hash = "sha256:cc86e6a9a390879dcc2976cef169dd9cc48843ed70b7380f321d1b118163c60e"},
