@@ -47,20 +47,6 @@ tasks:
               TOXENV: lint
             script:
               - tox
-          - name: PyPI upload
-            version: "3.8"
-            env:
-              TOXENV: pypi
-            script:
-              - tox
-            when:
-              release: true
-              all_passed: true
-            secrets:
-              - type: env
-                secret: project/fuzzing/pypi-bugmon
-                name: TWINE_PASSWORD
-                key: password
 
   in:
     $if: 'tasks_for != "github-pull-request" || event["action"] in ["opened", "reopened", "synchronize"]'
@@ -91,7 +77,6 @@ tasks:
           - queue:create-task:highest:proj-fuzzing/ci-*
           - queue:scheduler-id:taskcluster-github
           - secrets:get:project/fuzzing/codecov-bugmon
-          - secrets:get:project/fuzzing/pypi-bugmon
         metadata:
           name: ${project_name} CI decision
           description: Schedule CI tasks for ${project_name}
