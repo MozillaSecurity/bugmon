@@ -38,7 +38,7 @@ python = "^3.6"
 fuzzfetch = "^1.2.1"
 bugsy = {git = "https://github.com/AutomatedTester/Bugsy.git"}
 black = "^19.10b0"
-autobisect = "^0.8.6"
+autobisect = "^0.8.7"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.3"
