@@ -120,19 +120,23 @@ class BugMonitor:
 
             if attachment.file_name.endswith(".zip"):
                 try:
-                    z = zipfile.ZipFile(io.BytesIO(data))
+                    with zipfile.ZipFile(io.BytesIO(data)) as z:
+                        for filename in z.namelist():
+                            if os.path.exists(filename):
+                                log.warning(
+                                    "Duplicate filename identified: %s", filename
+                                )
+                            z.extract(filename, self.working_dir)
+                            if filename.lower().startswith("test"):
+                                if self._testcase is not None:
+                                    raise BugException("Multiple testcases identified!")
+                                self._testcase = os.path.join(
+                                    self.working_dir, filename
+                                )
                 except zipfile.BadZipFile as e:
                     log.warning("Failed to decompress attachment: %s", e)
                     continue
 
-                for filename in z.namelist():
-                    if os.path.exists(filename):
-                        log.warning("Duplicate filename identified: %s", filename)
-                    z.extract(filename, self.working_dir)
-                    if filename.lower().startswith("test"):
-                        if self._testcase is not None:
-                            raise BugException("Multiple testcases identified!")
-                        self._testcase = os.path.join(self.working_dir, filename)
             else:
                 dest = os.path.join(self.working_dir, attachment.file_name)
                 with open(dest, "wb") as file:
