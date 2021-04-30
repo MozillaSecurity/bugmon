@@ -1,6 +1,6 @@
 # Bugmon
 
-[![Task Status](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaSecurity/bugmon/main/badge.svg)](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaSecurity/bugmon/main/latest)
+[![Task Status](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaSecurity/bugmon/master/badge.svg)](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaSecurity/bugmon/master/latest)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![codecov](https://codecov.io/gh/MozillaSecurity/bugmon/branch/master/graph/badge.svg)](https://codecov.io/gh/MozillaSecurity/bugmon)
 
