@@ -35,7 +35,6 @@ homepage = "https://github.com/MozillaSecurity/bugmon"
 
 [tool.poetry.dependencies]
 python = "^3.6"
-toml = "^0.9"
 fuzzfetch = "^1.2.1"
 bugsy = {git = "https://github.com/AutomatedTester/Bugsy.git"}
 black = "^19.10b0"
