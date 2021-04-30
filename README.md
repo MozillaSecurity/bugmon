@@ -1,6 +1,8 @@
 # Bugmon
-[![Build Status](https://travis-ci.com/MozillaSecurity/bugmon.svg?branch=master)](https://travis-ci.org/MozillaSecurity/bugmon)
+
+[![Task Status](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaSecurity/bugmon/master/badge.svg)](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaSecurity/bugmon/master/latest)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![codecov](https://codecov.io/gh/MozillaSecurity/bugmon/branch/master/graph/badge.svg)](https://codecov.io/gh/MozillaSecurity/bugmon)
 
 Bugmon is a tool for the automatic analysis of bugs filed against Firefox or Spidermonkey in Mozilla's Bugzilla database. It is capable of automatically confirming open bugs, verifying closed bugs, and bisecting the bug's introduction or fix.
 
@@ -53,12 +55,12 @@ Bugmon will automatically analyse bugs that have the `bugmon` keyword.  The acti
 **Confirmation**
 - Bugmon will automatically confirm the reproducibility of bugs where the status is ASSIGNED, NEW, UNCONFIRMED, or REOPENED.
 - Bugs that are confirmed as open will also be bisected.
-- If the bug cannot be confirmed using the latest available build, Bugmon will attempt to confirm the bug using a build matching the original revision or a revision closest to the bug creation date.  If this succeeds, Bugmon will attempt to bisect which changeset introduced the fix. 
+- If the bug cannot be confirmed using the latest available build, Bugmon will attempt to confirm the bug using a build matching the original revision or a revision closest to the bug creation date.  If this succeeds, Bugmon will attempt to bisect which changeset introduced the fix.
 
 **Verification**
 - Bugmon will automatically confirm that the bug has been fixed where the bug status is RESOLVED and the resolution is FIXED.
 - Bugmon will also iterate over the tracking flags and attempt to verify each branch marked as FIXED.
-       
+
 ## Manual Analysis
 
 In addition to Bugmon's automatic analysis, specific actions can be requested via the bug whiteboard using the `bugmon` identifier.  The whiteboard should match the following format:
@@ -73,7 +75,7 @@ In addition to Bugmon's automatic analysis, specific actions can be requested vi
 - `bisect` - Request manual bisection
 
 ### Status Flags
-In addition to requesting manual actions, some actions can be excluded by adding the following status flags to the bugmon whiteboard. 
+In addition to requesting manual actions, some actions can be excluded by adding the following status flags to the bugmon whiteboard.
 
 - `confirmed` - Bug has already been confirmed
 - `verified` - Bug has already been verified
@@ -88,6 +90,6 @@ To ensure that your bug is analysed correctly, Bugmon requires specific informat
 Bugmon expects comment 0 to include any build flags, runtime flags, or environment variables required to reproduce the bug.
 
 ### Testcase Identification
-Bugmon will download all non-obsolete attachments and attempt to determine which file to use as a testcase.  Key indicators of testcases are attachment filenames or descriptions that match `/^testcase.*$/`. 
+Bugmon will download all non-obsolete attachments and attempt to determine which file to use as a testcase.  Key indicators of testcases are attachment filenames or descriptions that match `/^testcase.*$/`.
 
 Testcases that span multiple files can either be included as individual attachments or via a single zip file.  However, the filename or description of the testcase entrypoint must match the regex above.
