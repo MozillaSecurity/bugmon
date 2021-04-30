@@ -53,17 +53,56 @@ tox = "^3.14.5"
 pylint = "^2.4.4"
 pytest-pylint = "^0.17.0"
 pytest-mock = "^3.2.0"
+codecov = "^2.1.11"
+pytest-cov = "^2.11.1"
 
 [tool.poetry.scripts]
 bugmon = "bugmon.main:main"
 
-[tool.black]
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.tox
-  | build
-  | dist
-)/
-'''
+
+[tool.coverage.run]
+omit = [
+    "*/setup.py",
+    "*/tests/*",
+    "*/build/*",
+    "*/dist/*",
+    "*/.tox/*",
+    "*/.egg/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+]
+
+[tool.isort]
+force_sort_within_sections = false
+known_first_party = "bugmon"
+profile = "black"
+
+[tool.pylint.format]
+max-line-length = 88
+
+[tool.pylint.messages_control]
+disable = [
+    "bad-continuation",
+    "fixme",
+    "invalid-name",
+    "line-too-long",
+    "logging-format-interpolation",
+    "logging-fstring-interpolation",
+    "missing-module-docstring",
+    "too-few-public-methods",
+    "too-many-arguments",
+    "too-many-branches",
+    "too-many-instance-attributes",
+    "too-many-lines",
+    "too-many-locals",
+    "too-many-nested-blocks",
+    "too-many-return-statements",
+    "too-many-statements",
+    "useless-object-inheritance"
+]
+
+[tool.pytest.ini_options]
+log_level = "DEBUG"
