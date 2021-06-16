@@ -24,6 +24,7 @@ profile = "black"
 
 [tool.poetry]
 name = "bugmon"
+readme = "README.md"
 description = "A python module for analyzing SpiderMonkey and Firefox bugs"
 version = "0.8.6"
 classifiers = [
