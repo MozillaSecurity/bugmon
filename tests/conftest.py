@@ -143,25 +143,25 @@ BUG = {
 
 @pytest.fixture(scope="module")
 def attachment_fixture():
-    """ Simple attachment """
+    """Simple attachment"""
     return ATTACHMENT
 
 
 @pytest.fixture(scope="module")
 def comment_fixture():
-    """ Simple comment """
+    """Simple comment"""
     return COMMENT
 
 
 @pytest.fixture(scope="module")
 def bug_fixture():
-    """ Simple bug """
+    """Simple bug"""
     return BUG
 
 
 @pytest.fixture(scope="module")
 def bug_fixture_prefetch():
-    """ Simple bug including attachment and comment data """
+    """Simple bug including attachment and comment data"""
     bug_data = copy.deepcopy(BUG)
     bug_data["attachments"] = [ATTACHMENT]
     bug_data["comments"] = [COMMENT]

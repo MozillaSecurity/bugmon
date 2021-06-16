@@ -27,7 +27,7 @@ BUILD_ID = f"20200811-{SHORT_REV}"
 
 
 def test_new_attachment(attachment_fixture):
-    """ Test that new Attachment is the same as fixture """
+    """Test that new Attachment is the same as fixture"""
     result = LocalAttachment(**attachment_fixture).to_dict()
 
     for key in result:
@@ -39,7 +39,7 @@ def test_new_attachment(attachment_fixture):
 
 
 def test_new_comment(comment_fixture):
-    """ Test that new Comment is the same as fixture """
+    """Test that new Comment is the same as fixture"""
     result = LocalComment(**comment_fixture).to_dict()
     for key in result:
         if key in ["time", "creation_time"]:
@@ -52,20 +52,20 @@ def test_new_comment(comment_fixture):
 
 
 def test_new_bug(bug_fixture_prefetch):
-    """ Test that new Bug is the same as fixture """
+    """Test that new Bug is the same as fixture"""
     result = EnhancedBug(None, **bug_fixture_prefetch).to_dict()
     for key in result:
         assert bug_fixture_prefetch[key] == result[key]
 
 
 def test_new_bug_without_bugsy_or_prefetch(bug_fixture):
-    """ Test that new Bug without bugsy or cached data throws """
+    """Test that new Bug without bugsy or cached data throws"""
     with pytest.raises(BugException):
         EnhancedBug(None, **bug_fixture)
 
 
 def test_new_bug_prefetch_exclusion(bug_fixture_prefetch):
-    """ Test that new Bug with prefetch excludes attachments and comments """
+    """Test that new Bug with prefetch excludes attachments and comments"""
     result = EnhancedBug(None, **bug_fixture_prefetch).to_dict()
     assert "attachments" not in result
     assert "comments" not in result
@@ -73,7 +73,7 @@ def test_new_bug_prefetch_exclusion(bug_fixture_prefetch):
 
 @pytest.mark.parametrize("method", ["add_attachment", "add_comment"])
 def test_bug_remote_methods(bug_fixture_prefetch, method):
-    """ Test that EnhancedBug with prefetch enabled throws on remote methods """
+    """Test that EnhancedBug with prefetch enabled throws on remote methods"""
     bug = EnhancedBug(bugsy=None, **bug_fixture_prefetch)
     with pytest.raises(TypeError) as e:
         getattr(bug, method)(None)
@@ -82,7 +82,7 @@ def test_bug_remote_methods(bug_fixture_prefetch, method):
 
 
 def test_bug_get_attachments_prefetch(attachment_fixture, bug_fixture_prefetch):
-    """ Test that get_attachments with cached data returns correct attacment """
+    """Test that get_attachments with cached data returns correct attacment"""
     bug = EnhancedBug(bugsy=None, **bug_fixture_prefetch)
     attachments = bug.get_attachments()
     assert len(attachments) == 1
@@ -91,7 +91,7 @@ def test_bug_get_attachments_prefetch(attachment_fixture, bug_fixture_prefetch):
 
 
 def test_bug_get_comments_prefetch(bug_fixture_prefetch, comment_fixture):
-    """ Test that get_attachments with cached data returns correct attacment """
+    """Test that get_attachments with cached data returns correct attacment"""
     bug = EnhancedBug(bugsy=None, **bug_fixture_prefetch)
     comments = bug.get_comments()
     assert len(comments) == 1
@@ -101,7 +101,7 @@ def test_bug_get_comments_prefetch(bug_fixture_prefetch, comment_fixture):
 
 @pytest.mark.parametrize("method", ["add_tags", "remove_tags"])
 def test_comment_remote_methods(comment_fixture, method):
-    """ Test that LocalComment throws on remote methods """
+    """Test that LocalComment throws on remote methods"""
     comment = LocalComment(**comment_fixture)
     with pytest.raises(TypeError) as e:
         getattr(comment, method)(None)
@@ -111,7 +111,7 @@ def test_comment_remote_methods(comment_fixture, method):
 
 @pytest.mark.parametrize("method", ["update"])
 def test_attachment_remote_methods(attachment_fixture, method):
-    """ Test that LocalAttachment throws on remote methods """
+    """Test that LocalAttachment throws on remote methods"""
     attachment = LocalAttachment(**attachment_fixture)
     with pytest.raises(TypeError) as e:
         getattr(attachment, method)()
@@ -121,7 +121,7 @@ def test_attachment_remote_methods(attachment_fixture, method):
 
 @pytest.mark.parametrize("alias, version", BRANCH_ALIAS_PAIRS)
 def test_bug_branch(mocker, bug_fixture_prefetch, alias, version):
-    """ Test that branch matches alias of current version """
+    """Test that branch matches alias of current version"""
     mocker.patch("bugmon.bug.Fetcher.resolve_esr", side_effect=["esr78", "esr68"])
     bug = EnhancedBug(bugsy=None, **bug_fixture_prefetch)
 
@@ -133,7 +133,7 @@ def test_bug_branch(mocker, bug_fixture_prefetch, alias, version):
 
 
 def test_bug_branches(mocker, bug_fixture_prefetch):
-    """ Test branch enumeration """
+    """Test branch enumeration"""
     mocker.patch("bugmon.bug.Fetcher.resolve_esr", side_effect=["esr78", "esr68"])
     bug = EnhancedBug(bugsy=None, **bug_fixture_prefetch)
     # Set fixed central version
@@ -153,7 +153,7 @@ def test_bug_branches(mocker, bug_fixture_prefetch):
 
 
 def test_bug_build_flags(bug_fixture_prefetch):
-    """ Simple test of bug.build_flags """
+    """Simple test of bug.build_flags"""
     data = copy.deepcopy(bug_fixture_prefetch)
     data["comments"][0]["text"] = "Built with --enable-address-sanitizer --enable-debug"
     bug = EnhancedBug(bugsy=None, **data)
@@ -165,7 +165,7 @@ def test_bug_build_flags(bug_fixture_prefetch):
 
 
 def test_bug_central_version(mocker, bug_fixture_prefetch):
-    """ Simple test of bug.central_version """
+    """Simple test of bug.central_version"""
     mocker.patch("bugmon.bug._get_milestone", return_value=81)
     bug = EnhancedBug(bugsy=None, **bug_fixture_prefetch)
 
@@ -173,7 +173,7 @@ def test_bug_central_version(mocker, bug_fixture_prefetch):
 
 
 def test_bug_comment_zero(bug_fixture_prefetch):
-    """ Simple test of bug.comment_zero """
+    """Simple test of bug.comment_zero"""
     bug = EnhancedBug(bugsy=None, **bug_fixture_prefetch)
 
     assert bug.comment_zero == bug_fixture_prefetch["comments"][0]["text"]
@@ -182,7 +182,7 @@ def test_bug_comment_zero(bug_fixture_prefetch):
 @pytest.mark.parametrize("code_wrap", [True, False])
 @pytest.mark.parametrize("bid", [REV, SHORT_REV, BUILD_ID, "INVALID_REV"])
 def test_bug_initial_build_id_comment(mocker, bug_fixture_prefetch, code_wrap, bid):
-    """ Test parsing of initial_build_id from comment """
+    """Test parsing of initial_build_id from comment"""
     if code_wrap:
         bid_str = f"`{bid}`"
     else:
@@ -208,7 +208,7 @@ def test_bug_initial_build_id_comment(mocker, bug_fixture_prefetch, code_wrap, b
 
 @pytest.mark.parametrize("bid", [REV, SHORT_REV])
 def test_bug_initial_build_id_whiteboard(mocker, bug_fixture_prefetch, bid):
-    """ Test parsing of initial_build_id from whiteboard """
+    """Test parsing of initial_build_id from whiteboard"""
     data = copy.deepcopy(bug_fixture_prefetch)
     data["whiteboard"] = f"[bugmon:origRev={bid}]"
     bug = EnhancedBug(bugsy=None, **data)
@@ -224,7 +224,7 @@ def test_bug_initial_build_id_whiteboard(mocker, bug_fixture_prefetch, bid):
 
 @pytest.mark.parametrize("use_trunk", [True, False])
 def test_bug_version(mocker, bug_fixture_prefetch, use_trunk):
-    """ Simple test of version helper """
+    """Simple test of version helper"""
     if use_trunk:
         bug = EnhancedBug(bugsy=None, **bug_fixture_prefetch)
         mocker.patch("bugmon.bug._get_milestone", return_value=81)
@@ -237,7 +237,7 @@ def test_bug_version(mocker, bug_fixture_prefetch, use_trunk):
 
 
 def test_bug_command_setter_append(bug_fixture_prefetch):
-    """ Test appending commands to whiteboard """
+    """Test appending commands to whiteboard"""
     bug = EnhancedBug(bugsy=None, **bug_fixture_prefetch)
     commands = bug.commands
     commands["fake_command"] = None
@@ -246,7 +246,7 @@ def test_bug_command_setter_append(bug_fixture_prefetch):
 
 
 def test_bug_command_setter_replace(bug_fixture_prefetch):
-    """ Test replacing commands """
+    """Test replacing commands"""
     bug = EnhancedBug(bugsy=None, **bug_fixture_prefetch)
     bug.commands = {"fake_command": None}
 
@@ -254,7 +254,7 @@ def test_bug_command_setter_replace(bug_fixture_prefetch):
 
 
 def test_bug_command_setter_empty_bugmon(bug_fixture_prefetch):
-    """ Test setting command where bugmon exists on whiteboard with no commands """
+    """Test setting command where bugmon exists on whiteboard with no commands"""
     data = copy.deepcopy(bug_fixture_prefetch)
     data["whiteboard"] = "[bugmon:]"
     bug = EnhancedBug(bugsy=None, **data)
@@ -264,7 +264,7 @@ def test_bug_command_setter_empty_bugmon(bug_fixture_prefetch):
 
 
 def test_bug_command_setter_empty_whiteboard(bug_fixture_prefetch):
-    """ Test initialization of bugmon command on whiteboard """
+    """Test initialization of bugmon command on whiteboard"""
     data = copy.deepcopy(bug_fixture_prefetch)
     data["whiteboard"] = ""
     bug = EnhancedBug(bugsy=None, **data)
@@ -274,7 +274,7 @@ def test_bug_command_setter_empty_whiteboard(bug_fixture_prefetch):
 
 
 def test_bug_command_setter_remove_command(bug_fixture_prefetch):
-    """ Test removing command from whiteboard """
+    """Test removing command from whiteboard"""
     data = copy.deepcopy(bug_fixture_prefetch)
     data["whiteboard"] = "[something-else][bugmon:verify]"
     bug = EnhancedBug(bugsy=None, **data)
@@ -284,7 +284,7 @@ def test_bug_command_setter_remove_command(bug_fixture_prefetch):
 
 
 def test_bug_cache_bug(mocker, bug_fixture, comment_fixture, attachment_fixture):
-    """ Test EnhancedBug.cache_bug() """
+    """Test EnhancedBug.cache_bug()"""
     data = copy.deepcopy(bug_fixture)
     bug = EnhancedBug(bugsy=True, **data)
 

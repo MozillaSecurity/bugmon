@@ -29,7 +29,10 @@ def parse_args(argv=None):
 
     # Optional args
     parser.add_argument(
-        "-d", "--dry-run", action="store_true", help="Disable bug modification",
+        "-d",
+        "--dry-run",
+        action="store_true",
+        help="Disable bug modification",
     )
 
     # Bug selection

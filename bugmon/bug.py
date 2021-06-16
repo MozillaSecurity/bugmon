@@ -63,7 +63,7 @@ class EnhancedBug(Bug):
     )
 
     def __init__(self, bugsy, **kwargs):
-        """ Initializes LocalAttachment """
+        """Initializes LocalAttachment"""
         super().__init__(bugsy, **kwargs)
 
         if bugsy is None and ("attachments" not in kwargs or "comments" not in kwargs):
@@ -446,7 +446,7 @@ class LocalAttachment(Attachment):
     """
 
     def __init__(self, **kwargs):
-        """ Initializes LocalAttachment """
+        """Initializes LocalAttachment"""
         super().__init__(None, **kwargs)
 
     def update(self):
@@ -464,7 +464,7 @@ class LocalComment(Comment):
     """
 
     def __init__(self, **kwargs):
-        """ Initializes LocalComment """
+        """Initializes LocalComment"""
         super().__init__(None, **kwargs)
 
     def add_tags(self, tags):
