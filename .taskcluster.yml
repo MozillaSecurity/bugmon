@@ -7,11 +7,6 @@ tasks:
     project_name:
       bugmon
 
-    commit_msg:
-      $if: 'tasks_for == "github-push" && len(event.commits) == 1'
-      then: ${event.commits[0].message}
-      else: ''
-
     matrix:
       language: python
       secrets:
@@ -47,6 +42,23 @@ tasks:
               TOXENV: lint
             script:
               - tox
+          - name: semantic-release
+            version: "3.8"
+            script:
+              - bash
+              - '-xec'
+              - >-
+                git config --global user.email "bugmon@mozilla.com";
+                git config --global user.name "semantic-release";
+                git fetch origin master --tags;
+                tox -e release
+            when:
+              branch: master
+              all_passed: true
+            secrets:
+              - type: key
+                secret: project/fuzzing/deploy-bugmon
+                key: key
 
   in:
     $if: 'tasks_for != "github-pull-request" || event["action"] in ["opened", "reopened", "synchronize"]'
@@ -77,6 +89,7 @@ tasks:
           - queue:create-task:highest:proj-fuzzing/ci-*
           - queue:scheduler-id:taskcluster-github
           - secrets:get:project/fuzzing/codecov-bugmon
+          - secrets:get:project/fuzzing/deploy-bugmon
         metadata:
           name: ${project_name} CI decision
           description: Schedule CI tasks for ${project_name}
