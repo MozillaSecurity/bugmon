@@ -7,7 +7,12 @@ repos:
   - repo: https://gitlab.com/pycqa/flake8
     rev: 3.9.2
     hooks:
-    - id: flake8
+      - id: flake8
+  - repo: https://github.com/jorisroovers/gitlint
+    rev:  v0.15.1
+    hooks:
+      - id: gitlint
+        args: [--contrib=contrib-title-conventional-commits, --ignore=body-is-missing, --msg-filename]
   - repo: https://github.com/marco-c/taskcluster_yml_validator
     rev: v0.0.7
     hooks:
