@@ -1,11 +1,11 @@
 repos:
   - repo: https://github.com/psf/black
-    rev: stable
+    rev: 21.6b0
     hooks:
       - id: black
-        language_version: python3.6
+        language_version: python3
   - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.7.9
+    rev: 3.9.2
     hooks:
     - id: flake8
   - repo: https://github.com/marco-c/taskcluster_yml_validator
