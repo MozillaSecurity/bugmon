@@ -20,7 +20,7 @@ from autobisect import EvaluatorResult
 from autobisect.bisect import BisectionResult, Bisector
 from autobisect.build_manager import BuildManager
 from autobisect.evaluators import BrowserEvaluator, JSEvaluator
-from fuzzfetch import Fetcher, FetcherException
+from fuzzfetch import Fetcher, FetcherException, BuildSearchOrder
 
 log = logging.getLogger("bugmon")
 
@@ -410,7 +410,7 @@ class BugMonitor:
         :param bid: Build id (rev or date)
         """
         try:
-            direction = Fetcher.BUILD_ORDER_ASC
+            direction = BuildSearchOrder.ASC
             if bid is None:
                 bid = "latest"
                 direction = None

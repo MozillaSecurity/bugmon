@@ -140,9 +140,18 @@ class EnhancedBug(Bug):
             )
             fuzzing = "--enable-fuzzing" in self.comment_zero
             coverage = "--enable-coverage" in self.comment_zero
-            valgrind = False  # Ignore valgrind for now
+            valgrind = "--enable-valgrind" in self.comment_zero
+            no_opt = "--disable-optimize" in self.comment_zero
+            fuzzilli = "--enable-js-fuzzilli" in self.comment_zero
             self._build_flags = BuildFlags(
-                asan, tsan, debug, fuzzing, coverage, valgrind
+                asan,
+                tsan,
+                debug,
+                fuzzing,
+                coverage,
+                valgrind,
+                no_opt,
+                fuzzilli,
             )
 
         return self._build_flags
