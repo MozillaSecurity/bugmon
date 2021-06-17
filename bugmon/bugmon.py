@@ -20,7 +20,7 @@ from autobisect import EvaluatorResult
 from autobisect.bisect import BisectionResult, Bisector
 from autobisect.build_manager import BuildManager
 from autobisect.evaluators import BrowserEvaluator, JSEvaluator
-from fuzzfetch import Fetcher, FetcherException, BuildSearchOrder
+from fuzzfetch import BuildSearchOrder, Fetcher, FetcherException
 
 log = logging.getLogger("bugmon")
 
