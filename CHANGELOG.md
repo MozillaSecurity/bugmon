@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.8 (2021-06-21)
+### Fix
+* Fetcher objects no longer require target arg ([`a60cd0b`](https://github.com/MozillaSecurity/bugmon/commit/a60cd0b986cb51c3be96aac5644988b644ee2ed5))
+* Updated autobisect to v1.0.0 due to previous breakage ([`6527994`](https://github.com/MozillaSecurity/bugmon/commit/6527994665a90198680a1f1c287ee80a69a6c90f))
+
 ## v0.8.7 (2021-06-21)
 ### Fix
 * Update toml version in lockfile ([`a7154d3`](https://github.com/MozillaSecurity/bugmon/commit/a7154d3e8092850eb918c9eab8432b26451877da))
