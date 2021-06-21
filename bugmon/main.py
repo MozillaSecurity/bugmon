@@ -14,7 +14,7 @@ from pathlib import Path
 
 from bugsy import Bugsy
 
-from . import BugException, BugMonitor
+from . import BugmonException, BugMonitor
 from .bug import EnhancedBug
 
 log = logging.getLogger("bugmon")
@@ -80,7 +80,7 @@ def main(argv=None):
     api_key = os.environ.get("BZ_API_KEY")
 
     if api_root is None or api_key is None:
-        raise BugException("BZ_API_ROOT and BZ_API_KEY must be set!")
+        raise BugmonException("BZ_API_ROOT and BZ_API_KEY must be set!")
 
     bugsy = Bugsy(api_key=api_key, bugzilla_url=api_root)
 
@@ -104,7 +104,7 @@ def main(argv=None):
                     f"Resolution: {bugmon.bug.resolution})"
                 )
                 bugmon.process()
-            except BugException as e:
+            except BugmonException as e:
                 log.error(f"Error processing bug {bug.id}: {e}")
 
 

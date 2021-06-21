@@ -14,7 +14,6 @@ from autobisect import JSEvaluator
 from bugsy import Attachment, Bug, Comment
 from fuzzfetch import BuildFlags, Fetcher, FetcherException, Platform
 
-from . import BugException
 from .utils import HG_BASE, _get_milestone, _get_url
 
 REV_MATCH = r"([a-f0-9]{12}|[a-f0-9]{40})"
@@ -38,6 +37,12 @@ def sanitize_bug(obj):
         return obj._comment
 
     return obj
+
+
+class BugException(Exception):
+    """
+    Exception for Bugmon related issues
+    """
 
 
 class EnhancedBug(Bug):
