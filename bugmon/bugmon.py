@@ -416,7 +416,6 @@ class BugMonitor:
                 direction = None
 
             build = Fetcher(
-                self.target,
                 branch,
                 bid,
                 self.bug.build_flags,
