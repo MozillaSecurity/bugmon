@@ -55,7 +55,7 @@ tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>
 
 [[package]]
 name = "autobisect"
-version = "0.14.1"
+version = "1.0.0"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 category = "main"
 optional = false
@@ -1211,7 +1211,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.1"
-content-hash = "793b29c787c797a1fef01f1293a917fd07d9a9625afd46c61c0a7b171ff6a280"
+content-hash = "23085cf3be2406121390d7ce8aef96f1f5e66adeb6c1be340f6c43bc018bd8ff"
 
 [metadata.files]
 appdirs = [
@@ -1235,8 +1235,8 @@ attrs = [
     {file = "attrs-21.2.0.tar.gz", hash = "sha256:ef6aaac3ca6cd92904cdd0d83f629a15f18053ec84e6432106f7a4d04ae4f5fb"},
 ]
 autobisect = [
-    {file = "autobisect-0.14.1-py3-none-any.whl", hash = "sha256:a7b19f5ee1fd51568e630d62da7cb2b0d1406e837db65b3257c8b80d7ef11fcc"},
-    {file = "autobisect-0.14.1.tar.gz", hash = "sha256:5386f971b1c4adf5cf34353c62ccf36f97a7b96e418560dda8d6cdc85e12aee9"},
+    {file = "autobisect-1.0.0-py3-none-any.whl", hash = "sha256:2412032cdc5d3e28e9b6cc362ecd295f65372dbca69044170d7faba1556c743b"},
+    {file = "autobisect-1.0.0.tar.gz", hash = "sha256:f07562a53ef4490b556e81fb561c06ff3378857f1827487ad7e31e81979a718e"},
 ]
 black = [
     {file = "black-19.10b0-py36-none-any.whl", hash = "sha256:1b30e59be925fafc1ee4565e5e08abef6b03fe455102883820fe5ee2e4734e0b"},
