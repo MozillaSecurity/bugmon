@@ -187,11 +187,11 @@ class BugMonitor:
 
         return False
 
-    def bisect(self):
+    def _bisect(self):
         """
         Attempt to enumerate the changeset that introduced or fixed the bug
         """
-        tip = self.reproduce_bug(self.bug.branch)
+        tip = self._reproduce_bug(self.bug.branch)
         if tip.status == EvaluatorResult.BUILD_FAILED:
             log.warning("Failed to bisect bug (bad build)")
             return
@@ -243,11 +243,11 @@ class BugMonitor:
                 *output,
             )
 
-    def confirm_open(self):
+    def _confirm_open(self):
         """
         Attempt to confirm open test cases
         """
-        tip = self.reproduce_bug(self.bug.branch)
+        tip = self._reproduce_bug(self.bug.branch)
         if tip.status == EvaluatorResult.BUILD_FAILED:
             log.warning("Failed to confirm bug (bad build)")
             return
@@ -255,16 +255,16 @@ class BugMonitor:
         if tip.status == EvaluatorResult.BUILD_CRASHED:
             if "confirmed" not in self.bug.commands:
                 self.report(f"Verified bug as reproducible on {tip.build_str}.")
-                self.bisect()
+                self._bisect()
             else:
                 change = dt.strptime(self.bug.last_change_time, "%Y-%m-%dT%H:%M:%SZ")
                 if dt.now() - timedelta(days=30) > change:
                     self.report(f"Bug remains reproducible on {tip.build_str}")
         elif tip.status == EvaluatorResult.BUILD_PASSED:
-            orig = self.reproduce_bug(self.bug.branch, self.bug.initial_build_id)
+            orig = self._reproduce_bug(self.bug.branch, self.bug.initial_build_id)
             if orig.status == EvaluatorResult.BUILD_CRASHED:
                 log.info(f"Testcase crashes using the initial build ({orig.build_str})")
-                self.bisect()
+                self._bisect()
             elif orig.status == EvaluatorResult.BUILD_PASSED:
                 self.report(
                     "Unable to reproduce bug using the following builds:",
@@ -280,7 +280,7 @@ class BugMonitor:
         if "confirm" in self.bug.commands:
             self.remove_command("confirm")
 
-    def verify_fixed(self):
+    def _verify_fixed(self):
         """
         Attempt to verify the bug state
 
@@ -290,11 +290,13 @@ class BugMonitor:
         """
         if self.bug.status != "VERIFIED":
             patch_rev = self.bug.find_patch_rev(self.bug.branch)
-            tip = self.reproduce_bug(self.bug.branch, patch_rev)
+            tip = self._reproduce_bug(self.bug.branch, patch_rev)
 
             build_str = tip.build_str
             if tip.status == EvaluatorResult.BUILD_PASSED:
-                initial = self.reproduce_bug(self.bug.branch, self.bug.initial_build_id)
+                initial = self._reproduce_bug(
+                    self.bug.branch, self.bug.initial_build_id
+                )
                 if initial.status != EvaluatorResult.BUILD_CRASHED:
                     self.report(
                         f"Bug appears to be fixed on {build_str} but "
@@ -320,7 +322,7 @@ class BugMonitor:
             # Only check branches if bug is marked as fixed
             if getattr(self.bug, flag) == "fixed":
                 patch_rev = self.bug.find_patch_rev(alias)
-                branch = self.reproduce_bug(alias, patch_rev)
+                branch = self._reproduce_bug(alias, patch_rev)
                 if branch.status == EvaluatorResult.BUILD_PASSED:
                     log.info(f"Verified fixed on {flag}")
                     setattr(self.bug, flag, "verified")
@@ -392,16 +394,16 @@ class BugMonitor:
             )
 
         if self.needs_verify():
-            self.verify_fixed()
+            self._verify_fixed()
         elif self.needs_confirm():
-            self.confirm_open()
+            self._confirm_open()
         elif self.needs_bisect():
-            self.bisect()
+            self._bisect()
 
         # Post updates and comments
         self.commit()
 
-    def reproduce_bug(self, branch, bid=None):
+    def _reproduce_bug(self, branch, bid=None):
         """
         Method for evaluating testcase using the supplied branch and optional build ID
         Caches previous results
