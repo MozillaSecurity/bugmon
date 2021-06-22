@@ -271,7 +271,7 @@ class BugMonitor:
         build_str = f"mozilla-{self.bug.branch} {build.id}-{build.changeset[:12]}"
         log.info(f"Attempting to reproduce bug on {build_str}")
 
-        with self.build_manager.get_build(build) as build_path:
+        with self.build_manager.get_build(build, self.target) as build_path:
             status = self.evaluator.evaluate_testcase(build_path)
             self.results[branch][build.id] = ReproductionResult(status, build_str)
 
