@@ -15,6 +15,7 @@ from bugsy import Attachment, Bug, Comment
 from fuzzfetch import BuildFlags, Fetcher, FetcherException, Platform
 
 from .utils import HG_BASE, _get_milestone, _get_url
+from typing import Any, Dict, List, Union
 
 REV_MATCH = r"([a-f0-9]{12}|[a-f0-9]{40})"
 BID_MATCH = r"([0-9]{8}-)([a-f0-9]{12})"
@@ -84,14 +85,14 @@ class EnhancedBug(Bug):
         self._initial_build_id = None
         self._platform = None
 
-    def __setattr__(self, attr, value):
+    def __setattr__(self, attr: str, value: Any) -> None:
         if attr in self.LOCAL_ATTRS:
             object.__setattr__(self, attr, value)
         else:
             super().__setattr__(attr, value)
 
     @property
-    def branch(self):
+    def branch(self) -> str:
         """
         Attempt to enumerate the branch the bug was filed against
         """
@@ -104,7 +105,7 @@ class EnhancedBug(Bug):
         return self._branch
 
     @property
-    def branches(self):
+    def branches(self) -> Dict[str, int]:
         """
         Create map of fuzzfetch branch aliases and bugzilla version tags
         """
@@ -127,7 +128,7 @@ class EnhancedBug(Bug):
         return self._branches
 
     @property
-    def build_flags(self):
+    def build_flags(self) -> BuildFlags:
         """
         Attempt to enumerate build type based on flags listed in comment 0
         """
@@ -162,7 +163,7 @@ class EnhancedBug(Bug):
         return self._build_flags
 
     @property
-    def central_version(self):
+    def central_version(self) -> int:
         """
         Return numeric version for tip
         """
@@ -209,7 +210,7 @@ class EnhancedBug(Bug):
             self._bug["whiteboard"] = result
 
     @property
-    def comment_zero(self):
+    def comment_zero(self) -> str:
         """
         Helper function for retrieving comment zero
         """
@@ -220,7 +221,7 @@ class EnhancedBug(Bug):
         return self._comment_zero
 
     @property
-    def env(self):
+    def env(self) -> Dict[Any, Any]:
         """
         Attempt to enumerate any env_variables required
         """
@@ -237,7 +238,7 @@ class EnhancedBug(Bug):
         return self._env_variables
 
     @property
-    def initial_build_id(self):
+    def initial_build_id(self) -> str:
         """
         Attempt to enumerate the original rev specified in comment 0 or bugmon origRev command
         """
@@ -272,7 +273,7 @@ class EnhancedBug(Bug):
         return self._initial_build_id
 
     @property
-    def platform(self):
+    def platform(self) -> Platform:
         """
         Attempt to enumerate the target platform
         """
@@ -301,7 +302,7 @@ class EnhancedBug(Bug):
         return self._platform
 
     @property
-    def version(self):
+    def version(self) -> int:
         """
         Attempt to enumerate the version the bug was filed against
         """
@@ -327,7 +328,7 @@ class EnhancedBug(Bug):
 
         return flags
 
-    def get_attachments(self):
+    def get_attachments(self) -> List[Attachment]:
         """
         Return list of attachments
         """
@@ -347,7 +348,7 @@ class EnhancedBug(Bug):
             raise TypeError("Method not supported when using a cached bug")
         super().add_attachment(attachment)
 
-    def get_comments(self):
+    def get_comments(self) -> List[Comment]:
         """
         Returns list of comments
         Bugs without a bugsy instance are expected to include comments
@@ -368,7 +369,7 @@ class EnhancedBug(Bug):
             raise TypeError("Method not supported when using a cached bug")
         super().add_comment(comment)
 
-    def diff(self):
+    def diff(self) -> Dict[str, Union[str, Dict[str, Union[str, bool]]]]:
         """
         Overload Bug.diff() to strip attachments and comments
         :return:

@@ -11,6 +11,7 @@ import os
 import sys
 import tempfile
 from pathlib import Path
+from typing import Any
 
 from bugsy import Bugsy
 
@@ -20,14 +21,13 @@ from .bug import EnhancedBug
 log = logging.getLogger("bugmon")
 
 
-def parse_args(argv=None):
+def parse_args(argv: Any = None) -> argparse.Namespace:
     """
     Arg parser
 
     :param argv: Command line to use instead of sys.argv (optional)
     """
     parser = argparse.ArgumentParser()
-
     # Optional args
     parser.add_argument(
         "-d",
@@ -53,7 +53,7 @@ def parse_args(argv=None):
     return args
 
 
-def console_init_logging():
+def console_init_logging() -> None:
     """
     Enable logging when called from console
     """
@@ -65,7 +65,7 @@ def console_init_logging():
     logging.basicConfig(format=log_fmt, datefmt="%Y-%m-%d %H:%M:%S", level=log_level)
 
 
-def main(argv=None):
+def main(argv: Any = None):
     """
     Launch Bugmon
 
