@@ -86,107 +86,6 @@ class BugMonitor:
                         break
         return prefs_path
 
-    def add_command(self, key, value=None):
-        """
-        Add a bugmon command to the whiteboard
-        :return:
-        """
-        commands = copy.deepcopy(self.bug.commands)
-        commands[key] = value
-        self.bug.commands = commands
-
-    def remove_command(self, key):
-        """
-        Remove a bugmon command to the whiteboard
-        :return:
-        """
-        commands = copy.deepcopy(self.bug.commands)
-        if key in commands:
-            del commands[key]
-
-        self.bug.commands = commands
-
-    def fetch_attachments(self):
-        """
-        Download all attachments and store them in self.working_dir
-        """
-        attachments = filter(lambda a: not a.is_obsolete, self.bug.get_attachments())
-        for attachment in sorted(attachments, key=lambda a: a.creation_time):
-            try:
-                data = base64.decodebytes(attachment.data.encode("utf-8"))
-            except binascii.Error as e:
-                log.warning("Failed to decode attachment: %s", e)
-                continue
-
-            if attachment.file_name.endswith(".zip"):
-                try:
-                    with zipfile.ZipFile(io.BytesIO(data)) as z:
-                        for filename in z.namelist():
-                            if os.path.exists(filename):
-                                log.warning(
-                                    "Duplicate filename identified: %s", filename
-                                )
-                            z.extract(filename, self.working_dir)
-                            if filename.lower().startswith("test"):
-                                if self._testcase is not None:
-                                    raise BugException("Multiple testcases identified!")
-                                self._testcase = os.path.join(
-                                    self.working_dir, filename
-                                )
-                except zipfile.BadZipFile as e:
-                    log.warning("Failed to decompress attachment: %s", e)
-                    continue
-
-            else:
-                dest = os.path.join(self.working_dir, attachment.file_name)
-                with open(dest, "wb") as file:
-                    file.write(data)
-                    r = re.compile(r"^testcase.*$", re.IGNORECASE)
-                    targets = [attachment.file_name, attachment.description]
-                    if any(r.match(target) for target in targets):
-                        if self._testcase is not None:
-                            raise BugException("Multiple testcases identified!")
-                        self._testcase = file.name
-
-        return self._testcase
-
-    def needs_bisect(self):
-        """
-        Helper function to determine eligibility for 'bisect'
-        """
-        if "bisected" in self.bug.commands:
-            return False
-        if "bisect" in self.bug.commands:
-            return True
-
-        return False
-
-    def needs_confirm(self):
-        """
-        Helper function to determine eligibility for 'confirm'
-        """
-        if "confirmed" in self.bug.commands:
-            return False
-        if "confirm" in self.bug.commands:
-            return True
-        if self.bug.status in ["ASSIGNED", "NEW", "UNCONFIRMED", "REOPENED"]:
-            return True
-
-        return False
-
-    def needs_verify(self):
-        """
-        Helper function to determine eligibility for 'verify'
-        """
-        if "verified" in self.bug.commands:
-            return False
-        if "verify" in self.bug.commands:
-            return True
-        if self.bug.status == "RESOLVED" and self.bug.resolution == "FIXED":
-            return True
-
-        return False
-
     def _bisect(self):
         """
         Attempt to enumerate the changeset that introduced or fixed the bug
@@ -337,6 +236,148 @@ class BugMonitor:
             # Remove from further analysis
             self._close_bug = True
 
+    def _reproduce_bug(self, branch, bid=None):
+        """
+        Method for evaluating testcase using the supplied branch and optional build ID
+        Caches previous results
+
+        :param branch: Branch where build is found
+        :param bid: Build id (rev or date)
+        """
+        try:
+            direction = BuildSearchOrder.ASC
+            if bid is None:
+                bid = "latest"
+                direction = None
+
+            build = Fetcher(
+                branch,
+                bid,
+                self.bug.build_flags,
+                self.bug.platform,
+                nearest=direction,
+            )
+        except FetcherException as e:
+            log.error(f"Error fetching build: {e}")
+            return ReproductionResult(EvaluatorResult.BUILD_FAILED)
+
+        # Check if this branch and build was already tested
+        if branch in self.results:
+            if build.id in self.results[branch]:
+                return self.results[branch][build.id]
+        else:
+            self.results[branch] = {}
+
+        build_str = f"mozilla-{self.bug.branch} {build.id}-{build.changeset[:12]}"
+        log.info(f"Attempting to reproduce bug on {build_str}")
+
+        with self.build_manager.get_build(build) as build_path:
+            status = self.evaluator.evaluate_testcase(build_path)
+            self.results[branch][build.id] = ReproductionResult(status, build_str)
+
+            return self.results[branch][build.id]
+
+    def add_command(self, key, value=None):
+        """
+        Add a bugmon command to the whiteboard
+        :return:
+        """
+        commands = copy.deepcopy(self.bug.commands)
+        commands[key] = value
+        self.bug.commands = commands
+
+    def remove_command(self, key):
+        """
+        Remove a bugmon command to the whiteboard
+        :return:
+        """
+        commands = copy.deepcopy(self.bug.commands)
+        if key in commands:
+            del commands[key]
+
+        self.bug.commands = commands
+
+    def fetch_attachments(self):
+        """
+        Download all attachments and store them in self.working_dir
+        """
+        attachments = filter(lambda a: not a.is_obsolete, self.bug.get_attachments())
+        for attachment in sorted(attachments, key=lambda a: a.creation_time):
+            try:
+                data = base64.decodebytes(attachment.data.encode("utf-8"))
+            except binascii.Error as e:
+                log.warning("Failed to decode attachment: %s", e)
+                continue
+
+            if attachment.file_name.endswith(".zip"):
+                try:
+                    with zipfile.ZipFile(io.BytesIO(data)) as z:
+                        for filename in z.namelist():
+                            if os.path.exists(filename):
+                                log.warning(
+                                    "Duplicate filename identified: %s", filename
+                                )
+                            z.extract(filename, self.working_dir)
+                            if filename.lower().startswith("test"):
+                                if self._testcase is not None:
+                                    raise BugException("Multiple testcases identified!")
+                                self._testcase = os.path.join(
+                                    self.working_dir, filename
+                                )
+                except zipfile.BadZipFile as e:
+                    log.warning("Failed to decompress attachment: %s", e)
+                    continue
+
+            else:
+                dest = os.path.join(self.working_dir, attachment.file_name)
+                with open(dest, "wb") as file:
+                    file.write(data)
+                    r = re.compile(r"^testcase.*$", re.IGNORECASE)
+                    targets = [attachment.file_name, attachment.description]
+                    if any(r.match(target) for target in targets):
+                        if self._testcase is not None:
+                            raise BugException("Multiple testcases identified!")
+                        self._testcase = file.name
+
+        return self._testcase
+
+    def needs_bisect(self):
+        """
+        Helper function to determine eligibility for 'bisect'
+        """
+        if "bisected" in self.bug.commands:
+            return False
+        if "bisect" in self.bug.commands:
+            return True
+
+        return False
+
+    def needs_confirm(self):
+        """
+        Helper function to determine eligibility for 'confirm'
+        """
+        if "confirmed" in self.bug.commands:
+            return False
+        if "confirm" in self.bug.commands:
+            return True
+        if self.bug.status in ["ASSIGNED", "NEW", "UNCONFIRMED", "REOPENED"]:
+            return True
+
+        return False
+
+    def needs_verify(self):
+        """
+        Helper function to determine eligibility for 'verify'
+        """
+        if "verified" in self.bug.commands:
+            return False
+        if "verify" in self.bug.commands:
+            return True
+        if self.bug.status == "RESOLVED" and self.bug.resolution == "FIXED":
+            return True
+
+        return False
+
     def is_supported(self):
         """
         Simple checks to determine if bug is valid candidate for Bugmon
@@ -402,47 +443,6 @@ class BugMonitor:
 
         # Post updates and comments
         self.commit()
-
-    def _reproduce_bug(self, branch, bid=None):
-        """
-        Method for evaluating testcase using the supplied branch and optional build ID
-        Caches previous results
-
-        :param branch: Branch where build is found
-        :param bid: Build id (rev or date)
-        """
-        try:
-            direction = BuildSearchOrder.ASC
-            if bid is None:
-                bid = "latest"
-                direction = None
-
-            build = Fetcher(
-                branch,
-                bid,
-                self.bug.build_flags,
-                self.bug.platform,
-                nearest=direction,
-            )
-        except FetcherException as e:
-            log.error(f"Error fetching build: {e}")
-            return ReproductionResult(EvaluatorResult.BUILD_FAILED)
-
-        # Check if this branch and build was already tested
-        if branch in self.results:
-            if build.id in self.results[branch]:
-                return self.results[branch][build.id]
-        else:
-            self.results[branch] = {}
-
-        build_str = f"mozilla-{self.bug.branch} {build.id}-{build.changeset[:12]}"
-        log.info(f"Attempting to reproduce bug on {build_str}")
-
-        with self.build_manager.get_build(build) as build_path:
-            status = self.evaluator.evaluate_testcase(build_path)
-            self.results[branch][build.id] = ReproductionResult(status, build_str)
-
-            return self.results[branch][build.id]
 
     def report(self, *messages):
         """
