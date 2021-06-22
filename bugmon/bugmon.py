@@ -15,6 +15,7 @@ import re
 import zipfile
 from datetime import datetime as dt
 from datetime import timedelta
+from pathlib import Path
 
 from autobisect import EvaluatorResult
 from autobisect.bisect import BisectionResult, Bisector
@@ -78,12 +79,11 @@ class BugMonitor:
         Identify prefs in working_dir
         """
         prefs_path = None
-        for filename in os.listdir(self.working_dir):
-            if filename.endswith(".js"):
-                with open(os.path.join(self.working_dir, filename)) as f:
-                    if "user_pref" in f.read():
-                        prefs_path = os.path.join(self.working_dir, filename)
-                        break
+        for filename in self.working_dir.glob("*.js"):
+            file_path = self.working_dir / filename
+            if "user_pref" in file_path.read_text():
+                prefs_path = file_path
+                break
         return prefs_path
 
     def _bisect(self):
@@ -321,23 +321,20 @@ class BugMonitor:
                             if filename.lower().startswith("test"):
                                 if self._testcase is not None:
                                     raise BugException("Multiple testcases identified!")
-                                self._testcase = os.path.join(
-                                    self.working_dir, filename
-                                )
+                                self._testcase = Path(self.working_dir, filename)
                 except zipfile.BadZipFile as e:
                     log.warning("Failed to decompress attachment: %s", e)
                     continue
 
             else:
-                dest = os.path.join(self.working_dir, attachment.file_name)
-                with open(dest, "wb") as file:
-                    file.write(data)
-                    r = re.compile(r"^testcase.*$", re.IGNORECASE)
-                    targets = [attachment.file_name, attachment.description]
-                    if any(r.match(target) for target in targets):
-                        if self._testcase is not None:
-                            raise BugException("Multiple testcases identified!")
-                        self._testcase = file.name
+                file_path = Path(self.working_dir, attachment.file_name)
+                file_path.write_bytes(data)
+                r = re.compile(r"^testcase.*$", re.IGNORECASE)
+                targets = [attachment.file_name, attachment.description]
+                if any(r.match(target) for target in targets):
+                    if self._testcase is not None:
+                        raise BugException("Multiple testcases identified!")
+                    self._testcase = file_path
 
         return self._testcase
 
