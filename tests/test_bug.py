@@ -10,8 +10,13 @@ import json
 
 import pytest
 
-from bugmon import BugException
-from bugmon.bug import EnhancedBug, LocalAttachment, LocalComment, sanitize_bug
+from bugmon.bug import (
+    BugException,
+    EnhancedBug,
+    LocalAttachment,
+    LocalComment,
+    sanitize_bug,
+)
 
 BRANCH_ALIAS_PAIRS = [
     ("central", 81),
