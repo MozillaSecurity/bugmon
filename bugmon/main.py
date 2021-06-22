@@ -10,6 +10,7 @@ import logging
 import os
 import sys
 import tempfile
+from pathlib import Path
 
 from bugsy import Bugsy
 
@@ -38,10 +39,15 @@ def parse_args(argv=None):
     # Bug selection
     bugs = parser.add_mutually_exclusive_group(required=True)
     bugs.add_argument("--bugs", nargs="+", help="Space separated list of bug numbers")
-    bugs.add_argument("-s", "--search", help="Path to advanced search parameters")
+    bugs.add_argument(
+        "-s",
+        "--search",
+        type=Path,
+        help="Path to advanced search parameters",
+    )
     args = parser.parse_args(argv)
 
-    if args.search and not os.path.isfile(args.search):
+    if args.search and not args.search.is_file():
         raise parser.error("Search parameter path does not exist!")
 
     return args
@@ -82,9 +88,8 @@ def main(argv=None):
         bug_list = ",".join(args.bugs)
         params = {"id": bug_list}
     else:
-        with open(args.search) as f:
-            params = json.load(f)
-            params["include_fields"] = "_default"
+        params = json.load(args.search.read_text())
+        params["include_fields"] = "_default"
 
     response = bugsy.request("bug", params=params)
     bugs = [EnhancedBug(bugsy, **bug) for bug in response["bugs"]]
@@ -92,7 +97,7 @@ def main(argv=None):
     for bug in bugs:
         with tempfile.TemporaryDirectory() as temp_dir:
             try:
-                bugmon = BugMonitor(bugsy, bug, temp_dir, args.dry_run)
+                bugmon = BugMonitor(bugsy, bug, Path(temp_dir), args.dry_run)
                 log.info(
                     f"Analyzing bug {bug.id} "
                     f"(Status: {bugmon.bug.status}, "
