@@ -30,7 +30,7 @@ AVAILABLE_BRANCHES = ["mozilla-central", "mozilla-beta", "mozilla-release"]
 TESTCASE_URL = "https://github.com/MozillaSecurity/bugmon#testcase-identification"
 
 
-class BugException(Exception):
+class BugmonException(Exception):
     """
     Exception for Bugmon related issues
     """
@@ -320,7 +320,9 @@ class BugMonitor:
                             z.extract(filename, self.working_dir)
                             if filename.lower().startswith("test"):
                                 if self._testcase is not None:
-                                    raise BugException("Multiple testcases identified!")
+                                    raise BugmonException(
+                                        "Multiple testcases identified!"
+                                    )
                                 self._testcase = Path(self.working_dir, filename)
                 except zipfile.BadZipFile as e:
                     log.warning("Failed to decompress attachment: %s", e)
@@ -333,7 +335,7 @@ class BugMonitor:
                 targets = [attachment.file_name, attachment.description]
                 if any(r.match(target) for target in targets):
                     if self._testcase is not None:
-                        raise BugException("Multiple testcases identified!")
+                        raise BugmonException("Multiple testcases identified!")
                     self._testcase = file_path
 
         return self._testcase
