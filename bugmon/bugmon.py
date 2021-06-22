@@ -86,6 +86,197 @@ class BugMonitor:
                         break
         return prefs_path
 
+    def _bisect(self):
+        """
+        Attempt to enumerate the changeset that introduced or fixed the bug
+        """
+        tip = self._reproduce_bug(self.bug.branch)
+        if tip.status == EvaluatorResult.BUILD_FAILED:
+            log.warning("Failed to bisect bug (bad build)")
+            return
+
+        # If tip doesn't crash, bisect the fix
+        find_fix = tip.status != EvaluatorResult.BUILD_CRASHED
+        if find_fix:
+            start = self.bug.initial_build_id
+            end = "latest"
+        else:
+            start = None
+            end = self.bug.initial_build_id
+
+        bisector = Bisector(
+            self.evaluator,
+            self.target,
+            self.bug.branch,
+            start,
+            end,
+            self.bug.build_flags,
+            self.bug.platform,
+            find_fix,
+        )
+        result = bisector.bisect()
+
+        # Set bisected status and remove the bisect command
+        self.add_command("bisected")
+        if "bisect" in self.bug.commands:
+            self.remove_command("bisect")
+
+        if result.status != BisectionResult.SUCCESS:
+            output = [
+                f"Failed to bisect testcase ({result.message}):",
+                f"> Start: {result.start.changeset} ({result.start.id})",
+                f"> End: {result.end.changeset} ({result.end.id})",
+                f"> BuildFlags: {str(self.bug.build_flags)}",
+            ]
+            self.report(*output)
+        else:
+            output = [
+                f"> Start: {result.start.changeset} ({result.start.id})",
+                f"> End: {result.end.changeset} ({result.end.id})",
+                f"> Pushlog: {result.pushlog}",
+            ]
+
+            verb = "fixed" if find_fix else "introduced"
+            self.report(
+                f"The bug appears to have been {verb} in the following build range:",
+                *output,
+            )
+
+    def _confirm_open(self):
+        """
+        Attempt to confirm open test cases
+        """
+        tip = self._reproduce_bug(self.bug.branch)
+        if tip.status == EvaluatorResult.BUILD_FAILED:
+            log.warning("Failed to confirm bug (bad build)")
+            return
+
+        if tip.status == EvaluatorResult.BUILD_CRASHED:
+            if "confirmed" not in self.bug.commands:
+                self.report(f"Verified bug as reproducible on {tip.build_str}.")
+                self._bisect()
+            else:
+                change = dt.strptime(self.bug.last_change_time, "%Y-%m-%dT%H:%M:%SZ")
+                if dt.now() - timedelta(days=30) > change:
+                    self.report(f"Bug remains reproducible on {tip.build_str}")
+        elif tip.status == EvaluatorResult.BUILD_PASSED:
+            orig = self._reproduce_bug(self.bug.branch, self.bug.initial_build_id)
+            if orig.status == EvaluatorResult.BUILD_CRASHED:
+                log.info(f"Testcase crashes using the initial build ({orig.build_str})")
+                self._bisect()
+            elif orig.status == EvaluatorResult.BUILD_PASSED:
+                self.report(
+                    "Unable to reproduce bug using the following builds:",
+                    f"> {tip.build_str}",
+                    f"> {orig.build_str}",
+                )
+
+            # Remove from further analysis
+            self._close_bug = True
+
+        # Set confirmed status and remove the confirm command
+        self.add_command("confirmed")
+        if "confirm" in self.bug.commands:
+            self.remove_command("confirm")
+
+    def _verify_fixed(self):
+        """
+        Attempt to verify the bug state
+
+        Bugs marked as resolved and fixed are verified to ensure that they are in fact, fixed
+        All other bugs will be tested to determine if the bug still reproduces
+
+        """
+        if self.bug.status != "VERIFIED":
+            patch_rev = self.bug.find_patch_rev(self.bug.branch)
+            tip = self._reproduce_bug(self.bug.branch, patch_rev)
+
+            build_str = tip.build_str
+            if tip.status == EvaluatorResult.BUILD_PASSED:
+                initial = self._reproduce_bug(
+                    self.bug.branch, self.bug.initial_build_id
+                )
+                if initial.status != EvaluatorResult.BUILD_CRASHED:
+                    self.report(
+                        f"Bug appears to be fixed on {build_str} but "
+                        f"BugMon was unable to reproduce using {initial.build_str}."
+                    )
+                    self._close_bug = True
+                else:
+                    self.report(f"Verified bug as fixed on rev {build_str}.")
+                    self.bug.status = "VERIFIED"
+
+            elif tip.status == EvaluatorResult.BUILD_CRASHED:
+                self.report(f"Bug marked as FIXED but still reproduces on {build_str}.")
+                self.bug.status = "REOPENED"
+                self.add_command("confirmed")
+
+        branches_verified = True
+        for alias, rel_num in self.bug.branches.items():
+            if isinstance(rel_num, int):
+                flag = f"cf_status_firefox{rel_num}"
+            else:
+                flag = f"cf_status_firefox_{rel_num}"
+
+            # Only check branches if bug is marked as fixed
+            if getattr(self.bug, flag) == "fixed":
+                patch_rev = self.bug.find_patch_rev(alias)
+                branch = self._reproduce_bug(alias, patch_rev)
+                if branch.status == EvaluatorResult.BUILD_PASSED:
+                    log.info(f"Verified fixed on {flag}")
+                    setattr(self.bug, flag, "verified")
+                    continue
+
+                branches_verified = False
+                if branch.status == EvaluatorResult.BUILD_CRASHED:
+                    log.info(f"Bug remains vulnerable on {flag}")
+                    setattr(self.bug, flag, "affected")
+
+        if self.bug.status == "VERIFIED" and branches_verified:
+            # Remove from further analysis
+            self._close_bug = True
+
+    def _reproduce_bug(self, branch, bid=None):
+        """
+        Method for evaluating testcase using the supplied branch and optional build ID
+        Caches previous results
+
+        :param branch: Branch where build is found
+        :param bid: Build id (rev or date)
+        """
+        try:
+            direction = BuildSearchOrder.ASC
+            if bid is None:
+                bid = "latest"
+                direction = None
+
+            build = Fetcher(
+                branch,
+                bid,
+                self.bug.build_flags,
+                self.bug.platform,
+                nearest=direction,
+            )
+        except FetcherException as e:
+            log.error(f"Error fetching build: {e}")
+            return ReproductionResult(EvaluatorResult.BUILD_FAILED)
+
+        # Check if this branch and build was already tested
+        if branch in self.results:
+            if build.id in self.results[branch]:
+                return self.results[branch][build.id]
+        else:
+            self.results[branch] = {}
+
+        build_str = f"mozilla-{self.bug.branch} {build.id}-{build.changeset[:12]}"
+        log.info(f"Attempting to reproduce bug on {build_str}")
+
+        with self.build_manager.get_build(build) as build_path:
+            status = self.evaluator.evaluate_testcase(build_path)
+            self.results[branch][build.id] = ReproductionResult(status, build_str)
+
+            return self.results[branch][build.id]
+
     def add_command(self, key, value=None):
         """
         Add a bugmon command to the whiteboard
@@ -187,154 +378,6 @@ class BugMonitor:
 
         return False
 
-    def bisect(self):
-        """
-        Attempt to enumerate the changeset that introduced or fixed the bug
-        """
-        tip = self.reproduce_bug(self.bug.branch)
-        if tip.status == EvaluatorResult.BUILD_FAILED:
-            log.warning("Failed to bisect bug (bad build)")
-            return
-
-        # If tip doesn't crash, bisect the fix
-        find_fix = tip.status != EvaluatorResult.BUILD_CRASHED
-        if find_fix:
-            start = self.bug.initial_build_id
-            end = "latest"
-        else:
-            start = None
-            end = self.bug.initial_build_id
-
-        bisector = Bisector(
-            self.evaluator,
-            self.target,
-            self.bug.branch,
-            start,
-            end,
-            self.bug.build_flags,
-            self.bug.platform,
-            find_fix,
-        )
-        result = bisector.bisect()
-
-        # Set bisected status and remove the bisect command
-        self.add_command("bisected")
-        if "bisect" in self.bug.commands:
-            self.remove_command("bisect")
-
-        if result.status != BisectionResult.SUCCESS:
-            output = [
-                f"Failed to bisect testcase ({result.message}):",
-                f"> Start: {result.start.changeset} ({result.start.id})",
-                f"> End: {result.end.changeset} ({result.end.id})",
-                f"> BuildFlags: {str(self.bug.build_flags)}",
-            ]
-            self.report(*output)
-        else:
-            output = [
-                f"> Start: {result.start.changeset} ({result.start.id})",
-                f"> End: {result.end.changeset} ({result.end.id})",
-                f"> Pushlog: {result.pushlog}",
-            ]
-
-            verb = "fixed" if find_fix else "introduced"
-            self.report(
-                f"The bug appears to have been {verb} in the following build range:",
-                *output,
-            )
-
-    def confirm_open(self):
-        """
-        Attempt to confirm open test cases
-        """
-        tip = self.reproduce_bug(self.bug.branch)
-        if tip.status == EvaluatorResult.BUILD_FAILED:
-            log.warning("Failed to confirm bug (bad build)")
-            return
-
-        if tip.status == EvaluatorResult.BUILD_CRASHED:
-            if "confirmed" not in self.bug.commands:
-                self.report(f"Verified bug as reproducible on {tip.build_str}.")
-                self.bisect()
-            else:
-                change = dt.strptime(self.bug.last_change_time, "%Y-%m-%dT%H:%M:%SZ")
-                if dt.now() - timedelta(days=30) > change:
-                    self.report(f"Bug remains reproducible on {tip.build_str}")
-        elif tip.status == EvaluatorResult.BUILD_PASSED:
-            orig = self.reproduce_bug(self.bug.branch, self.bug.initial_build_id)
-            if orig.status == EvaluatorResult.BUILD_CRASHED:
-                log.info(f"Testcase crashes using the initial build ({orig.build_str})")
-                self.bisect()
-            elif orig.status == EvaluatorResult.BUILD_PASSED:
-                self.report(
-                    "Unable to reproduce bug using the following builds:",
-                    f"> {tip.build_str}",
-                    f"> {orig.build_str}",
-                )
-
-            # Remove from further analysis
-            self._close_bug = True
-
-        # Set confirmed status and remove the confirm command
-        self.add_command("confirmed")
-        if "confirm" in self.bug.commands:
-            self.remove_command("confirm")
-
-    def verify_fixed(self):
-        """
-        Attempt to verify the bug state
-
-        Bugs marked as resolved and fixed are verified to ensure that they are in fact, fixed
-        All other bugs will be tested to determine if the bug still reproduces
-
-        """
-        if self.bug.status != "VERIFIED":
-            patch_rev = self.bug.find_patch_rev(self.bug.branch)
-            tip = self.reproduce_bug(self.bug.branch, patch_rev)
-
-            build_str = tip.build_str
-            if tip.status == EvaluatorResult.BUILD_PASSED:
-                initial = self.reproduce_bug(self.bug.branch, self.bug.initial_build_id)
-                if initial.status != EvaluatorResult.BUILD_CRASHED:
-                    self.report(
-                        f"Bug appears to be fixed on {build_str} but "
-                        f"BugMon was unable to reproduce using {initial.build_str}."
-                    )
-                    self._close_bug = True
-                else:
-                    self.report(f"Verified bug as fixed on rev {build_str}.")
-                    self.bug.status = "VERIFIED"
-
-            elif tip.status == EvaluatorResult.BUILD_CRASHED:
-                self.report(f"Bug marked as FIXED but still reproduces on {build_str}.")
-                self.bug.status = "REOPENED"
-                self.add_command("confirmed")
-
-        branches_verified = True
-        for alias, rel_num in self.bug.branches.items():
-            if isinstance(rel_num, int):
-                flag = f"cf_status_firefox{rel_num}"
-            else:
-                flag = f"cf_status_firefox_{rel_num}"
-
-            # Only check branches if bug is marked as fixed
-            if getattr(self.bug, flag) == "fixed":
-                patch_rev = self.bug.find_patch_rev(alias)
-                branch = self.reproduce_bug(alias, patch_rev)
-                if branch.status == EvaluatorResult.BUILD_PASSED:
-                    log.info(f"Verified fixed on {flag}")
-                    setattr(self.bug, flag, "verified")
-                    continue
-
-                branches_verified = False
-                if branch.status == EvaluatorResult.BUILD_CRASHED:
-                    log.info(f"Bug remains vulnerable on {flag}")
-                    setattr(self.bug, flag, "affected")
-
-        if self.bug.status == "VERIFIED" and branches_verified:
-            # Remove from further analysis
-            self._close_bug = True
-
     def is_supported(self):
         """
         Simple checks to determine if bug is valid candidate for Bugmon
@@ -392,55 +435,14 @@ class BugMonitor:
             )
 
         if self.needs_verify():
-            self.verify_fixed()
+            self._verify_fixed()
         elif self.needs_confirm():
-            self.confirm_open()
+            self._confirm_open()
         elif self.needs_bisect():
-            self.bisect()
+            self._bisect()
 
         # Post updates and comments
         self.commit()
-
-    def reproduce_bug(self, branch, bid=None):
-        """
-        Method for evaluating testcase using the supplied branch and optional build ID
-        Caches previous results
-
-        :param branch: Branch where build is found
-        :param bid: Build id (rev or date)
-        """
-        try:
-            direction = BuildSearchOrder.ASC
-            if bid is None:
-                bid = "latest"
-                direction = None
-
-            build = Fetcher(
-                branch,
-                bid,
-                self.bug.build_flags,
-                self.bug.platform,
-                nearest=direction,
-            )
-        except FetcherException as e:
-            log.error(f"Error fetching build: {e}")
-            return ReproductionResult(EvaluatorResult.BUILD_FAILED)
-
-        # Check if this branch and build was already tested
-        if branch in self.results:
-            if build.id in self.results[branch]:
-                return self.results[branch][build.id]
-        else:
-            self.results[branch] = {}
-
-        build_str = f"mozilla-{self.bug.branch} {build.id}-{build.changeset[:12]}"
-        log.info(f"Attempting to reproduce bug on {build_str}")
-
-        with self.build_manager.get_build(build) as build_path:
-            status = self.evaluator.evaluate_testcase(build_path)
-            self.results[branch][build.id] = ReproductionResult(status, build_str)
-
-            return self.results[branch][build.id]
 
     def report(self, *messages):
         """
