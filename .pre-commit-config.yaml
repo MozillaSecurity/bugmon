@@ -25,3 +25,10 @@ repos:
     rev: v0.19.0
     hooks:
       - id: toml-sort
+  - repo: local
+    hooks:
+      - id: system
+        name: mypy
+        entry: poetry run mypy bugmon
+        pass_filenames: false
+        language: system
