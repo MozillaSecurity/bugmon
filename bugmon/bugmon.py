@@ -17,13 +17,14 @@ from datetime import datetime as dt
 from datetime import timedelta
 from pathlib import Path
 
+from autobisect import Evaluator
 from autobisect.bisect import BisectionResult, Bisector
 from autobisect.build_manager import BuildManager
 from autobisect.evaluators import BrowserEvaluator, JSEvaluator, EvaluatorResult
 from fuzzfetch import BuildSearchOrder, Fetcher, FetcherException
 from bugmon.bug import EnhancedBug
 from bugsy.bugsy import Bugsy
-from typing import Optional
+from typing import Optional, List, Dict
 
 log = logging.getLogger("bugmon")
 
@@ -73,14 +74,14 @@ class BugMonitor:
         self.bug = bug
         self.working_dir = working_dir
         self.dry_run = dry_run
-        self.queue = []
-        self.results = {}
+        self.queue: List[str] = []
+        self.results: Dict[str, Dict[str, ReproductionResult]] = {}
 
         self._close_bug = False
-        self._testcase = None
+        self._testcase: Optional[Path] = None
 
-        self.target = None
-        self.evaluator = None
+        self.target: Optional[str] = None
+        self.evaluator: Optional[Evaluator] = None
         self.build_manager = BuildManager()
 
     @property
@@ -111,7 +112,7 @@ class BugMonitor:
             start = self.bug.initial_build_id
             end = "latest"
         else:
-            start = None
+            start = None  # type: ignore
             end = self.bug.initial_build_id
 
         bisector = Bisector(
@@ -256,6 +257,9 @@ class BugMonitor:
         :param branch: Branch where build is found
         :param bid: Build id (rev or date)
         """
+        if self.evaluator is None:
+            raise BugmonException("Evaluator not set!")
+
         try:
             direction = BuildSearchOrder.ASC
             if bid is None:
