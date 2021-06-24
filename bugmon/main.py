@@ -22,8 +22,7 @@ log = logging.getLogger("bugmon")
 
 
 def parse_args(argv: Any = None) -> argparse.Namespace:
-    """
-    Arg parser
+    """Arg parser
 
     :param argv: Command line to use instead of sys.argv (optional)
     """
@@ -54,9 +53,7 @@ def parse_args(argv: Any = None) -> argparse.Namespace:
 
 
 def console_init_logging() -> None:
-    """
-    Enable logging when called from console
-    """
+    """Enable logging when called from console"""
     log_level = logging.INFO
     log_fmt = "[%(asctime)s] %(message)s"
     if bool(os.getenv("DEBUG")):
@@ -66,11 +63,10 @@ def console_init_logging() -> None:
 
 
 def main(argv: Optional[Dict[str, Any]] = None) -> int:
-    """
-    Launch Bugmon
+    """Launch Bugmon
 
     :param argv: Command line to use instead of sys.argv (optional)
-    :return:
+    :raises BugmonException: Re-raises any error encountered by BugMonitor
     """
     console_init_logging()
     args = parse_args(argv)
