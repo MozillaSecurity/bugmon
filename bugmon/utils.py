@@ -5,6 +5,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 import requests
 from requests.adapters import HTTPAdapter, Retry
+from requests.models import Response
 
 HTTP_SESSION = requests.Session()
 HTTP_ADAPTER = HTTPAdapter(max_retries=Retry(connect=3, backoff_factor=0.5))
@@ -15,7 +16,7 @@ HG_BASE = "https://hg.mozilla.org"
 MILESTONE = f"{HG_BASE}/mozilla-central/raw-file/tip/config/milestone.txt"
 
 
-def _get_url(url):
+def _get_url(url: str) -> Response:
     """
     Retrieve requested URL
     """
@@ -24,7 +25,7 @@ def _get_url(url):
     return data
 
 
-def _get_milestone():
+def _get_milestone() -> int:
     """
     Fetch current milestone
     """

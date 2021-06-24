@@ -16,12 +16,16 @@ import zipfile
 from datetime import datetime as dt
 from datetime import timedelta
 from pathlib import Path
+from typing import Optional, List, Dict, cast
 
-from autobisect import EvaluatorResult
+from autobisect import Evaluator
 from autobisect.bisect import BisectionResult, Bisector
 from autobisect.build_manager import BuildManager
-from autobisect.evaluators import BrowserEvaluator, JSEvaluator
+from autobisect.evaluators import BrowserEvaluator, JSEvaluator, EvaluatorResult
+from bugsy.bugsy import Bugsy
 from fuzzfetch import BuildSearchOrder, Fetcher, FetcherException
+
+from bugmon.bug import EnhancedBug
 
 log = logging.getLogger("bugmon")
 
@@ -41,7 +45,9 @@ class ReproductionResult:
     Class for storing reproduction results
     """
 
-    def __init__(self, status, build_str=None):
+    def __init__(
+        self, status: EvaluatorResult, build_str: Optional[str] = None
+    ) -> None:
         self.status = status
         self.build_str = build_str
 
@@ -51,7 +57,13 @@ class BugMonitor:
     Main bugmon class
     """
 
-    def __init__(self, bugsy, bug, working_dir, dry_run=False):
+    def __init__(
+        self,
+        bugsy: Bugsy,
+        bug: EnhancedBug,
+        working_dir: Path,
+        dry_run: bool = False,
+    ) -> None:
         """
 
         :param bugsy: Bugsy instance used for retrieving bugs
@@ -63,18 +75,18 @@ class BugMonitor:
         self.bug = bug
         self.working_dir = working_dir
         self.dry_run = dry_run
-        self.queue = []
-        self.results = {}
+        self.queue: List[str] = []
+        self.results: Dict[str, Dict[str, ReproductionResult]] = {}
 
         self._close_bug = False
-        self._testcase = None
+        self._testcase: Optional[Path] = None
 
-        self.target = None
-        self.evaluator = None
+        self.target: Optional[str] = None
+        self.evaluator: Optional[Evaluator] = None
         self.build_manager = BuildManager()
 
     @property
-    def prefs(self):
+    def prefs(self) -> Optional[Path]:
         """
         Identify prefs in working_dir
         """
@@ -86,7 +98,7 @@ class BugMonitor:
                 break
         return prefs_path
 
-    def _bisect(self):
+    def _bisect(self) -> None:
         """
         Attempt to enumerate the changeset that introduced or fixed the bug
         """
@@ -101,9 +113,11 @@ class BugMonitor:
             start = self.bug.initial_build_id
             end = "latest"
         else:
-            start = None
+            start = None  # type: ignore
             end = self.bug.initial_build_id
 
+        assert isinstance(self.evaluator, Evaluator)
+        assert self.target is not None
         bisector = Bisector(
             self.evaluator,
             self.target,
@@ -142,7 +156,7 @@ class BugMonitor:
                 *output,
             )
 
-    def _confirm_open(self):
+    def _confirm_open(self) -> None:
         """
         Attempt to confirm open test cases
         """
@@ -179,7 +193,7 @@ class BugMonitor:
         if "confirm" in self.bug.commands:
             self.remove_command("confirm")
 
-    def _verify_fixed(self):
+    def _verify_fixed(self) -> None:
         """
         Attempt to verify the bug state
 
@@ -236,7 +250,9 @@ class BugMonitor:
             # Remove from further analysis
             self._close_bug = True
 
-    def _reproduce_bug(self, branch, bid=None):
+    def _reproduce_bug(
+        self, branch: str, bid: Optional[str] = None
+    ) -> ReproductionResult:
         """
         Method for evaluating testcase using the supplied branch and optional build ID
         Caches previous results
@@ -244,8 +260,11 @@ class BugMonitor:
         :param branch: Branch where build is found
         :param bid: Build id (rev or date)
         """
+        if self.evaluator is None:
+            raise BugmonException("Evaluator not set!")
+
         try:
-            direction = BuildSearchOrder.ASC
+            direction: Optional[BuildSearchOrder] = BuildSearchOrder.ASC
             if bid is None:
                 bid = "latest"
                 direction = None
@@ -271,13 +290,14 @@ class BugMonitor:
         build_str = f"mozilla-{self.bug.branch} {build.id}-{build.changeset[:12]}"
         log.info(f"Attempting to reproduce bug on {build_str}")
 
+        assert self.target is not None
         with self.build_manager.get_build(build, self.target) as build_path:
             status = self.evaluator.evaluate_testcase(build_path)
             self.results[branch][build.id] = ReproductionResult(status, build_str)
 
             return self.results[branch][build.id]
 
-    def add_command(self, key, value=None):
+    def add_command(self, key: str, value: None = None) -> None:
         """
         Add a bugmon command to the whiteboard
         :return:
@@ -286,7 +306,7 @@ class BugMonitor:
         commands[key] = value
         self.bug.commands = commands
 
-    def remove_command(self, key):
+    def remove_command(self, key: str) -> None:
         """
         Remove a bugmon command to the whiteboard
         :return:
@@ -297,12 +317,12 @@ class BugMonitor:
 
         self.bug.commands = commands
 
-    def fetch_attachments(self):
+    def fetch_attachments(self) -> Optional[Path]:
         """
         Download all attachments and store them in self.working_dir
         """
         attachments = filter(lambda a: not a.is_obsolete, self.bug.get_attachments())
-        for attachment in sorted(attachments, key=lambda a: a.creation_time):
+        for attachment in sorted(attachments, key=lambda a: cast(str, a.creation_time)):
             try:
                 data = base64.decodebytes(attachment.data.encode("utf-8"))
             except binascii.Error as e:
@@ -340,7 +360,7 @@ class BugMonitor:
 
         return self._testcase
 
-    def needs_bisect(self):
+    def needs_bisect(self) -> bool:
         """
         Helper function to determine eligibility for 'bisect'
         """
@@ -351,7 +371,7 @@ class BugMonitor:
 
         return False
 
-    def needs_confirm(self):
+    def needs_confirm(self) -> bool:
         """
         Helper function to determine eligibility for 'confirm'
         """
@@ -364,7 +384,7 @@ class BugMonitor:
 
         return False
 
-    def needs_verify(self):
+    def needs_verify(self) -> bool:
         """
         Helper function to determine eligibility for 'verify'
         """
@@ -377,7 +397,7 @@ class BugMonitor:
 
         return False
 
-    def is_supported(self):
+    def is_supported(self) -> bool:
         """
         Simple checks to determine if bug is valid candidate for Bugmon
 
@@ -406,7 +426,7 @@ class BugMonitor:
 
         return True
 
-    def process(self):
+    def process(self) -> None:
         """
         Process bugmon commands present in whiteboard
 
@@ -420,6 +440,7 @@ class BugMonitor:
             return
 
         # Setup the evaluators
+        assert isinstance(self._testcase, Path)
         if self.bug.component.lower().startswith("javascript"):
             self.target = "js"
             self.evaluator = JSEvaluator(self._testcase, flags=self.bug.runtime_opts)
@@ -443,7 +464,7 @@ class BugMonitor:
         # Post updates and comments
         self.commit()
 
-    def report(self, *messages):
+    def report(self, *messages: str) -> None:
         """
         Output and store messages in queue
         :param messages: List of comments
@@ -454,7 +475,7 @@ class BugMonitor:
             for line in message.splitlines():
                 log.info(line)
 
-    def commit(self):
+    def commit(self) -> None:
         """
         Post any changes to the bug
         """
