@@ -23,7 +23,11 @@ known_first_party = "bugmon"
 profile = "black"
 
 [tool.mypy]
+exclude = "^.*tests.*$"
+disallow_subclassing_any = "False"
 ignore_missing_imports = "True"
+implicit_reexport = "True"
+strict = "True"
 
 [tool.poetry]
 name = "bugmon"
