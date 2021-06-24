@@ -27,7 +27,12 @@ repos:
       - id: toml-sort
   - repo: local
     hooks:
-      - id: system
+      - id: pylint
+        name: pylint
+        entry: poetry run pylint -j 0 bugmon
+        pass_filenames: false
+        language: system
+      - id: mypy
         name: mypy
         entry: poetry run mypy bugmon
         pass_filenames: false
