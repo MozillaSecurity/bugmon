@@ -16,15 +16,16 @@ import zipfile
 from datetime import datetime as dt
 from datetime import timedelta
 from pathlib import Path
+from typing import Optional, List, Dict, cast
 
 from autobisect import Evaluator
 from autobisect.bisect import BisectionResult, Bisector
 from autobisect.build_manager import BuildManager
 from autobisect.evaluators import BrowserEvaluator, JSEvaluator, EvaluatorResult
-from fuzzfetch import BuildSearchOrder, Fetcher, FetcherException
-from bugmon.bug import EnhancedBug
 from bugsy.bugsy import Bugsy
-from typing import Optional, List, Dict
+from fuzzfetch import BuildSearchOrder, Fetcher, FetcherException
+
+from bugmon.bug import EnhancedBug
 
 log = logging.getLogger("bugmon")
 
@@ -115,6 +116,8 @@ class BugMonitor:
             start = None  # type: ignore
             end = self.bug.initial_build_id
 
+        assert isinstance(self.evaluator, Evaluator)
+        assert self.target is not None
         bisector = Bisector(
             self.evaluator,
             self.target,
@@ -261,7 +264,7 @@ class BugMonitor:
             raise BugmonException("Evaluator not set!")
 
         try:
-            direction = BuildSearchOrder.ASC
+            direction: Optional[BuildSearchOrder] = BuildSearchOrder.ASC
             if bid is None:
                 bid = "latest"
                 direction = None
@@ -287,6 +290,7 @@ class BugMonitor:
         build_str = f"mozilla-{self.bug.branch} {build.id}-{build.changeset[:12]}"
         log.info(f"Attempting to reproduce bug on {build_str}")
 
+        assert self.target is not None
         with self.build_manager.get_build(build, self.target) as build_path:
             status = self.evaluator.evaluate_testcase(build_path)
             self.results[branch][build.id] = ReproductionResult(status, build_str)
@@ -318,7 +322,7 @@ class BugMonitor:
         Download all attachments and store them in self.working_dir
         """
         attachments = filter(lambda a: not a.is_obsolete, self.bug.get_attachments())
-        for attachment in sorted(attachments, key=lambda a: a.creation_time):
+        for attachment in sorted(attachments, key=lambda a: cast(str, a.creation_time)):
             try:
                 data = base64.decodebytes(attachment.data.encode("utf-8"))
             except binascii.Error as e:
@@ -436,6 +440,7 @@ class BugMonitor:
             return
 
         # Setup the evaluators
+        assert isinstance(self._testcase, Path)
         if self.bug.component.lower().startswith("javascript"):
             self.target = "js"
             self.evaluator = JSEvaluator(self._testcase, flags=self.bug.runtime_opts)

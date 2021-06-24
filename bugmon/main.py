@@ -11,7 +11,7 @@ import os
 import sys
 import tempfile
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional, Dict
 
 from bugsy import Bugsy
 
@@ -65,7 +65,7 @@ def console_init_logging() -> None:
     logging.basicConfig(format=log_fmt, datefmt="%Y-%m-%d %H:%M:%S", level=log_level)
 
 
-def main(argv: Any = None):
+def main(argv: Optional[Dict[str, Any]] = None) -> int:
     """
     Launch Bugmon
 
@@ -106,6 +106,9 @@ def main(argv: Any = None):
                 bugmon.process()
             except BugmonException as e:
                 log.error(f"Error processing bug {bug.id}: {e}")
+                return 1
+
+    return 0
 
 
 if __name__ == "__main__":

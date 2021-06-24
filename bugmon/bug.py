@@ -8,20 +8,20 @@ import json
 import platform
 import re
 from datetime import datetime
+from typing import Any, Dict, List, Union, Optional, NoReturn, cast, Type
 
 import requests
 from autobisect import JSEvaluator
-from bugsy import Attachment, Bug, Comment
+from bugsy import Attachment, Bug, Comment, Bugsy
 from fuzzfetch import BuildFlags, Fetcher, FetcherException, Platform
 
 from .utils import HG_BASE, _get_milestone, _get_url
-from typing import Any, Dict, List, Union
 
 REV_MATCH = r"([a-f0-9]{12}|[a-f0-9]{40})"
 BID_MATCH = r"([0-9]{8}-)([a-f0-9]{12})"
 
 
-def sanitize_bug(obj):
+def sanitize_bug(obj: Any) -> Any:
     """
     Helper method for converting Bug to JSON
     :param obj:
@@ -68,7 +68,7 @@ class EnhancedBug(Bug):
         }
     )
 
-    def __init__(self, bugsy, **kwargs):
+    def __init__(self, bugsy: Bugsy, **kwargs: Dict[str, Any]):
         """Initializes LocalAttachment"""
         super().__init__(bugsy, **kwargs)
 
@@ -76,14 +76,14 @@ class EnhancedBug(Bug):
             raise BugException("Cannot init Bug without Bugsy instance or cached data")
 
         # Initialize placeholders
-        self._branch = None
-        self._branches = None
-        self._build_flags = None
-        self._central_version = None
-        self._comment_zero = None
-        self._env_variables = None
-        self._initial_build_id = None
-        self._platform = None
+        self._branch: Optional[str] = None
+        self._branches: Optional[Dict[str, int]] = None
+        self._build_flags: Optional[BuildFlags] = None
+        self._central_version: Optional[int] = None
+        self._comment_zero: Optional[str] = None
+        self._env_variables: Optional[Dict[str, str]] = None
+        self._initial_build_id: Optional[str] = None
+        self._platform: Optional[Platform] = None
 
     def __setattr__(self, attr: str, value: Any) -> None:
         if attr in self.LOCAL_ATTRS:
@@ -101,6 +101,9 @@ class EnhancedBug(Bug):
                 if self.version == actual:
                     self._branch = alias
                     break
+
+        # Type guard
+        assert self._branch is not None
 
         return self._branch
 
@@ -173,7 +176,7 @@ class EnhancedBug(Bug):
         return self._central_version
 
     @property
-    def commands(self):
+    def commands(self) -> Dict[str, Optional[str]]:
         """
         Attempt to extract commands from whiteboard
         """
@@ -191,7 +194,7 @@ class EnhancedBug(Bug):
         return commands
 
     @commands.setter
-    def commands(self, value):
+    def commands(self, value: Dict[str, str]) -> None:
         parts = ",".join([f"{k}={v}" if v is not None else k for k, v in value.items()])
         if len(parts) != 0:
             if re.search(r"(?<=\[bugmon:)([^]]*)", self._bug["whiteboard"]):
@@ -244,8 +247,12 @@ class EnhancedBug(Bug):
         """
         if self._initial_build_id is None:
             tokens = []
-            if re.match(rf"^{REV_MATCH}$", self.commands.get("origRev", "")):
-                tokens.append(self.commands["origRev"])
+            # Type guard needed due to self.commands.get -> Optional[str]
+            original_rev = self.commands.get("origRev", "")
+            assert original_rev is not None
+
+            if re.match(rf"^{REV_MATCH}$", original_rev):
+                tokens.append(original_rev)
             else:
                 tokens.extend(re.findall(r"([A-Za-z0-9_-]+)", self.comment_zero))
 
@@ -268,6 +275,7 @@ class EnhancedBug(Bug):
                     break
             else:
                 # If original rev isn't specified, use the date the bug was created
+                assert isinstance(self.creation_time, str)
                 self._initial_build_id = self.creation_time.split("T")[0]
 
         return self._initial_build_id
@@ -312,7 +320,7 @@ class EnhancedBug(Bug):
         return self.central_version
 
     @property
-    def runtime_opts(self):
+    def runtime_opts(self) -> List[str]:
         """
         Attempt to enumerate the runtime flags specified in comment 0
         """
@@ -336,9 +344,9 @@ class EnhancedBug(Bug):
             attachments = self._bug.get("attachments", [])
             return [LocalAttachment(**a) for a in attachments]
 
-        return super().get_attachments()
+        return cast(List[Attachment], super().get_attachments())
 
-    def add_attachment(self, attachment):
+    def add_attachment(self, attachment: Attachment) -> None:
         """
         Add a new attachment when a bugsy instance is present
 
@@ -357,9 +365,9 @@ class EnhancedBug(Bug):
             comments = self._bug.get("comments", [])
             return [LocalComment(**c) for c in comments]
 
-        return super().get_comments()
+        return cast(List[Comment], super().get_comments())
 
-    def add_comment(self, comment):
+    def add_comment(self, comment: Comment) -> None:
         """
         Add a new comment when a bugsy instance is present
 
@@ -374,7 +382,9 @@ class EnhancedBug(Bug):
         Overload Bug.diff() to strip attachments and comments
         :return:
         """
-        changed = super().diff()
+        changed = cast(
+            Dict[str, Union[str, Dict[str, Union[str, bool]]]], super().diff()
+        )
 
         # These keys should never occur in the diff
         changed.pop("attachments", None)
@@ -382,7 +392,7 @@ class EnhancedBug(Bug):
 
         return changed
 
-    def find_patch_rev(self, branch):
+    def find_patch_rev(self, branch: str) -> Optional[str]:
         """
         Attempt to determine patch rev for the supplied branch
 
@@ -396,14 +406,16 @@ class EnhancedBug(Bug):
             pattern = re.compile(rf"(?:{HG_BASE}/releases/{alias}/rev/){REV_MATCH}")
 
         comments = self.get_comments()
-        for comment in sorted(comments, key=lambda c: c.creation_time, reverse=True):
+        for comment in sorted(
+            comments, key=lambda c: cast(str, c.creation_time), reverse=True
+        ):
             match = pattern.match(comment.text)
             if match:
                 return match.group(1)
 
         return None
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
         """
         Bug.to_dict() is used via Bugsy remote methods
         To avoid sending bad data, we need to exclude attachments and comments
@@ -412,7 +424,7 @@ class EnhancedBug(Bug):
         excluded = ["attachments", "comments"]
         return {k: v for k, v in self._bug.items() if k not in excluded}
 
-    def to_json(self):
+    def to_json(self) -> str:
         """
         Export entire bug in JSON safe format
         May include attachments and comments
@@ -421,7 +433,7 @@ class EnhancedBug(Bug):
         """
         return json.dumps(self._bug, default=sanitize_bug)
 
-    def update(self):
+    def update(self) -> None:
         """Update bug when a bugsy instance is present"""
         if self._bugsy is None:
             raise TypeError("Method not supported when using a cached bug")
@@ -429,7 +441,7 @@ class EnhancedBug(Bug):
         super().update()
 
     @classmethod
-    def cache_bug(cls, bug):
+    def cache_bug(cls: Type["EnhancedBug"], bug: "EnhancedBug") -> "EnhancedBug":
         """
         Create a cached instance of EnhancedBug
 
@@ -460,11 +472,11 @@ class LocalAttachment(Attachment):
     :param kwargs: Bug data
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Dict[str, Any]) -> None:
         """Initializes LocalAttachment"""
         super().__init__(None, **kwargs)
 
-    def update(self):
+    def update(self) -> NoReturn:
         """
         Disable update
         """
@@ -478,11 +490,11 @@ class LocalComment(Comment):
     :param kwargs: Comment data
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Dict[str, Any]) -> None:
         """Initializes LocalComment"""
         super().__init__(None, **kwargs)
 
-    def add_tags(self, tags):
+    def add_tags(self, tags: Union[str, List[str]]) -> NoReturn:
         """
         Disable add_tags
 
@@ -490,7 +502,7 @@ class LocalComment(Comment):
         """
         raise TypeError("Method not supported when using a cached comment")
 
-    def remove_tags(self, tags):
+    def remove_tags(self, tags: Union[str, List[str]]) -> NoReturn:
         """
         Disable remove_tags
 
@@ -498,8 +510,8 @@ class LocalComment(Comment):
         """
         raise TypeError("Method not supported when using a cached comment")
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
         """
         Return comment content as dict
         """
-        return self._comment
+        return cast(Dict[str, Any], self._comment)
