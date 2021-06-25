@@ -102,6 +102,7 @@ disable = [
     "logging-fstring-interpolation",
     "missing-module-docstring",
     "missing-return-doc",
+    "missing-yield-doc",
     "too-few-public-methods",
     "too-many-arguments",
     "too-many-branches",
