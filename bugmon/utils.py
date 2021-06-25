@@ -17,18 +17,14 @@ MILESTONE = f"{HG_BASE}/mozilla-central/raw-file/tip/config/milestone.txt"
 
 
 def _get_url(url: str) -> Response:
-    """
-    Retrieve requested URL
-    """
+    """Retrieve requested URL"""
     data = HTTP_SESSION.get(url, stream=True)
     data.raise_for_status()
     return data
 
 
 def _get_milestone() -> int:
-    """
-    Fetch current milestone
-    """
+    """Fetch current milestone"""
     milestone = _get_url(MILESTONE)
     version = milestone.text.splitlines()[-1]
     return int(version.split(".", 1)[0])
