@@ -35,15 +35,11 @@ TESTCASE_URL = "https://github.com/MozillaSecurity/bugmon#testcase-identificatio
 
 
 class BugmonException(Exception):
-    """
-    Exception for Bugmon related issues
-    """
+    """Exception for Bugmon related issues"""
 
 
 class ReproductionResult:
-    """
-    Class for storing reproduction results
-    """
+    """Class for storing reproduction results"""
 
     def __init__(
         self, status: EvaluatorResult, build_str: Optional[str] = None
@@ -53,9 +49,7 @@ class ReproductionResult:
 
 
 class BugMonitor:
-    """
-    Main bugmon class
-    """
+    """Main bugmon class"""
 
     def __init__(
         self,
@@ -64,7 +58,7 @@ class BugMonitor:
         working_dir: Path,
         dry_run: bool = False,
     ) -> None:
-        """
+        """Initializes new BugMonitor instance
 
         :param bugsy: Bugsy instance used for retrieving bugs
         :param bug: Bug to analyze
@@ -87,9 +81,7 @@ class BugMonitor:
 
     @property
     def prefs(self) -> Optional[Path]:
-        """
-        Identify prefs in working_dir
-        """
+        """Identify prefs in working_dir"""
         prefs_path = None
         for filename in self.working_dir.glob("*.js"):
             file_path = self.working_dir / filename
@@ -99,9 +91,7 @@ class BugMonitor:
         return prefs_path
 
     def _bisect(self) -> None:
-        """
-        Attempt to enumerate the changeset that introduced or fixed the bug
-        """
+        """Attempt to enumerate the changeset that introduced or fixed the bug"""
         tip = self._reproduce_bug(self.bug.branch)
         if tip.status == EvaluatorResult.BUILD_FAILED:
             log.warning("Failed to bisect bug (bad build)")
@@ -157,9 +147,7 @@ class BugMonitor:
             )
 
     def _confirm_open(self) -> None:
-        """
-        Attempt to confirm open test cases
-        """
+        """Attempt to confirm open test cases"""
         tip = self._reproduce_bug(self.bug.branch)
         if tip.status == EvaluatorResult.BUILD_FAILED:
             log.warning("Failed to confirm bug (bad build)")
@@ -194,12 +182,10 @@ class BugMonitor:
             self.remove_command("confirm")
 
     def _verify_fixed(self) -> None:
-        """
-        Attempt to verify the bug state
+        """Attempt to verify the bug state
 
         Bugs marked as resolved and fixed are verified to ensure that they are in fact, fixed
         All other bugs will be tested to determine if the bug still reproduces
-
         """
         if self.bug.status != "VERIFIED":
             patch_rev = self.bug.find_patch_rev(self.bug.branch)
@@ -253,12 +239,12 @@ class BugMonitor:
     def _reproduce_bug(
         self, branch: str, bid: Optional[str] = None
     ) -> ReproductionResult:
-        """
-        Method for evaluating testcase using the supplied branch and optional build ID
+        """Method for evaluating testcase using the supplied branch and optional build ID
         Caches previous results
 
         :param branch: Branch where build is found
         :param bid: Build id (rev or date)
+        :raises BugmonException: Raises if the evaluator has not been set
         """
         if self.evaluator is None:
             raise BugmonException("Evaluator not set!")
@@ -298,18 +284,17 @@ class BugMonitor:
             return self.results[branch][build.id]
 
     def add_command(self, key: str, value: None = None) -> None:
-        """
-        Add a bugmon command to the whiteboard
-        :return:
+        """Add a bugmon command to the whiteboard
+        :param key: The command key name
+        :param value: The command value
         """
         commands = copy.deepcopy(self.bug.commands)
         commands[key] = value
         self.bug.commands = commands
 
     def remove_command(self, key: str) -> None:
-        """
-        Remove a bugmon command to the whiteboard
-        :return:
+        """Remove a bugmon command to the whiteboard
+        :param key: The command key name
         """
         commands = copy.deepcopy(self.bug.commands)
         if key in commands:
@@ -318,9 +303,7 @@ class BugMonitor:
         self.bug.commands = commands
 
     def fetch_attachments(self) -> Optional[Path]:
-        """
-        Download all attachments and store them in self.working_dir
-        """
+        """Download all attachments and store them in self.working_dir"""
         attachments = filter(lambda a: not a.is_obsolete, self.bug.get_attachments())
         for attachment in sorted(attachments, key=lambda a: cast(str, a.creation_time)):
             try:
@@ -361,9 +344,7 @@ class BugMonitor:
         return self._testcase
 
     def needs_bisect(self) -> bool:
-        """
-        Helper function to determine eligibility for 'bisect'
-        """
+        """Helper function to determine eligibility for 'bisect'"""
         if "bisected" in self.bug.commands:
             return False
         if "bisect" in self.bug.commands:
@@ -372,9 +353,7 @@ class BugMonitor:
         return False
 
     def needs_confirm(self) -> bool:
-        """
-        Helper function to determine eligibility for 'confirm'
-        """
+        """Helper function to determine eligibility for 'confirm'"""
         if "confirmed" in self.bug.commands:
             return False
         if "confirm" in self.bug.commands:
@@ -385,9 +364,7 @@ class BugMonitor:
         return False
 
     def needs_verify(self) -> bool:
-        """
-        Helper function to determine eligibility for 'verify'
-        """
+        """Helper function to determine eligibility for 'verify'"""
         if "verified" in self.bug.commands:
             return False
         if "verify" in self.bug.commands:
@@ -398,11 +375,7 @@ class BugMonitor:
         return False
 
     def is_supported(self) -> bool:
-        """
-        Simple checks to determine if bug is valid candidate for Bugmon
-
-        :return: Boolean
-        """
+        """Simple checks to determine if bug is valid candidate for Bugmon"""
 
         # Check that the branch is available on taskcluster
         if self.bug.branch is None:
@@ -427,8 +400,7 @@ class BugMonitor:
         return True
 
     def process(self) -> None:
-        """
-        Process bugmon commands present in whiteboard
+        """Process bugmon commands present in whiteboard
 
         Available commands:
         verify - Attempt to verify the bug state
@@ -465,10 +437,8 @@ class BugMonitor:
         self.commit()
 
     def report(self, *messages: str) -> None:
-        """
-        Output and store messages in queue
+        """Output and store messages in queue
         :param messages: List of comments
-        :return:
         """
         for message in messages:
             self.queue.append(message)
@@ -476,9 +446,7 @@ class BugMonitor:
                 log.info(line)
 
     def commit(self) -> None:
-        """
-        Post any changes to the bug
-        """
+        """Post any changes to the bug"""
         if self._close_bug:
             if "bugmon" in self.bug.keywords:
                 self.bug.keywords.remove("bugmon")

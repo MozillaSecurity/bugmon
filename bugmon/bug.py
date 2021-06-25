@@ -3,7 +3,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-# pylint: disable=too-many-public-methods
+# pylint: disable=too-many-public-methods,protected-access
 import json
 import platform
 import re
@@ -22,8 +22,7 @@ BID_MATCH = r"([0-9]{8}-)([a-f0-9]{12})"
 
 
 def sanitize_bug(obj: Any) -> Any:
-    """
-    Helper method for converting Bug to JSON
+    """Helper method for converting Bug to JSON
     :param obj:
     :return:
     """
@@ -34,21 +33,17 @@ def sanitize_bug(obj: Any) -> Any:
     if isinstance(obj, Attachment):
         return obj.to_dict()
     if isinstance(obj, Comment):
-        # pylint: disable=protected-access
         return obj._comment
 
     return obj
 
 
 class BugException(Exception):
-    """
-    Exception for Bugmon related issues
-    """
+    """Exception for Bugmon related issues"""
 
 
 class EnhancedBug(Bug):
-    """
-    Bug wrapper which includes helper methods needed by Bugmon
+    """Bug wrapper which includes helper methods needed by Bugmon
 
     :param bugsy: Bugsy instance
     :param kwargs: Bug data
@@ -93,9 +88,7 @@ class EnhancedBug(Bug):
 
     @property
     def branch(self) -> str:
-        """
-        Attempt to enumerate the branch the bug was filed against
-        """
+        """Attempt to enumerate the branch the bug was filed against"""
         if self._branch is None:
             for alias, actual in self.branches.items():
                 if self.version == actual:
@@ -109,9 +102,7 @@ class EnhancedBug(Bug):
 
     @property
     def branches(self) -> Dict[str, int]:
-        """
-        Create map of fuzzfetch branch aliases and bugzilla version tags
-        """
+        """Create map of fuzzfetch branch aliases and bugzilla version tags"""
         if self._branches is None:
             self._branches = {
                 "central": self.central_version,
@@ -132,9 +123,7 @@ class EnhancedBug(Bug):
 
     @property
     def build_flags(self) -> BuildFlags:
-        """
-        Attempt to enumerate build type based on flags listed in comment 0
-        """
+        """Attempt to enumerate build type based on flags listed in comment 0"""
         if self._build_flags is None:
             asan = (
                 "AddressSanitizer" in self.comment_zero
@@ -167,9 +156,7 @@ class EnhancedBug(Bug):
 
     @property
     def central_version(self) -> int:
-        """
-        Return numeric version for tip
-        """
+        """Return numeric version for tip"""
         if self._central_version is None:
             self._central_version = _get_milestone()
 
@@ -177,9 +164,7 @@ class EnhancedBug(Bug):
 
     @property
     def commands(self) -> Dict[str, Optional[str]]:
-        """
-        Attempt to extract commands from whiteboard
-        """
+        """Attempt to extract commands from whiteboard"""
         commands = {}
         if self._bug["whiteboard"]:
             match = re.search(r"(?<=\[bugmon:)[^]]+", self._bug["whiteboard"])
@@ -214,9 +199,7 @@ class EnhancedBug(Bug):
 
     @property
     def comment_zero(self) -> str:
-        """
-        Helper function for retrieving comment zero
-        """
+        """Helper function for retrieving comment zero"""
         if self._comment_zero is None:
             comments = self.get_comments()
             self._comment_zero = comments[0].text
@@ -225,9 +208,7 @@ class EnhancedBug(Bug):
 
     @property
     def env(self) -> Dict[Any, Any]:
-        """
-        Attempt to enumerate any env_variables required
-        """
+        """Attempt to enumerate any env_variables required"""
         if self._env_variables is None:
             self._env_variables = {}
             tokens = self.comment_zero.split(" ")
@@ -242,9 +223,7 @@ class EnhancedBug(Bug):
 
     @property
     def initial_build_id(self) -> str:
-        """
-        Attempt to enumerate the original rev specified in comment 0 or bugmon origRev command
-        """
+        """Attempt to enumerate the original rev specified in comment 0 or bugmon origRev command"""
         if self._initial_build_id is None:
             tokens = []
             # Type guard needed due to self.commands.get -> Optional[str]
@@ -282,9 +261,7 @@ class EnhancedBug(Bug):
 
     @property
     def platform(self) -> Platform:
-        """
-        Attempt to enumerate the target platform
-        """
+        """Attempt to enumerate the target platform"""
         if self._platform is None:
             os_ = platform.system()
             if "Linux" in self.op_sys:
@@ -311,9 +288,7 @@ class EnhancedBug(Bug):
 
     @property
     def version(self) -> int:
-        """
-        Attempt to enumerate the version the bug was filed against
-        """
+        """Attempt to enumerate the version the bug was filed against"""
         if isinstance(self._bug["version"], int):
             return self._bug["version"]
 
@@ -321,9 +296,7 @@ class EnhancedBug(Bug):
 
     @property
     def runtime_opts(self) -> List[str]:
-        """
-        Attempt to enumerate the runtime flags specified in comment 0
-        """
+        """Attempt to enumerate the runtime flags specified in comment 0"""
         all_flags = JSEvaluator.get_valid_flags(self.initial_build_id)
         flags = []
         for flag in all_flags:
@@ -337,9 +310,7 @@ class EnhancedBug(Bug):
         return flags
 
     def get_attachments(self) -> List[Attachment]:
-        """
-        Return list of attachments
-        """
+        """Return list of attachments"""
         if self._bugsy is None:
             attachments = self._bug.get("attachments", [])
             return [LocalAttachment(**a) for a in attachments]
@@ -347,18 +318,17 @@ class EnhancedBug(Bug):
         return cast(List[Attachment], super().get_attachments())
 
     def add_attachment(self, attachment: Attachment) -> None:
-        """
-        Add a new attachment when a bugsy instance is present
+        """Add a new attachment when a bugsy instance is present
 
         :param attachment: Attachment
+        :raise TypeError: Raises if bug does not have a bugsy instance
         """
         if self._bugsy is None:
             raise TypeError("Method not supported when using a cached bug")
         super().add_attachment(attachment)
 
     def get_comments(self) -> List[Comment]:
-        """
-        Returns list of comments
+        """Returns list of comments
         Bugs without a bugsy instance are expected to include comments
         """
         if self._bugsy is None:
@@ -368,20 +338,16 @@ class EnhancedBug(Bug):
         return cast(List[Comment], super().get_comments())
 
     def add_comment(self, comment: Comment) -> None:
-        """
-        Add a new comment when a bugsy instance is present
+        """Add a new comment when a bugsy instance is present
 
-        :param comment: comment
-        """
+                :param comment: comment
+        :raise TypeError: Raises if bug does not have a bugsy instance"""
         if self._bugsy is None:
             raise TypeError("Method not supported when using a cached bug")
         super().add_comment(comment)
 
     def diff(self) -> Dict[str, Union[str, Dict[str, Union[str, bool]]]]:
-        """
-        Overload Bug.diff() to strip attachments and comments
-        :return:
-        """
+        """Overload Bug.diff() to strip attachments and comments"""
         changed = cast(
             Dict[str, Union[str, Dict[str, Union[str, bool]]]], super().diff()
         )
@@ -393,11 +359,9 @@ class EnhancedBug(Bug):
         return changed
 
     def find_patch_rev(self, branch: str) -> Optional[str]:
-        """
-        Attempt to determine patch rev for the supplied branch
+        """Attempt to determine patch rev for the supplied branch
 
         :param branch: Branch name
-        :return: Patch revision
         """
         alias = f"mozilla-{branch}"
         if branch == "central":
@@ -416,20 +380,15 @@ class EnhancedBug(Bug):
         return None
 
     def to_dict(self) -> Dict[str, Any]:
-        """
-        Bug.to_dict() is used via Bugsy remote methods
+        """Bug.to_dict() is used via Bugsy remote methods
         To avoid sending bad data, we need to exclude attachments and comments
-
         """
         excluded = ["attachments", "comments"]
         return {k: v for k, v in self._bug.items() if k not in excluded}
 
     def to_json(self) -> str:
-        """
-        Export entire bug in JSON safe format
+        """Export entire bug in JSON safe format
         May include attachments and comments
-
-        :return:
         """
         return json.dumps(self._bug, default=sanitize_bug)
 
@@ -442,15 +401,11 @@ class EnhancedBug(Bug):
 
     @classmethod
     def cache_bug(cls: Type["EnhancedBug"], bug: "EnhancedBug") -> "EnhancedBug":
-        """
-        Create a cached instance of EnhancedBug
+        """Create a cached instance of EnhancedBug
 
         :param bug: A EnhancedBug instance with Bugsy
-        :type bug: EnhancedBug
-        :return: A cached EnhancedBug instance
-        :rtype: EnhancedBug
+        :raise TypeError: Raises when instance is a cached bug
         """
-        # pylint: disable=protected-access
         if bug._bugsy is None:
             raise TypeError("Method not supported when using a cached bug")
 
@@ -459,15 +414,13 @@ class EnhancedBug(Bug):
         bug_data["attachments"] = [a.to_dict() for a in attachments]
 
         comments = bug.get_comments()
-        # pylint: disable=protected-access
         bug_data["comments"] = [c._comment for c in comments]
 
         return cls(None, **bug_data)
 
 
 class LocalAttachment(Attachment):
-    """
-    Class for storing attachments without access to bugzilla
+    """Class for storing attachments without access to bugzilla
 
     :param kwargs: Bug data
     """
@@ -477,15 +430,12 @@ class LocalAttachment(Attachment):
         super().__init__(None, **kwargs)
 
     def update(self) -> NoReturn:
-        """
-        Disable update
-        """
+        """Disable update"""
         raise TypeError("Method not supported when using a cached attachment")
 
 
 class LocalComment(Comment):
-    """
-    Class for storing comments without access to bugzilla
+    """Class for storing comments without access to bugzilla
 
     :param kwargs: Comment data
     """
@@ -495,23 +445,21 @@ class LocalComment(Comment):
         super().__init__(None, **kwargs)
 
     def add_tags(self, tags: Union[str, List[str]]) -> NoReturn:
-        """
-        Disable add_tags
+        """Disable add_tags
 
         :param tags:
+        :raise TypeError: Raises when instance is a cached comment
         """
         raise TypeError("Method not supported when using a cached comment")
 
     def remove_tags(self, tags: Union[str, List[str]]) -> NoReturn:
-        """
-        Disable remove_tags
+        """Disable remove_tags
 
         :param tags:
+        :raise TypeError: Raises when instance is a cached comment
         """
         raise TypeError("Method not supported when using a cached comment")
 
     def to_dict(self) -> Dict[str, Any]:
-        """
-        Return comment content as dict
-        """
+        """Return comment content as dict"""
         return cast(Dict[str, Any], self._comment)
