@@ -297,7 +297,7 @@ class BugMonitor:
 
         self.bug.commands = commands
 
-    def fetch_attachments(self, unpack: Optional[bool] = False) -> None:
+    def fetch_attachments(self, unpack: Optional[bool] = True) -> None:
         """Download all attachments and store them in self.working_dir
 
         :param unpack: Boolean indicating if archives should be unpacked
