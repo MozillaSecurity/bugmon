@@ -31,8 +31,6 @@ def identify_prefs(attachment_dir: Path) -> Union[Path, None]:
 class SimpleBrowserConfig(BaseEvaluatorConfig, BrowserEvaluator):
     """Simple Browser Evaluator Configuration"""
 
-    target = "firefox"
-
     @classmethod
     def iterate(
         cls, bug: EnhancedBug, working_dir: Path

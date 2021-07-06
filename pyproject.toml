@@ -61,7 +61,7 @@ toml = "^0.10.2"
 fuzzfetch = "1.3.3"
 bugsy = { git = "https://github.com/AutomatedTester/Bugsy.git" }
 black = "^19.10b0"
-autobisect = "^2.1.0"
+autobisect = "^3.0.1"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.3"

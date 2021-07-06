@@ -13,8 +13,6 @@ from ..bug import EnhancedBug
 class SimpleJSConfig(BaseEvaluatorConfig, JSEvaluator):
     """Simple Browser Evaluator Configuration"""
 
-    target = "js"
-
     @classmethod
     def iterate(
         cls, bug: EnhancedBug, working_dir: Path

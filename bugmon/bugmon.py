@@ -96,7 +96,6 @@ class BugMonitor:
 
         bisector = Bisector(
             evaluator,
-            evaluator.target,
             self.bug.branch,
             start,
             end,

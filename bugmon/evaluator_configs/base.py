@@ -13,11 +13,6 @@ from bugmon.bug import EnhancedBug
 class BaseEvaluatorConfig(Evaluator):
     """Base evaluator configuration class"""
 
-    @property
-    @abstractmethod
-    def target(self) -> str:
-        """The corresponding fuzzfetch target"""
-
     @classmethod
     @abstractmethod
     def iterate(
