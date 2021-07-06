@@ -38,6 +38,10 @@ class BugmonException(Exception):
     """Exception for Bugmon related issues"""
 
 
+class EvaluatorException(BugmonException):
+    """Exception when attempting to access uninitialized Evaluator"""
+
+
 class ReproductionResult:
     """Class for storing reproduction results"""
 
@@ -77,40 +81,40 @@ class BugMonitor:
         self._close_bug = False
 
     @property
-    def evaluator(self) -> Optional[BaseEvaluatorConfig]:
+    def evaluator(self) -> BaseEvaluatorConfig:
         """Returns the evaluator used for running the testcase
 
         If no evaluator is currently set, iterate over the evaluator configs until a
         successful configuration is identified.
         """
-        if self._evaluator is None:
-            bid = self.bug.initial_build_id
-            branch = self.bug.branch
+        if self._evaluator is not None:
+            return self._evaluator
 
-            self.fetch_attachments()
-            log.info("Attempting to identify an evaluator configuration...")
-            for EvaluatorConfig in EvaluatorConfigs:
-                for evaluator in EvaluatorConfig.iterate(self.bug, self.working_dir):
-                    evaluator_name = type(evaluator).__name__
-                    parameters = ", ".join(
-                        [f"{k}:{v}" for k, v in evaluator.__dict__.items()]
+        bid = self.bug.initial_build_id
+        branch = self.bug.branch
+
+        self.fetch_attachments()
+        log.info("Attempting to identify an evaluator configuration...")
+        for EvaluatorConfig in EvaluatorConfigs:
+            for evaluator in EvaluatorConfig.iterate(self.bug, self.working_dir):
+                evaluator_name = type(evaluator).__name__
+                parameters = ", ".join(
+                    [f"{k}:{v}" for k, v in evaluator.__dict__.items()]
+                )
+                log.info(f"Evaluator config: {evaluator_name} - {parameters}")
+                result = self._reproduce_bug(branch, bid)
+                if result.status == EvaluatorResult.BUILD_CRASHED:
+                    log.info("Successfully identified evaluator configuration!")
+                    self._evaluator = evaluator
+                    return self._evaluator
+                if result.status == EvaluatorResult.BUILD_FAILED:
+                    raise BugmonException(
+                        "Cannot identify evaluator without original build!"
                     )
-                    log.info(f"Evaluator config: {evaluator_name} - {parameters}")
-                    result = self._reproduce_bug(branch, bid)
 
-                    if result.status == EvaluatorResult.BUILD_CRASHED:
-                        log.info("Successfully identified evaluator configuration!")
-                        self._evaluator = evaluator
-                        return self.evaluator
-                    if result.status == EvaluatorResult.BUILD_FAILED:
-                        raise BugmonException(
-                            "Cannot identify evaluator without original build!"
-                        )
-
-            self.report(f"Unable to reproduce bug using mozilla-{branch} {bid}.")
-            self._close_bug = True
-
-        return self._evaluator
+        raise EvaluatorException(
+            f"Unable to reproduce bug using mozilla-{branch} {bid}."
+        )
 
     def _bisect(self) -> None:
         """Attempt to enumerate the changeset that introduced or fixed the bug"""
@@ -282,9 +286,6 @@ class BugMonitor:
         :param use_cache: Check for previous result using build/bid combination
         :raises BugmonException: Raises if the evaluator has not been set
         """
-        if self.evaluator is None:
-            raise BugmonException("Evaluator not set!")
-
         try:
             direction: Optional[BuildSearchOrder] = BuildSearchOrder.ASC
             if bid is None:
@@ -423,14 +424,18 @@ class BugMonitor:
             self.commit()
             return
 
-        if self.needs_verify():
-            self._verify_fixed()
-        elif self.needs_confirm():
-            self._confirm_open()
-        elif self.needs_bisect():
-            self._bisect()
-        else:
-            log.info("No actions necessary.  Exiting")
+        try:
+            if self.needs_verify():
+                self._verify_fixed()
+            elif self.needs_confirm():
+                self._confirm_open()
+            elif self.needs_bisect():
+                self._bisect()
+            else:
+                log.info("No actions necessary.  Exiting")
+        except EvaluatorException as e:
+            self.report(str(e))
+            self._close_bug = True
 
         # Post updates and comments
         self.commit()
