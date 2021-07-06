@@ -9,7 +9,7 @@ from autobisect import BrowserEvaluator
 from .base import BaseEvaluatorConfig
 from ..bug import EnhancedBug
 
-ALLOWED = ["*.html", "*.svg", "*.xml", "*"]
+ALLOWED = ["*.htm", "*.html", "*.svg", "*.xml", "*"]
 EXCLUDED = ["*.js"]
 
 
