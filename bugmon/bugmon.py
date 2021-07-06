@@ -280,7 +280,11 @@ class BugMonitor:
         :param branch: Branch where build is found
         :param bid: Build id (rev or date)
         :param use_cache: Check for previous result using build/bid combination
+        :raises BugmonException: Raises if the evaluator has not been set
         """
+        if self.evaluator is None:
+            raise BugmonException("Evaluator not set!")
+
         try:
             direction: Optional[BuildSearchOrder] = BuildSearchOrder.ASC
             if bid is None:
@@ -308,7 +312,6 @@ class BugMonitor:
         build_str = f"mozilla-{self.bug.branch} {build.id}-{build.changeset[:12]}"
         log.info(f"Attempting to reproduce bug on {build_str}")
 
-        assert self.evaluator is not None
         with self.build_manager.get_build(build, self.evaluator.target) as build_path:
             status = self.evaluator.evaluate_testcase(build_path)
             self.results[branch][build.id] = ReproductionResult(status, build_str)
