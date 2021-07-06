@@ -73,14 +73,51 @@ class BugMonitor:
         self.results: Dict[str, Dict[str, ReproductionResult]] = {}
         self.build_manager = BuildManager()
 
+        self._evaluator: Optional[BaseEvaluatorConfig] = None
         self._close_bug = False
 
-    def _bisect(self, evaluator: BaseEvaluatorConfig) -> None:
-        """Attempt to enumerate the changeset that introduced or fixed the bug
+    @property
+    def evaluator(self) -> Optional[BaseEvaluatorConfig]:
+        """Returns the evaluator used for running the testcase
 
-        :param evaluator: Evaluator instance to use for reproducing the issue
+        If no evaluator is currently set, iterate over the evaluator configs until a
+        successful configuration is identified.
         """
-        tip = self._reproduce_bug(evaluator, self.bug.branch)
+        if self._evaluator is None:
+            bid = self.bug.initial_build_id
+            branch = self.bug.branch
+
+            self.fetch_attachments()
+            log.info("Attempting to identify an evaluator configuration...")
+            for EvaluatorConfig in EvaluatorConfigs:
+                for evaluator in EvaluatorConfig.iterate(self.bug, self.working_dir):
+                    evaluator_name = type(evaluator).__name__
+                    parameters = ", ".join(
+                        [f"{k}:{v}" for k, v in evaluator.__dict__.items()]
+                    )
+                    log.info(f"Evaluator config: {evaluator_name} - {parameters}")
+                    result = self._reproduce_bug(branch, bid)
+
+                    if result.status == EvaluatorResult.BUILD_CRASHED:
+                        log.info("Successfully identified evaluator configuration!")
+                        self._evaluator = evaluator
+                        return self.evaluator
+                    if result.status == EvaluatorResult.BUILD_FAILED:
+                        raise BugmonException(
+                            "Cannot identify evaluator without original build!"
+                        )
+
+            self.report(f"Unable to reproduce bug using mozilla-{branch} {bid}.")
+            self._close_bug = True
+
+        return self._evaluator
+
+    def _bisect(self) -> None:
+        """Attempt to enumerate the changeset that introduced or fixed the bug"""
+        if self.evaluator is None:
+            return
+
+        tip = self._reproduce_bug(self.bug.branch)
         if tip.status == EvaluatorResult.BUILD_FAILED:
             log.warning("Failed to bisect bug (bad build)")
             return
@@ -95,7 +132,7 @@ class BugMonitor:
             end = self.bug.initial_build_id
 
         bisector = Bisector(
-            evaluator,
+            self.evaluator,
             self.bug.branch,
             start,
             end,
@@ -131,12 +168,12 @@ class BugMonitor:
                 *output,
             )
 
-    def _confirm_open(self, evaluator: BaseEvaluatorConfig) -> None:
-        """Attempt to confirm open test cases
+    def _confirm_open(self) -> None:
+        """Attempt to confirm open test cases"""
+        if self.evaluator is None:
+            return
 
-        :param evaluator: Evaluator instance to use for reproducing the issue
-        """
-        tip = self._reproduce_bug(evaluator, self.bug.branch)
+        tip = self._reproduce_bug(self.bug.branch)
         if tip.status == EvaluatorResult.BUILD_FAILED:
             log.warning("Failed to confirm bug (bad build)")
             return
@@ -144,17 +181,17 @@ class BugMonitor:
         if tip.status == EvaluatorResult.BUILD_CRASHED:
             if "confirmed" not in self.bug.commands:
                 self.report(f"Verified bug as reproducible on {tip.build_str}.")
-                self._bisect(evaluator)
+                self._bisect()
             else:
                 change = dt.strptime(self.bug.last_change_time, "%Y-%m-%dT%H:%M:%SZ")
                 if dt.now() - timedelta(days=30) > change:
                     self.report(f"Bug remains reproducible on {tip.build_str}")
         elif tip.status == EvaluatorResult.BUILD_PASSED:
             bid = self.bug.initial_build_id
-            orig = self._reproduce_bug(evaluator, self.bug.branch, bid)
+            orig = self._reproduce_bug(self.bug.branch, bid)
             if orig.status == EvaluatorResult.BUILD_CRASHED:
                 log.info(f"Testcase crashes using the initial build ({orig.build_str})")
-                self._bisect(evaluator)
+                self._bisect()
             elif orig.status == EvaluatorResult.BUILD_PASSED:
                 self.report(
                     "Unable to reproduce bug using the following builds:",
@@ -170,22 +207,23 @@ class BugMonitor:
         if "confirm" in self.bug.commands:
             self.remove_command("confirm")
 
-    def _verify_fixed(self, evaluator: BaseEvaluatorConfig) -> None:
+    def _verify_fixed(self) -> None:
         """Attempt to verify the bug state
 
         Bugs marked as resolved and fixed are verified to ensure that they are in fact,
         fixed.  All other bugs will be tested to determine if the bug still reproduces
-
-        :param evaluator: Evaluator instance to use for reproducing the issue
         """
+        if self.evaluator is None:
+            return
+
         if self.bug.status != "VERIFIED":
             patch_rev = self.bug.find_patch_rev(self.bug.branch)
-            tip = self._reproduce_bug(evaluator, self.bug.branch, patch_rev)
+            tip = self._reproduce_bug(self.bug.branch, patch_rev)
 
             build_str = tip.build_str
             if tip.status == EvaluatorResult.BUILD_PASSED:
                 initial = self._reproduce_bug(
-                    evaluator, self.bug.branch, self.bug.initial_build_id
+                    self.bug.branch, self.bug.initial_build_id
                 )
                 if initial.status != EvaluatorResult.BUILD_CRASHED:
                     self.report(
@@ -212,7 +250,7 @@ class BugMonitor:
             # Only check branches if bug is marked as fixed
             if getattr(self.bug, flag) == "fixed":
                 patch_rev = self.bug.find_patch_rev(alias)
-                branch = self._reproduce_bug(evaluator, alias, patch_rev)
+                branch = self._reproduce_bug(alias, patch_rev)
                 if branch.status == EvaluatorResult.BUILD_PASSED:
                     log.info(f"Verified fixed on {flag}")
                     setattr(self.bug, flag, "verified")
@@ -229,7 +267,6 @@ class BugMonitor:
 
     def _reproduce_bug(
         self,
-        evaluator: BaseEvaluatorConfig,
         branch: str,
         bid: Optional[str] = None,
         use_cache: Optional[bool] = True,
@@ -242,7 +279,6 @@ class BugMonitor:
 
         :param branch: Branch where build is found
         :param bid: Build id (rev or date)
-        :param evaluator: The evaluator to use for running the testcase
         :param use_cache: Check for previous result using build/bid combination
         """
         try:
@@ -272,8 +308,9 @@ class BugMonitor:
         build_str = f"mozilla-{self.bug.branch} {build.id}-{build.changeset[:12]}"
         log.info(f"Attempting to reproduce bug on {build_str}")
 
-        with self.build_manager.get_build(build, evaluator.target) as build_path:
-            status = evaluator.evaluate_testcase(build_path)
+        assert self.evaluator is not None
+        with self.build_manager.get_build(build, self.evaluator.target) as build_path:
+            status = self.evaluator.evaluate_testcase(build_path)
             self.results[branch][build.id] = ReproductionResult(status, build_str)
 
             return self.results[branch][build.id]
@@ -371,34 +408,6 @@ class BugMonitor:
 
         return True
 
-    def detect_config(self) -> Optional[BaseEvaluatorConfig]:
-        """Detect the evaluator configuration used to reproduce the issue"""
-        bid = self.bug.initial_build_id
-        branch = self.bug.branch
-
-        self.fetch_attachments()
-        log.info("Attempting to identify an evaluator configuration...")
-        for EvaluatorConfig in EvaluatorConfigs:
-            for evaluator in EvaluatorConfig.iterate(self.bug, self.working_dir):
-                evaluator_name = type(evaluator).__name__
-                parameters = ", ".join(
-                    [f"{k}:{v}" for k, v in evaluator.__dict__.items()]
-                )
-                log.info(f"Evaluator config: {evaluator_name} - {parameters}")
-                result = self._reproduce_bug(evaluator, branch, bid)
-
-                if result.status == EvaluatorResult.BUILD_CRASHED:
-                    log.info("Successfully identified evaluator configuration!")
-                    return evaluator
-                if result.status == EvaluatorResult.BUILD_FAILED:
-                    log.error("Cannot reproduce bug without build!")
-                    return None
-
-        message = f"Unable to reproduce bug using mozilla-{branch} {bid}."
-        self.report(message)
-        self._close_bug = True
-        return None
-
     def process(self) -> None:
         """Process bugmon commands present in whiteboard
 
@@ -411,17 +420,12 @@ class BugMonitor:
             self.commit()
             return
 
-        evaluator = self.detect_config()
-        if evaluator is None:
-            self.commit()
-            return
-
         if self.needs_verify():
-            self._verify_fixed(evaluator)
+            self._verify_fixed()
         elif self.needs_confirm():
-            self._confirm_open(evaluator)
+            self._confirm_open()
         elif self.needs_bisect():
-            self._bisect(evaluator)
+            self._bisect()
         else:
             log.info("No actions necessary.  Exiting")
 
