@@ -9,7 +9,8 @@ from autobisect import BrowserEvaluator
 from .base import BaseEvaluatorConfig
 from ..bug import EnhancedBug
 
-EXTENSION_ORDER = ["html", "svg", "xml", "*"]
+ALLOWED = ["*.html", "*.svg", "*.xml", "*"]
+EXCLUDED = ["*.js"]
 
 
 def identify_prefs(attachment_dir: Path) -> Union[Path, None]:
@@ -42,12 +43,18 @@ class SimpleBrowserConfig(BaseEvaluatorConfig, BrowserEvaluator):
         prefs = identify_prefs(working_dir)
 
         processed = []
-        for ext in EXTENSION_ORDER:
-            for filename in working_dir.glob(f"*.{ext}"):
-                if filename not in processed:
-                    processed.append(filename)
-                else:
+        for allowed_pattern in ALLOWED:
+            for filename in working_dir.glob(f"{allowed_pattern}"):
+                is_excluded = False
+                for excluded_pattern in EXCLUDED:
+                    if filename.match(excluded_pattern):
+                        is_excluded = True
+                        break
+
+                if is_excluded or filename in processed:
                     continue
+
+                processed.append(filename)
 
                 yield cls(
                     filename,
