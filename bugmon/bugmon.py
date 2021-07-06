@@ -377,18 +377,21 @@ class BugMonitor:
         branch = self.bug.branch
 
         self.fetch_attachments()
-        log.info("Attempting to identify an evaluator configuration")
+        log.info("Attempting to identify an evaluator configuration...")
         for EvaluatorConfig in EvaluatorConfigs:
             for evaluator in EvaluatorConfig.iterate(self.bug, self.working_dir):
+                evaluator_name = type(evaluator).__name__
+                parameters = ", ".join(
+                    [f"{k}:{v}" for k, v in evaluator.__dict__.items()]
+                )
+                log.info(f"Evaluator config: {evaluator_name} - {parameters}")
                 result = self._reproduce_bug(evaluator, branch, bid)
 
                 if result.status == EvaluatorResult.BUILD_CRASHED:
-                    log.info(
-                        f"Bug successfully reproduced issue using {type(evaluator).__name__}"
-                    )
+                    log.info("Successfully identified evaluator configuration!")
                     return evaluator
                 if result.status == EvaluatorResult.BUILD_FAILED:
-                    log.error("Cannot reproduce bug without build")
+                    log.error("Cannot reproduce bug without build!")
                     return None
 
         message = f"Unable to reproduce bug using mozilla-{branch} {bid}."
@@ -419,6 +422,8 @@ class BugMonitor:
             self._confirm_open(evaluator)
         elif self.needs_bisect():
             self._bisect(evaluator)
+        else:
+            log.info("No actions necessary.  Exiting")
 
         # Post updates and comments
         self.commit()
