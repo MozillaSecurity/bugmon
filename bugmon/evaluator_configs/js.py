@@ -26,5 +26,11 @@ class SimpleJSConfig(BaseEvaluatorConfig, JSEvaluator):
         :param bug: The bug to evaluate
         :param working_dir: Directory containing bug attachments
         """
-        for filename in working_dir.glob("*"):
-            yield cls(filename, flags=bug.runtime_opts)
+        processed = []
+        for allowed_pattern in ALLOWED:
+            for filename in working_dir.glob(f"{allowed_pattern}"):
+                if filename in processed:
+                    continue
+
+                processed.append(filename)
+                yield cls(filename, flags=bug.runtime_opts)
