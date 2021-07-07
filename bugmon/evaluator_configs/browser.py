@@ -10,7 +10,7 @@ from .base import BaseEvaluatorConfig
 from ..bug import EnhancedBug
 
 ALLOWED = ["*.htm", "*.html", "*.svg", "*.xml", "*"]
-EXCLUDED = ["*.js"]
+EXCLUDED = ["*.js", "*.txt"]
 
 
 def identify_prefs(attachment_dir: Path) -> Union[Path, None]:

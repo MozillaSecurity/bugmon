@@ -9,6 +9,8 @@ from autobisect import JSEvaluator
 from .base import BaseEvaluatorConfig
 from ..bug import EnhancedBug
 
+ALLOWED = ["*.js", "*"]
+
 
 class SimpleJSConfig(BaseEvaluatorConfig, JSEvaluator):
     """Simple Browser Evaluator Configuration"""
