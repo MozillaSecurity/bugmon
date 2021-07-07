@@ -77,7 +77,7 @@ class BugMonitor:
 
     def _bisect(self, evaluator: Optional[BaseEvaluatorConfig] = None) -> None:
         """Attempt to enumerate the changeset that introduced or fixed the bug"""
-        evaluator = self.detect_config() if evaluator else None
+        evaluator = evaluator if evaluator is not None else self.detect_config()
         if evaluator is None:
             return
 
