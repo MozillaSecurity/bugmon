@@ -381,6 +381,8 @@ class BugMonitor:
         bid = self.bug.initial_build_id
         branch = self.bug.branch
 
+        build_str = None
+
         self.fetch_attachments()
         log.info("Attempting to identify an evaluator configuration...")
         for EvaluatorConfig in EvaluatorConfigs:
@@ -398,7 +400,14 @@ class BugMonitor:
                     log.error("Cannot identify evaluator without original build!")
                     return None
 
-        self.report(f"Unable to reproduce bug using mozilla-{branch} {bid}.")
+                # Record build string for reporting failed result
+                if build_str is None and result.build_str is not None:
+                    build_str = result.build_str
+
+        self.report(
+            f"Unable to reproduce bug using q build nearest the original: {build_str}.  "
+            + "Without a baseline, bugmon is unable to analyze this bug."
+        )
         self._close_bug = True
         return None
 
@@ -441,14 +450,14 @@ class BugMonitor:
             if "bugmon" in self.bug.keywords:
                 self.bug.keywords.remove("bugmon")
                 self.report(
-                    "Removing bugmon keyword as no further action possible.",
-                    "Please review the bug and re-add the keyword for further analysis.",
+                    "Removing bugmon keyword as no further action possible.  "
+                    + "Please review the bug and re-add the keyword for further analysis."
                 )
 
         if self.queue:
             results = "\n".join(self.queue)
             self.bug.comment = {
-                "body": f"Bugmon Analysis:\n{results}",
+                "body": f"**Bugmon Analysis**\n{results}",
                 "is_private": False,
                 "is_markdown": True,
             }
