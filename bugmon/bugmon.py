@@ -405,7 +405,7 @@ class BugMonitor:
                     build_str = result.build_str
 
         self.report(
-            f"Unable to reproduce bug using q build nearest the original: {build_str}.  "
+            f"Unable to reproduce bug using build {build_str}.  "
             + "Without a baseline, bugmon is unable to analyze this bug."
         )
         self._close_bug = True
