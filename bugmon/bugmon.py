@@ -411,13 +411,15 @@ class BugMonitor:
         self._close_bug = True
         return None
 
-    def process(self) -> None:
+    def process(self, force_confirm: bool = False) -> None:
         """Process bugmon commands present in whiteboard
 
         Available commands:
         verify - Attempt to verify the bug state
         bisect - Attempt to bisect the bug regression or, if RESOLVED, the bug fix
         confirm - Attempt to confirm that testcase reproduces
+
+        :param force_confirm: Force confirmation regardless of bug state
         """
         if not self.is_supported():
             self.commit()
@@ -425,7 +427,7 @@ class BugMonitor:
 
         if self.needs_verify():
             self._verify_fixed()
-        elif self.needs_confirm():
+        elif force_confirm or self.needs_confirm():
             self._confirm_open()
         elif self.needs_bisect():
             self._bisect()
