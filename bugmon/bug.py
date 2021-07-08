@@ -133,7 +133,9 @@ class EnhancedBug(Bug):
                 "ThreadSanitizer" in self.comment_zero
                 or "--enable-thread-sanitizer" in self.comment_zero
             )
-            debug = "--enable-debug" in self.comment_zero
+            debug = (
+                "--enable-debug" in self.comment_zero or "assertion" in self.keywords
+            )
             fuzzing = "--enable-fuzzing" in self.comment_zero
             coverage = "--enable-coverage" in self.comment_zero
             valgrind = "--enable-valgrind" in self.comment_zero
