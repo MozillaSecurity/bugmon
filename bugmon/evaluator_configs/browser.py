@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 from pathlib import Path
-from typing import Union, Generator
+from typing import Union, Iterator
 
 from autobisect import BrowserEvaluator
 
@@ -35,7 +35,7 @@ class SimpleBrowserConfig(BaseEvaluatorConfig, BrowserEvaluator):
     @classmethod
     def iterate(
         cls, bug: EnhancedBug, working_dir: Path
-    ) -> Generator["SimpleBrowserConfig", None, None]:
+    ) -> Iterator["SimpleBrowserConfig"]:
         """Generator for iterating over possible BrowserEvaluator configurations
         :param bug: The bug to evaluate
         :param working_dir: Directory containing bug attachments

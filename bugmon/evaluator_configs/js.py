@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 from pathlib import Path
-from typing import Generator
+from typing import Iterator
 
 from autobisect import JSEvaluator
 
@@ -16,9 +16,7 @@ class SimpleJSConfig(BaseEvaluatorConfig, JSEvaluator):
     """Simple Browser Evaluator Configuration"""
 
     @classmethod
-    def iterate(
-        cls, bug: EnhancedBug, working_dir: Path
-    ) -> Generator["SimpleJSConfig", None, None]:
+    def iterate(cls, bug: EnhancedBug, working_dir: Path) -> Iterator["SimpleJSConfig"]:
         """Generator for iterating over possible JSEvaluator configurations
 
         Iterates over file attachments to determine the correct entry-point.
