@@ -214,7 +214,7 @@ class EnhancedBug(Bug):
                 if token.startswith("`") and token.endswith("`"):
                     token = token[1:-1]
                 if re.match(r"([a-z0-9_]+=[a-z0-9])", token, re.IGNORECASE):
-                    name, value = token.split("=")
+                    name, value = token.split("=", 1)
                     self._env_variables[name] = value
 
         return self._env_variables
