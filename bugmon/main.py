@@ -84,7 +84,7 @@ def main(argv: Optional[Dict[str, Any]] = None) -> int:
         bug_list = ",".join(args.bugs)
         params = {"id": bug_list}
     else:
-        params = json.load(args.search.read_text())
+        params = json.loads(args.search.read_text())
         params["include_fields"] = "_default"
 
     response = bugsy.request("bug", params=params)

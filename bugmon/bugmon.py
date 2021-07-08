@@ -11,21 +11,21 @@ import io
 import json
 import logging
 import os
-import re
 import zipfile
 from datetime import datetime as dt
 from datetime import timedelta
 from pathlib import Path
 from typing import Optional, List, Dict, cast
 
-from autobisect import Evaluator
 from autobisect.bisect import BisectionResult, Bisector
 from autobisect.build_manager import BuildManager
-from autobisect.evaluators import BrowserEvaluator, JSEvaluator, EvaluatorResult
+from autobisect.evaluators import EvaluatorResult
 from bugsy.bugsy import Bugsy
 from fuzzfetch import BuildSearchOrder, Fetcher, FetcherException
 
 from bugmon.bug import EnhancedBug
+from bugmon.evaluator_configs import EvaluatorConfigs
+from bugmon.evaluator_configs.base import BaseEvaluatorConfig
 
 log = logging.getLogger("bugmon")
 
@@ -71,28 +71,17 @@ class BugMonitor:
         self.dry_run = dry_run
         self.queue: List[str] = []
         self.results: Dict[str, Dict[str, ReproductionResult]] = {}
-
-        self._close_bug = False
-        self._testcase: Optional[Path] = None
-
-        self.target: Optional[str] = None
-        self.evaluator: Optional[Evaluator] = None
         self.build_manager = BuildManager()
 
-    @property
-    def prefs(self) -> Optional[Path]:
-        """Identify prefs in working_dir"""
-        prefs_path = None
-        for filename in self.working_dir.glob("*.js"):
-            file_path = self.working_dir / filename
-            if "user_pref" in file_path.read_text():
-                prefs_path = file_path
-                break
-        return prefs_path
+        self._close_bug = False
 
-    def _bisect(self) -> None:
+    def _bisect(self, evaluator: Optional[BaseEvaluatorConfig] = None) -> None:
         """Attempt to enumerate the changeset that introduced or fixed the bug"""
-        tip = self._reproduce_bug(self.bug.branch)
+        evaluator = evaluator if evaluator is not None else self.detect_config()
+        if evaluator is None:
+            return
+
+        tip = self._reproduce_bug(evaluator, self.bug.branch)
         if tip.status == EvaluatorResult.BUILD_FAILED:
             log.warning("Failed to bisect bug (bad build)")
             return
@@ -106,11 +95,8 @@ class BugMonitor:
             start = None  # type: ignore
             end = self.bug.initial_build_id
 
-        assert isinstance(self.evaluator, Evaluator)
-        assert self.target is not None
         bisector = Bisector(
-            self.evaluator,
-            self.target,
+            evaluator,
             self.bug.branch,
             start,
             end,
@@ -148,7 +134,11 @@ class BugMonitor:
 
     def _confirm_open(self) -> None:
         """Attempt to confirm open test cases"""
-        tip = self._reproduce_bug(self.bug.branch)
+        evaluator = self.detect_config()
+        if evaluator is None:
+            return
+
+        tip = self._reproduce_bug(evaluator, self.bug.branch)
         if tip.status == EvaluatorResult.BUILD_FAILED:
             log.warning("Failed to confirm bug (bad build)")
             return
@@ -156,16 +146,17 @@ class BugMonitor:
         if tip.status == EvaluatorResult.BUILD_CRASHED:
             if "confirmed" not in self.bug.commands:
                 self.report(f"Verified bug as reproducible on {tip.build_str}.")
-                self._bisect()
+                self._bisect(evaluator)
             else:
                 change = dt.strptime(self.bug.last_change_time, "%Y-%m-%dT%H:%M:%SZ")
                 if dt.now() - timedelta(days=30) > change:
                     self.report(f"Bug remains reproducible on {tip.build_str}")
         elif tip.status == EvaluatorResult.BUILD_PASSED:
-            orig = self._reproduce_bug(self.bug.branch, self.bug.initial_build_id)
+            bid = self.bug.initial_build_id
+            orig = self._reproduce_bug(evaluator, self.bug.branch, bid)
             if orig.status == EvaluatorResult.BUILD_CRASHED:
                 log.info(f"Testcase crashes using the initial build ({orig.build_str})")
-                self._bisect()
+                self._bisect(evaluator)
             elif orig.status == EvaluatorResult.BUILD_PASSED:
                 self.report(
                     "Unable to reproduce bug using the following builds:",
@@ -184,17 +175,23 @@ class BugMonitor:
     def _verify_fixed(self) -> None:
         """Attempt to verify the bug state
 
-        Bugs marked as resolved and fixed are verified to ensure that they are in fact, fixed
-        All other bugs will be tested to determine if the bug still reproduces
+        Bugs marked as resolved and fixed are verified to ensure that they are in fact,
+        fixed.  All other bugs will be tested to determine if the bug still reproduces
         """
+        evaluator = self.detect_config()
+        if evaluator is None:
+            return
+
         if self.bug.status != "VERIFIED":
             patch_rev = self.bug.find_patch_rev(self.bug.branch)
-            tip = self._reproduce_bug(self.bug.branch, patch_rev)
+            tip = self._reproduce_bug(evaluator, self.bug.branch, patch_rev)
 
             build_str = tip.build_str
             if tip.status == EvaluatorResult.BUILD_PASSED:
                 initial = self._reproduce_bug(
-                    self.bug.branch, self.bug.initial_build_id
+                    evaluator,
+                    self.bug.branch,
+                    self.bug.initial_build_id,
                 )
                 if initial.status != EvaluatorResult.BUILD_CRASHED:
                     self.report(
@@ -221,7 +218,7 @@ class BugMonitor:
             # Only check branches if bug is marked as fixed
             if getattr(self.bug, flag) == "fixed":
                 patch_rev = self.bug.find_patch_rev(alias)
-                branch = self._reproduce_bug(alias, patch_rev)
+                branch = self._reproduce_bug(evaluator, alias, patch_rev)
                 if branch.status == EvaluatorResult.BUILD_PASSED:
                     log.info(f"Verified fixed on {flag}")
                     setattr(self.bug, flag, "verified")
@@ -237,18 +234,23 @@ class BugMonitor:
             self._close_bug = True
 
     def _reproduce_bug(
-        self, branch: str, bid: Optional[str] = None
+        self,
+        evaluator: BaseEvaluatorConfig,
+        branch: str,
+        bid: Optional[str] = None,
+        use_cache: Optional[bool] = True,
     ) -> ReproductionResult:
-        """Method for evaluating testcase using the supplied branch and optional build ID
-        Caches previous results
+        """Reproduces the bug
 
+        Attempts to reproduce the bug using the specified branch.  If a build id is not
+        specified, tip will be used.  Supports caching previous results unless a custom
+        evaluator has been supplied.
+
+        :param evaluator: The evaluator to use for running the testcase
         :param branch: Branch where build is found
         :param bid: Build id (rev or date)
-        :raises BugmonException: Raises if the evaluator has not been set
+        :param use_cache: Check for previous result using build/bid combination
         """
-        if self.evaluator is None:
-            raise BugmonException("Evaluator not set!")
-
         try:
             direction: Optional[BuildSearchOrder] = BuildSearchOrder.ASC
             if bid is None:
@@ -268,7 +270,7 @@ class BugMonitor:
 
         # Check if this branch and build was already tested
         if branch in self.results:
-            if build.id in self.results[branch]:
+            if use_cache and build.id in self.results[branch]:
                 return self.results[branch][build.id]
         else:
             self.results[branch] = {}
@@ -276,11 +278,9 @@ class BugMonitor:
         build_str = f"mozilla-{self.bug.branch} {build.id}-{build.changeset[:12]}"
         log.info(f"Attempting to reproduce bug on {build_str}")
 
-        assert self.target is not None
-        with self.build_manager.get_build(build, self.target) as build_path:
-            status = self.evaluator.evaluate_testcase(build_path)
+        with self.build_manager.get_build(build, evaluator.target) as build_path:
+            status = evaluator.evaluate_testcase(build_path)
             self.results[branch][build.id] = ReproductionResult(status, build_str)
-
             return self.results[branch][build.id]
 
     def add_command(self, key: str, value: None = None) -> None:
@@ -302,8 +302,11 @@ class BugMonitor:
 
         self.bug.commands = commands
 
-    def fetch_attachments(self) -> Optional[Path]:
-        """Download all attachments and store them in self.working_dir"""
+    def fetch_attachments(self, unpack: Optional[bool] = True) -> None:
+        """Download all attachments and store them in self.working_dir
+
+        :param unpack: Boolean indicating if archives should be unpacked
+        """
         attachments = filter(lambda a: not a.is_obsolete, self.bug.get_attachments())
         for attachment in sorted(attachments, key=lambda a: cast(str, a.creation_time)):
             try:
@@ -312,36 +315,19 @@ class BugMonitor:
                 log.warning("Failed to decode attachment: %s", e)
                 continue
 
-            if attachment.file_name.endswith(".zip"):
+            if unpack and attachment.file_name.endswith(".zip"):
                 try:
                     with zipfile.ZipFile(io.BytesIO(data)) as z:
                         for filename in z.namelist():
-                            if os.path.exists(filename):
-                                log.warning(
-                                    "Duplicate filename identified: %s", filename
-                                )
+                            if os.path.exists(self.working_dir / filename):
+                                log.warning("Duplicate filename: %s", filename)
                             z.extract(filename, self.working_dir)
-                            if filename.lower().startswith("test"):
-                                if self._testcase is not None:
-                                    raise BugmonException(
-                                        "Multiple testcases identified!"
-                                    )
-                                self._testcase = Path(self.working_dir, filename)
                 except zipfile.BadZipFile as e:
                     log.warning("Failed to decompress attachment: %s", e)
                     continue
 
             else:
-                file_path = Path(self.working_dir, attachment.file_name)
-                file_path.write_bytes(data)
-                r = re.compile(r"^testcase.*$", re.IGNORECASE)
-                targets = [attachment.file_name, attachment.description]
-                if any(r.match(target) for target in targets):
-                    if self._testcase is not None:
-                        raise BugmonException("Multiple testcases identified!")
-                    self._testcase = file_path
-
-        return self._testcase
+                Path(self.working_dir, attachment.file_name).write_bytes(data)
 
     def needs_bisect(self) -> bool:
         """Helper function to determine eligibility for 'bisect'"""
@@ -386,18 +372,44 @@ class BugMonitor:
         if self.bug.resolution in ("DUPLICATE", "INVALID", "WORKSFORME", "WONTFIX"):
             self.report(f"No valid actions for resolution ({self.bug.resolution})")
             self._close_bug = True
-
-        # Check that we can parse the testcase
-        if self.fetch_attachments() is None:
-            self.report(
-                "Failed to identify testcase.  "
-                "Please ensure that the testcase meets the requirements identified here: "
-                "https://github.com/MozillaSecurity/bugmon#testcase-identification",
-            )
-            self._close_bug = True
             return False
 
         return True
+
+    def detect_config(self) -> Optional[BaseEvaluatorConfig]:
+        """Detect the evaluator configuration used to reproduce the issue"""
+        bid = self.bug.initial_build_id
+        branch = self.bug.branch
+
+        build_str = None
+
+        self.fetch_attachments()
+        log.info("Attempting to identify an evaluator configuration...")
+        for EvaluatorConfig in EvaluatorConfigs:
+            for evaluator in EvaluatorConfig.iterate(self.bug, self.working_dir):
+                evaluator_name = type(evaluator).__name__
+                parameters = ", ".join(
+                    [f"{k}:{v}" for k, v in evaluator.__dict__.items()]
+                )
+                log.info(f"Evaluator config: {evaluator_name} - {parameters}")
+                result = self._reproduce_bug(evaluator, branch, bid)
+                if result.status == EvaluatorResult.BUILD_CRASHED:
+                    log.info("Successfully identified evaluator configuration!")
+                    return evaluator
+                if result.status == EvaluatorResult.BUILD_FAILED:
+                    log.error("Cannot identify evaluator without original build!")
+                    return None
+
+                # Record build string for reporting failed result
+                if build_str is None and result.build_str is not None:
+                    build_str = result.build_str
+
+        self.report(
+            f"Unable to reproduce bug using build {build_str}.  "
+            + "Without a baseline, bugmon is unable to analyze this bug."
+        )
+        self._close_bug = True
+        return None
 
     def process(self) -> None:
         """Process bugmon commands present in whiteboard
@@ -411,27 +423,14 @@ class BugMonitor:
             self.commit()
             return
 
-        # Setup the evaluators
-        assert isinstance(self._testcase, Path)
-        if self.bug.component.lower().startswith("javascript"):
-            self.target = "js"
-            self.evaluator = JSEvaluator(self._testcase, flags=self.bug.runtime_opts)
-        else:
-            self.target = "firefox"
-            self.evaluator = BrowserEvaluator(
-                self._testcase,
-                env=self.bug.env,
-                prefs=self.prefs,
-                repeat=10,
-                timeout=60,
-            )
-
         if self.needs_verify():
             self._verify_fixed()
         elif self.needs_confirm():
             self._confirm_open()
         elif self.needs_bisect():
             self._bisect()
+        else:
+            log.info("No actions necessary.  Exiting")
 
         # Post updates and comments
         self.commit()
@@ -451,14 +450,14 @@ class BugMonitor:
             if "bugmon" in self.bug.keywords:
                 self.bug.keywords.remove("bugmon")
                 self.report(
-                    "Removing bugmon keyword as no further action possible.",
-                    "Please review the bug and re-add the keyword for further analysis.",
+                    "Removing bugmon keyword as no further action possible.  "
+                    + "Please review the bug and re-add the keyword for further analysis."
                 )
 
         if self.queue:
             results = "\n".join(self.queue)
             self.bug.comment = {
-                "body": f"Bugmon Analysis:\n{results}",
+                "body": f"**Bugmon Analysis**\n{results}",
                 "is_private": False,
                 "is_markdown": True,
             }
