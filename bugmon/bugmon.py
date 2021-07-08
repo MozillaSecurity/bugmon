@@ -319,7 +319,7 @@ class BugMonitor:
                 try:
                     with zipfile.ZipFile(io.BytesIO(data)) as z:
                         for filename in z.namelist():
-                            if os.path.exists(filename):
+                            if os.path.exists(self.working_dir / filename):
                                 log.warning("Duplicate filename: %s", filename)
                             z.extract(filename, self.working_dir)
                 except zipfile.BadZipFile as e:
