@@ -34,6 +34,12 @@ def parse_args(argv: Any = None) -> argparse.Namespace:
         action="store_true",
         help="Disable bug modification",
     )
+    parser.add_argument(
+        "-f",
+        "--force-confirm",
+        action="store_true",
+        help="Force bug confirmation regardless of status",
+    )
 
     # Bug selection
     bugs = parser.add_mutually_exclusive_group(required=True)
@@ -99,7 +105,7 @@ def main(argv: Optional[Dict[str, Any]] = None) -> int:
                     f"(Status: {bugmon.bug.status}, "
                     f"Resolution: {bugmon.bug.resolution})"
                 )
-                bugmon.process()
+                bugmon.process(args.force_confirm)
             except BugmonException as e:
                 log.error(f"Error processing bug {bug.id}: {e}")
                 return 1
