@@ -12,8 +12,6 @@ import json
 import logging
 import os
 import zipfile
-from datetime import datetime as dt
-from datetime import timedelta
 from pathlib import Path
 from typing import Optional, List, Dict, cast
 
@@ -147,10 +145,10 @@ class BugMonitor:
             if "confirmed" not in self.bug.commands:
                 self.report(f"Verified bug as reproducible on {tip.build_str}.")
                 self._bisect(evaluator)
-            else:
-                change = dt.strptime(self.bug.last_change_time, "%Y-%m-%dT%H:%M:%SZ")
-                if dt.now() - timedelta(days=30) > change:
-                    self.report(f"Bug remains reproducible on {tip.build_str}")
+            # else:
+            #     change = dt.strptime(self.bug.last_change_time, "%Y-%m-%dT%H:%M:%SZ")
+            #     if dt.now() - timedelta(days=30) > change:
+            #         self.report(f"Bug remains reproducible on {tip.build_str}")
         elif tip.status == EvaluatorResult.BUILD_PASSED:
             bid = self.bug.initial_build_id
             orig = self._reproduce_bug(evaluator, self.bug.branch, bid)
@@ -411,13 +409,15 @@ class BugMonitor:
         self._close_bug = True
         return None
 
-    def process(self) -> None:
+    def process(self, force_confirm: bool = False) -> None:
         """Process bugmon commands present in whiteboard
 
         Available commands:
         verify - Attempt to verify the bug state
         bisect - Attempt to bisect the bug regression or, if RESOLVED, the bug fix
         confirm - Attempt to confirm that testcase reproduces
+
+        :param force_confirm: Force confirmation regardless of bug state
         """
         if not self.is_supported():
             self.commit()
@@ -425,7 +425,7 @@ class BugMonitor:
 
         if self.needs_verify():
             self._verify_fixed()
-        elif self.needs_confirm():
+        elif force_confirm or self.needs_confirm():
             self._confirm_open()
         elif self.needs_bisect():
             self._bisect()
