@@ -198,7 +198,7 @@ def test_bug_initial_build_id_comment(mocker, bug_fixture_prefetch, code_wrap, b
     bug = EnhancedBug(bugsy=None, **data)
 
     # Disable verification
-    mocker.patch("bugmon.bug._get_url", return_value=0)
+    mocker.patch("bugmon.bug._get_rev", return_value=0)
 
     # Set fixed branch
     bug._branch = "mozilla-central"
@@ -219,7 +219,7 @@ def test_bug_initial_build_id_whiteboard(mocker, bug_fixture_prefetch, bid):
     bug = EnhancedBug(bugsy=None, **data)
 
     # Disable verification
-    mocker.patch("bugmon.bug._get_url", return_value=0)
+    mocker.patch("bugmon.bug._get_rev", return_value=0)
 
     # Set fixed branch
     bug._branch = "central"
