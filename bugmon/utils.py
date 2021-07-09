@@ -28,3 +28,13 @@ def _get_milestone() -> int:
     milestone = _get_url(MILESTONE)
     version = milestone.text.splitlines()[-1]
     return int(version.split(".", 1)[0])
+
+
+def _get_rev(branch: str, rev: str) -> Response:
+    """Determine if revision exists for branch"""
+    if branch == "central":
+        url = f"{HG_BASE}/mozilla-{branch}/json-rev/{rev}"
+    else:
+        url = f"{HG_BASE}/releases/mozilla-{branch}/json-rev/{rev}"
+
+    return _get_url(url)

@@ -15,7 +15,7 @@ from autobisect import JSEvaluator
 from bugsy import Attachment, Bug, Comment, Bugsy
 from fuzzfetch import BuildFlags, Fetcher, FetcherException, Platform
 
-from .utils import HG_BASE, _get_milestone, _get_url
+from .utils import HG_BASE, _get_milestone, _get_rev
 
 REV_MATCH = r"([a-f0-9]{12}|[a-f0-9]{40})"
 BID_MATCH = r"([0-9]{8}-)([a-f0-9]{12})"
@@ -242,7 +242,7 @@ class EnhancedBug(Bug):
                 # Match 12 or 40 character revs
                 if re.match(rf"^{REV_MATCH}$", token, re.IGNORECASE):
                     try:
-                        _get_url(f"{HG_BASE}/{self.branch}/json-rev/{token}")
+                        _get_rev(self.branch, token)
                         self._initial_build_id = token
                         break
                     except requests.exceptions.HTTPError:
