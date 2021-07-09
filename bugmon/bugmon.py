@@ -390,7 +390,7 @@ class BugMonitor:
                     [f"{k}:{v}" for k, v in evaluator.__dict__.items()]
                 )
                 log.info(f"Evaluator config: {evaluator_name} - {parameters}")
-                result = self._reproduce_bug(evaluator, branch, bid)
+                result = self._reproduce_bug(evaluator, branch, bid, False)
                 if result.status == EvaluatorResult.BUILD_CRASHED:
                     log.info("Successfully identified evaluator configuration!")
                     return evaluator
