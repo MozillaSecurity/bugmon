@@ -31,4 +31,9 @@ class SimpleJSConfig(BaseEvaluatorConfig, JSEvaluator):
                     continue
 
                 processed.append(filename)
-                yield cls(filename, flags=bug.runtime_opts)
+                yield cls(
+                    filename,
+                    flags=bug.runtime_opts,
+                    repeat=10,
+                    timeout=60,
+                )
