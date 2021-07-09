@@ -402,10 +402,16 @@ class BugMonitor:
                 if build_str is None and result.build_str is not None:
                     build_str = result.build_str
 
-        self.report(
-            f"Unable to reproduce bug using build {build_str}.  "
-            + "Without a baseline, bugmon is unable to analyze this bug."
-        )
+        if build_str is not None:
+            self.report(
+                f"Unable to reproduce bug using build {build_str}.  "
+                + "Without a baseline, bugmon is unable to analyze this bug."
+            )
+        else:
+            self.report(
+                "Bugmon was unable to identify a testcase that reproduces this issue."
+            )
+
         self._close_bug = True
         return None
 
