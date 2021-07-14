@@ -13,7 +13,13 @@ from typing import Any, Dict, List, Union, Optional, NoReturn, cast, Type
 import requests
 from autobisect import JSEvaluator
 from bugsy import Attachment, Bug, Comment, Bugsy
-from fuzzfetch import BuildFlags, Fetcher, FetcherException, Platform
+from fuzzfetch import (
+    BuildFlags,
+    Fetcher,
+    FetcherException,
+    Platform,
+    BuildSearchOrder,
+)
 
 from .utils import HG_BASE, _get_milestone, _get_rev
 
@@ -243,19 +249,30 @@ class EnhancedBug(Bug):
                 if re.match(rf"^{REV_MATCH}$", token, re.IGNORECASE):
                     try:
                         _get_rev(self.branch, token)
-                        self._initial_build_id = token
+                        self._initial_build_id = token[:12]
                         break
                     except requests.exceptions.HTTPError:
                         pass
 
                 # Match fuzzfetch build identifiers
                 if re.match(rf"^{BID_MATCH}$", token, re.IGNORECASE):
-                    self._initial_build_id = token.split("-")[1]
+                    self._initial_build_id = token.split("-")[1][:12]
                     break
             else:
-                # If original rev isn't specified, use the date the bug was created
+                # If original rev isn't specified, use the first TC rev from the bug creation date
                 assert isinstance(self.creation_time, str)
-                self._initial_build_id = self.creation_time.split("T")[0]
+                creation_time = self.creation_time.split("T")[0]
+                try:
+                    instance = Fetcher(
+                        self.branch,
+                        creation_time,
+                        self.build_flags,
+                        self.platform,
+                        nearest=BuildSearchOrder.ASC,
+                    )
+                    self._initial_build_id = instance.changeset
+                except FetcherException as e:
+                    raise BugException("Failed to identify build id from date") from e
 
         return self._initial_build_id
 
