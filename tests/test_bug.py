@@ -7,6 +7,7 @@
 # pylint: disable=protected-access
 import copy
 import json
+from types import SimpleNamespace
 
 import pytest
 
@@ -29,6 +30,7 @@ BRANCH_ALIAS_PAIRS = [
 REV = "7bd6cb8b76c078f5e687574decdde97f1e4affce"
 SHORT_REV = REV[:12]
 BUILD_ID = f"20200811-{SHORT_REV}"
+DATE = BUILD_ID[:8]
 
 
 def test_new_attachment(attachment_fixture):
@@ -185,7 +187,7 @@ def test_bug_comment_zero(bug_fixture_prefetch):
 
 
 @pytest.mark.parametrize("code_wrap", [True, False])
-@pytest.mark.parametrize("bid", [REV, SHORT_REV, BUILD_ID, "INVALID_REV"])
+@pytest.mark.parametrize("bid", [REV, SHORT_REV, BUILD_ID, DATE, "INVALID_REV"])
 def test_bug_initial_build_id_comment(mocker, bug_fixture_prefetch, code_wrap, bid):
     """Test parsing of initial_build_id from comment"""
     if code_wrap:
@@ -206,9 +208,16 @@ def test_bug_initial_build_id_comment(mocker, bug_fixture_prefetch, code_wrap, b
     if bid == BUILD_ID:
         assert bug.initial_build_id == bid.split("-")[1]
     elif bid in (REV, SHORT_REV):
-        assert bug.initial_build_id == bid
+        assert bug.initial_build_id == SHORT_REV
+    elif bid == DATE:
+        mocker.patch("bugmon.bug.Fetcher").return_value = SimpleNamespace(
+            **{"changeset": REV}
+        )
+        assert bug.initial_build_id == REV
     else:
-        assert bug.initial_build_id == data["creation_time"].split("T")[0]
+        mocker.patch("bugmon.bug.Fetcher").side_effect = BugException
+        with pytest.raises(BugException):
+            _ = bug.initial_build_id
 
 
 @pytest.mark.parametrize("bid", [REV, SHORT_REV])
