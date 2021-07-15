@@ -37,6 +37,7 @@ class SimpleBrowserConfig(BaseEvaluatorConfig, BrowserEvaluator):
         cls, bug: EnhancedBug, working_dir: Path
     ) -> Iterator["SimpleBrowserConfig"]:
         """Generator for iterating over possible BrowserEvaluator configurations
+
         :param bug: The bug to evaluate
         :param working_dir: Directory containing bug attachments
         """
