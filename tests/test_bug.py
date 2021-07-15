@@ -233,7 +233,7 @@ def test_bug_initial_build_id_whiteboard(mocker, bug_fixture_prefetch, bid):
     # Set fixed branch
     bug._branch = "central"
 
-    assert bug.initial_build_id == bid
+    assert bug.initial_build_id == SHORT_REV
 
 
 @pytest.mark.parametrize("use_trunk", [True, False])
