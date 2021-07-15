@@ -307,6 +307,10 @@ class BugMonitor:
         """
         attachments = filter(lambda a: not a.is_obsolete, self.bug.get_attachments())
         for attachment in sorted(attachments, key=lambda a: cast(str, a.creation_time)):
+            # Ignore patches
+            if attachment.content_type == "text/x-phabricator-request":
+                continue
+
             try:
                 data = base64.decodebytes(attachment.data.encode("utf-8"))
             except binascii.Error as e:
