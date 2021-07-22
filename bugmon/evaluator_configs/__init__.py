@@ -2,7 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # flake8: noqa
-from .browser import SimpleBrowserConfig
-from .js import SimpleJSConfig
+from .base import BugConfiguration
+from .browser import BrowserConfiguration
+from .js import JSConfiguration
 
-EvaluatorConfigs = [SimpleBrowserConfig, SimpleJSConfig]
+BugConfigs = [BrowserConfiguration, JSConfiguration]
