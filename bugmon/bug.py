@@ -69,7 +69,7 @@ class EnhancedBug(Bug):
         }
     )
 
-    def __init__(self, bugsy: Bugsy, **kwargs: Dict[str, Any]):
+    def __init__(self, bugsy: Optional[Bugsy], **kwargs: Dict[str, Any]):
         """Initializes LocalAttachment"""
         super().__init__(bugsy, **kwargs)
 
@@ -213,7 +213,7 @@ class EnhancedBug(Bug):
         return self._comment_zero
 
     @property
-    def env(self) -> Dict[Any, Any]:
+    def env(self) -> Dict[str, str]:
         """Attempt to enumerate any env_variables required"""
         if self._env_variables is None:
             self._env_variables = {}
