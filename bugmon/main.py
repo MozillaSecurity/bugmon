@@ -53,7 +53,7 @@ def parse_args(argv: Any = None) -> argparse.Namespace:
     args = parser.parse_args(argv)
 
     if args.search and not args.search.is_file():
-        raise parser.error("Search parameter path does not exist!")
+        parser.error("Search parameter path does not exist!")
 
     return args
 
