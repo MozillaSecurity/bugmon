@@ -31,18 +31,20 @@ class BugConfiguration(ABC):
         """
         yield bug.build_flags
 
-        enable_debug = "assertion" in bug.keywords and not bug.build_flags.debug
-        enable_fuzzing = not bug.build_flags.fuzzing
         for debug, fuzzing in itertools.product(
-            (True, False) if enable_debug else (False,),
-            (True, False) if enable_fuzzing else (False,),
+            (True, None) if not bug.build_flags.debug else (None,),
+            (True, None) if not bug.build_flags.fuzzing else (None,),
         ):
-            if not debug and not fuzzing:
+            if debug is None and fuzzing is None:
                 continue
 
             raw_flags = bug.build_flags._asdict()
-            raw_flags["debug"] = debug
-            raw_flags["fuzzing"] = fuzzing
+            if debug is not None:
+                raw_flags["debug"] = debug
+
+            if fuzzing is not None:
+                raw_flags["fuzzing"] = fuzzing
+
             yield BuildFlags(**raw_flags)
 
     @classmethod
