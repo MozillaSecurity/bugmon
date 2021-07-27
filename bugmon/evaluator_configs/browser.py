@@ -1,16 +1,14 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
+import copy
 from pathlib import Path
-from typing import Union, Iterator
+from typing import Union, Iterator, Dict
 
 from autobisect import BrowserEvaluator
 
-from .base import BaseEvaluatorConfig
+from .base import BugConfiguration
 from ..bug import EnhancedBug
-
-ALLOWED = ["*.htm", "*.html", "*.svg", "*.xml", "*"]
-EXCLUDED = ["*.js", "*.txt"]
 
 
 def identify_prefs(attachment_dir: Path) -> Union[Path, None]:
@@ -29,13 +27,29 @@ def identify_prefs(attachment_dir: Path) -> Union[Path, None]:
     return prefs_path
 
 
-class SimpleBrowserConfig(BaseEvaluatorConfig, BrowserEvaluator):
+class BrowserConfiguration(BugConfiguration):
     """Simple Browser Evaluator Configuration"""
+
+    ALLOWED = ("*.htm", "*.html", "*.svg", "*.xml", "*")
+    EXCLUDED = ("*.js", "*.txt")
+
+    @staticmethod
+    def iter_env(bug: EnhancedBug) -> Iterator[Dict[str, str]]:
+        """Iterate over possible env variable settings
+
+        :param bug: Bug instance used to detect env variables
+        """
+        yield bug.env
+
+        if bug.component == "Accessibility" and "GNOME_ACCESSIBILITY" not in bug.env:
+            env_variables = copy.deepcopy(bug.env)
+            env_variables["GNOME_ACCESSIBILITY"] = "1"
+            yield env_variables
 
     @classmethod
     def iterate(
         cls, bug: EnhancedBug, working_dir: Path
-    ) -> Iterator["SimpleBrowserConfig"]:
+    ) -> Iterator["BrowserConfiguration"]:
         """Generator for iterating over possible BrowserEvaluator configurations
 
         :param bug: The bug to evaluate
@@ -43,24 +57,15 @@ class SimpleBrowserConfig(BaseEvaluatorConfig, BrowserEvaluator):
         """
         prefs = identify_prefs(working_dir)
 
-        processed = []
-        for allowed_pattern in ALLOWED:
-            for filename in working_dir.glob(f"{allowed_pattern}"):
-                is_excluded = False
-                for excluded_pattern in EXCLUDED:
-                    if filename.match(excluded_pattern):
-                        is_excluded = True
-                        break
+        for build_flags in BrowserConfiguration.iter_build_flags(bug):
+            for env_variables in BrowserConfiguration.iter_env(bug):
+                for filename in BrowserConfiguration.iter_tests(working_dir):
+                    evaluator = BrowserEvaluator(
+                        filename,
+                        env=env_variables,
+                        prefs=prefs,
+                        repeat=1,
+                        timeout=30,
+                    )
 
-                if is_excluded or filename in processed:
-                    continue
-
-                processed.append(filename)
-
-                yield cls(
-                    filename,
-                    env=bug.env,
-                    prefs=prefs,
-                    repeat=10,
-                    timeout=60,
-                )
+                    yield cls(build_flags, evaluator)

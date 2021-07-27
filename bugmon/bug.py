@@ -69,7 +69,7 @@ class EnhancedBug(Bug):
         }
     )
 
-    def __init__(self, bugsy: Bugsy, **kwargs: Dict[str, Any]):
+    def __init__(self, bugsy: Optional[Bugsy], **kwargs: Dict[str, Any]):
         """Initializes LocalAttachment"""
         super().__init__(bugsy, **kwargs)
 
@@ -139,9 +139,7 @@ class EnhancedBug(Bug):
                 "ThreadSanitizer" in self.comment_zero
                 or "--enable-thread-sanitizer" in self.comment_zero
             )
-            debug = (
-                "--enable-debug" in self.comment_zero or "assertion" in self.keywords
-            )
+            debug = "--enable-debug" in self.comment_zero
             fuzzing = "--enable-fuzzing" in self.comment_zero
             coverage = "--enable-coverage" in self.comment_zero
             valgrind = "--enable-valgrind" in self.comment_zero
@@ -213,7 +211,7 @@ class EnhancedBug(Bug):
         return self._comment_zero
 
     @property
-    def env(self) -> Dict[Any, Any]:
+    def env(self) -> Dict[str, str]:
         """Attempt to enumerate any env_variables required"""
         if self._env_variables is None:
             self._env_variables = {}
