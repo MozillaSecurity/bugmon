@@ -64,7 +64,7 @@ class BrowserConfiguration(BugConfiguration):
                         filename,
                         env=env_variables,
                         prefs=prefs,
-                        repeat=1,
+                        repeat=10,
                         timeout=30,
                     )
 
