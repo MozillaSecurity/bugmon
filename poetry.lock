@@ -301,7 +301,7 @@ six = "*"
 
 [[package]]
 name = "ffpuppet"
-version = "0.8.1"
+version = "0.8.2"
 description = "A Python module that aids in the automation of Firefox at the process level"
 category = "main"
 optional = false
@@ -1486,8 +1486,8 @@ fasteners = [
     {file = "fasteners-0.16.3.tar.gz", hash = "sha256:b1ab4e5adfbc28681ce44b3024421c4f567e705cc3963c732bf1cba3348307de"},
 ]
 ffpuppet = [
-    {file = "ffpuppet-0.8.1-py3-none-any.whl", hash = "sha256:7dc096e7130e293e2858154ae5954d78b407e1a0f7b26323f46de85188025073"},
-    {file = "ffpuppet-0.8.1.tar.gz", hash = "sha256:a47f3b299d637ce877d5ab387e71cb42abf0293c2540b1419b6efd16688abc88"},
+    {file = "ffpuppet-0.8.2-py3-none-any.whl", hash = "sha256:f81a46ea6e1bd4b9638fc6a70924d9d9ceb29f33217b5fff04f574fe624e0979"},
+    {file = "ffpuppet-0.8.2.tar.gz", hash = "sha256:4b2a5478cc310d0d1edfabfefdf331f2e21bae64b72151134af01b620c9a6eae"},
 ]
 filelock = [
     {file = "filelock-3.0.12-py3-none-any.whl", hash = "sha256:929b7d63ec5b7d6b71b0fa5ac14e030b3f70b75747cef1b10da9b879fef15836"},
