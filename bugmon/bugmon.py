@@ -396,9 +396,6 @@ class BugMonitor:
                 if result.status == EvaluatorResult.BUILD_CRASHED:
                     log.info("Successfully identified evaluator configuration!")
                     return config
-                if result.status == EvaluatorResult.BUILD_FAILED:
-                    log.error("Cannot identify evaluator without original build!")
-                    return None
 
                 # Record build string for reporting failed result
                 if build_str is None and result.build_str is not None:
