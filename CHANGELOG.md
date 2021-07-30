@@ -2,6 +2,37 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.0 (2021-07-30)
+### Feature
+* Add ability to iterate over build flags and env variables ([#20](https://github.com/MozillaSecurity/bugmon/issues/20)) ([`db287c5`](https://github.com/MozillaSecurity/bugmon/commit/db287c578bddfed6baba39e722db22bcaac0bd97))
+* Always return a short rev from initial_build_id ([`8c9b7e5`](https://github.com/MozillaSecurity/bugmon/commit/8c9b7e516fc98d863b2a7212ba59ae5763aefc61))
+* Add ability to force bug confirmation ([#19](https://github.com/MozillaSecurity/bugmon/issues/19)) ([`e641988`](https://github.com/MozillaSecurity/bugmon/commit/e6419887ca72e3f3b41baeb171e03864870a1505))
+* Add target iterator for detecting evaluator configuration ([#18](https://github.com/MozillaSecurity/bugmon/issues/18)) ([`7f390d3`](https://github.com/MozillaSecurity/bugmon/commit/7f390d3bcd5da58605543e9636ccec9950f5d9cb))
+* Add type annotations throughout ([#16](https://github.com/MozillaSecurity/bugmon/issues/16)) ([`ac70459`](https://github.com/MozillaSecurity/bugmon/commit/ac7045983dd2641f5b399510853e308223b04673))
+* Create separate error classes for bug and bugmon ([#15](https://github.com/MozillaSecurity/bugmon/issues/15)) ([`6fccc77`](https://github.com/MozillaSecurity/bugmon/commit/6fccc77b60296100c8ae7d76374941f683affb13))
+
+### Fix
+* Continue iterating if build failed ([`24a2c1c`](https://github.com/MozillaSecurity/bugmon/commit/24a2c1cd5bc5970ae15ef389e16f0214b148fc1f))
+* Revert repeat count to 10 ([`3a0f3bc`](https://github.com/MozillaSecurity/bugmon/commit/3a0f3bc76f92a952a7c37c877dcecca71c1488d3))
+* Include bug number failed baseline message ([`f9d7078`](https://github.com/MozillaSecurity/bugmon/commit/f9d70782adb82274ede9fb81a802f5b954f4796d))
+* Don't raise parser.error ([`48c34a8`](https://github.com/MozillaSecurity/bugmon/commit/48c34a812f5453bcb4928ff7f27a9691fdd82d37))
+* Ignore phabricator attachments ([`42b33f6`](https://github.com/MozillaSecurity/bugmon/commit/42b33f6536184cd4eb94b0c672e1b03cd8f4b75d))
+* Set default repeat and timeout for JSEvaluator ([`7fbccd7`](https://github.com/MozillaSecurity/bugmon/commit/7fbccd7c72a8d810b92ac193b115f4ffc88d2d87))
+* Add additional logging for bugs with no matching config ([`dbd7db1`](https://github.com/MozillaSecurity/bugmon/commit/dbd7db158faba18fea608a9ff45b160a7e3c9001))
+* Do not cache results when detecting configuration ([`036f28e`](https://github.com/MozillaSecurity/bugmon/commit/036f28e9dadbb7380a8e7f34e7e99ed6c177d757))
+* Add additional paths for HG branch revisions ([`9f78759`](https://github.com/MozillaSecurity/bugmon/commit/9f78759ddc5cfd41676647ac0d5b4a2f92d89bcd))
+* Treat assertions as debug builds until build flag iterator implemented ([`8c1cdf3`](https://github.com/MozillaSecurity/bugmon/commit/8c1cdf3faeb184fbdde2f66cd276297ec181ff23))
+* Update autobisect to fix bug in bisection result message ([`4f33a46`](https://github.com/MozillaSecurity/bugmon/commit/4f33a4697ec20d30489a079182258dbafcd6d3c7))
+* Only split env variables based on first equal sign ([`cb8bc0d`](https://github.com/MozillaSecurity/bugmon/commit/cb8bc0dcbab7c51d2f5b0020777866d4462eb63a))
+
+### Breaking
+* Bugmon now expects working_dir to be a Path object. ([`8df3391`](https://github.com/MozillaSecurity/bugmon/commit/8df3391624d6868dcdcf1222f768c979cb1252a4))
+* Bugmon now expects working_dir to be a Path object. ([`bab8d1e`](https://github.com/MozillaSecurity/bugmon/commit/bab8d1e079e673689d428e21920009dc964cfb7d))
+* Individual analysis method names have been renamed, effectively breaking the API. ([`ba44690`](https://github.com/MozillaSecurity/bugmon/commit/ba4469061d0a8313ee972acada7364c2234a6e37))
+
+### Documentation
+* Enforce sphinx docstrings ([#17](https://github.com/MozillaSecurity/bugmon/issues/17)) ([`45ff588`](https://github.com/MozillaSecurity/bugmon/commit/45ff588ee4b48b94b60ccdcc0f05ed0bdbe96bc1))
+
 ## v0.8.8 (2021-06-21)
 ### Fix
 * Fetcher objects no longer require target arg ([`a60cd0b`](https://github.com/MozillaSecurity/bugmon/commit/a60cd0b986cb51c3be96aac5644988b644ee2ed5))
