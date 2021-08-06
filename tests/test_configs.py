@@ -94,7 +94,7 @@ def test_browser_configuration_iterate_001(bug_fixture_prefetch):
         Path(tmp_path / "3.js").touch()
 
         bug = EnhancedBug(None, **bug_fixture_prefetch)
-        assert len(list(BrowserConfiguration.iterate(bug, tmp_path))) == 4
+        assert len(list(BrowserConfiguration.iterate(bug, tmp_path))) == 8
 
 
 def test_js_configuration_iterate_001(mocker, bug_fixture_prefetch):
