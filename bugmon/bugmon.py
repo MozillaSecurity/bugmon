@@ -436,10 +436,17 @@ class BugMonitor:
 
         if self.needs_verify():
             self._verify_fixed()
-        elif force_confirm or self.needs_confirm():
+        elif self.needs_confirm():
             self._confirm_open()
         elif self.needs_bisect():
             self._bisect()
+        elif force_confirm and self.bug.status in [
+            "ASSIGNED",
+            "NEW",
+            "UNCONFIRMED",
+            "REOPENED",
+        ]:
+            self._confirm_open()
         else:
             log.info("No actions necessary.  Exiting")
 
