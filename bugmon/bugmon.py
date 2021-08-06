@@ -191,10 +191,16 @@ class BugMonitor:
                     self.bug.branch,
                     self.bug.initial_build_id,
                 )
-                if initial.status != EvaluatorResult.BUILD_CRASHED:
+                if initial.status == EvaluatorResult.BUILD_PASSED:
                     self.report(
                         f"Bug appears to be fixed on {build_str} but "
                         f"BugMon was unable to reproduce using {initial.build_str}."
+                    )
+                    self._close_bug = True
+                elif initial.status == EvaluatorResult.BUILD_FAILED:
+                    self.report(
+                        f"Bug appears to be fixed on {build_str} but "
+                        f"BugMon was unable to find a usable build for {self.bug.initial_build_id}."
                     )
                     self._close_bug = True
                 else:
