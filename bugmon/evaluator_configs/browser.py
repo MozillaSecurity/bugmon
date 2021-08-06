@@ -60,12 +60,14 @@ class BrowserConfiguration(BugConfiguration):
         for build_flags in BrowserConfiguration.iter_build_flags(bug):
             for env_variables in BrowserConfiguration.iter_env(bug):
                 for filename in BrowserConfiguration.iter_tests(working_dir):
-                    evaluator = BrowserEvaluator(
-                        filename,
-                        env=env_variables,
-                        prefs=prefs,
-                        repeat=10,
-                        timeout=30,
-                    )
+                    for use_harness in [True, False]:
+                        evaluator = BrowserEvaluator(
+                            filename,
+                            env=env_variables,
+                            prefs=prefs,
+                            repeat=10,
+                            timeout=30,
+                            use_harness=use_harness,
+                        )
 
-                    yield cls(build_flags, evaluator)
+                        yield cls(build_flags, evaluator)
