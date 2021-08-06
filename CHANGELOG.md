@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.1 (2021-08-06)
+### Fix
+* Handle failed builds during verification ([`799906f`](https://github.com/MozillaSecurity/bugmon/commit/799906fabd92d07248759e0bf63c2434598e0543))
+
 ## v1.0.0 (2021-07-30)
 ### Feature
 * Add ability to iterate over build flags and env variables ([#20](https://github.com/MozillaSecurity/bugmon/issues/20)) ([`db287c5`](https://github.com/MozillaSecurity/bugmon/commit/db287c578bddfed6baba39e722db22bcaac0bd97))
