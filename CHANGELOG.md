@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.0 (2021-08-06)
+### Feature
+* Add harness iterator for BrowserEvaluator ([#23](https://github.com/MozillaSecurity/bugmon/issues/23)) ([`5d127fb`](https://github.com/MozillaSecurity/bugmon/commit/5d127fbfc0e7b4171dd4f490c6420f5b296b0c7d))
+
+### Fix
+* Only force confirmation if no other action applies ([`751f917`](https://github.com/MozillaSecurity/bugmon/commit/751f917f34cf69a3276fb599cc46e423a2bca9bc))
+
 ## v1.0.1 (2021-08-06)
 ### Fix
 * Handle failed builds during verification ([`799906f`](https://github.com/MozillaSecurity/bugmon/commit/799906fabd92d07248759e0bf63c2434598e0543))
