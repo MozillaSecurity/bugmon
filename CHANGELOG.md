@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.1 (2021-08-06)
+### Fix
+* Move unnecessary deps to dev-dependencies ([`ced1ad8`](https://github.com/MozillaSecurity/bugmon/commit/ced1ad85250c86768001378bec91e001e19d5924))
+
 ## v1.1.0 (2021-08-06)
 ### Feature
 * Add harness iterator for BrowserEvaluator ([#23](https://github.com/MozillaSecurity/bugmon/issues/23)) ([`5d127fb`](https://github.com/MozillaSecurity/bugmon/commit/5d127fbfc0e7b4171dd4f490c6420f5b296b0c7d))
