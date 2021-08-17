@@ -45,7 +45,9 @@ class BugConfiguration(ABC):
             if fuzzing is not None:
                 raw_flags["fuzzing"] = fuzzing
 
-            yield BuildFlags(**raw_flags)
+            new_flags = BuildFlags(**raw_flags)
+            if new_flags != bug.build_flags:
+                yield new_flags
 
     @classmethod
     def iter_tests(cls, working_dir: Path) -> Iterator[Path]:
