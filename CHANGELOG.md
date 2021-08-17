@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.2 (2021-08-17)
+### Fix
+* Don't yield the same build flags more than once ([`fdbf79f`](https://github.com/MozillaSecurity/bugmon/commit/fdbf79f83b1f1519b74d6dbea0fc36a021e3eed8))
+
 ## v1.1.1 (2021-08-06)
 ### Fix
 * Move unnecessary deps to dev-dependencies ([`ced1ad8`](https://github.com/MozillaSecurity/bugmon/commit/ced1ad85250c86768001378bec91e001e19d5924))
