@@ -145,10 +145,6 @@ class BugMonitor:
             if "confirmed" not in self.bug.commands:
                 self.report(f"Verified bug as reproducible on {tip.build_str}.")
                 self._bisect(config)
-            # else:
-            #     change = dt.strptime(self.bug.last_change_time, "%Y-%m-%dT%H:%M:%SZ")
-            #     if dt.now() - timedelta(days=30) > change:
-            #         self.report(f"Bug remains reproducible on {tip.build_str}")
         elif tip.status == EvaluatorResult.BUILD_PASSED:
             bid = self.bug.initial_build_id
             orig = self._reproduce_bug(config, self.bug.branch, bid)
