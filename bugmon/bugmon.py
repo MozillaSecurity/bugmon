@@ -149,7 +149,10 @@ class BugMonitor:
             bid = self.bug.initial_build_id
             orig = self._reproduce_bug(config, self.bug.branch, bid)
             if orig.status == EvaluatorResult.BUILD_CRASHED:
-                log.info(f"Testcase crashes using the initial build ({orig.build_str})")
+                self.report(
+                    f"Testcase crashes using the initial build ({orig.build_str}) "
+                    f"but not with tip ({tip.build_str}.)"
+                )
                 self._bisect(config)
             elif orig.status == EvaluatorResult.BUILD_PASSED:
                 self.report(
