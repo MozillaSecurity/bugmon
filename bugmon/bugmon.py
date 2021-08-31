@@ -162,7 +162,8 @@ class BugMonitor:
                 )
 
             # Remove from further analysis
-            self._close_bug = True
+            if orig.status != EvaluatorResult.BUILD_FAILED:
+                self._close_bug = True
 
         # Set confirmed status and remove the confirm command
         self.add_command("confirmed")
