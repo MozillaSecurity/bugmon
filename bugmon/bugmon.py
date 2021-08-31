@@ -282,10 +282,14 @@ class BugMonitor:
         build_str = f"mozilla-{self.bug.branch} {build.id}-{build.changeset[:12]}"
         log.info(f"Attempting to reproduce bug on {build_str}...")
 
-        with self.build_manager.get_build(build, config.evaluator.target) as build_path:
-            status = config.evaluator.evaluate_testcase(build_path)
-            self.results[branch][build.id] = ReproductionResult(status, build_str)
-            return self.results[branch][build.id]
+        try:
+            with self.build_manager.get_build(build, config.evaluator.target) as path:
+                status = config.evaluator.evaluate_testcase(path)
+                self.results[branch][build.id] = ReproductionResult(status, build_str)
+                return self.results[branch][build.id]
+        except FetcherException as e:
+            log.error(f"Error fetching build: {e}")
+            return ReproductionResult(EvaluatorResult.BUILD_FAILED)
 
     def add_command(self, key: str, value: None = None) -> None:
         """Add a bugmon command to the whiteboard
