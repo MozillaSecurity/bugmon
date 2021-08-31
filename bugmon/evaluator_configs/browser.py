@@ -18,11 +18,10 @@ def identify_prefs(attachment_dir: Path) -> Union[Path, None]:
     :return:
     """
     prefs_path = None
-    for file_name in attachment_dir.iterdir():
-        if file_name.suffix == ".js":
-            file_path = Path(attachment_dir / file_name)
-            if "user_pref" in file_path.read_text():
-                prefs_path = file_path
+    for file in attachment_dir.rglob("*"):
+        if file.suffix == ".js":
+            if "user_pref" in file.read_text():
+                prefs_path = file
 
     return prefs_path
 
