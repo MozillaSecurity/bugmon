@@ -58,6 +58,9 @@ class BugConfiguration(ABC):
         processed = []
         for allowed_pattern in cls.ALLOWED:
             for filename in working_dir.glob(f"{allowed_pattern}"):
+                if not filename.is_file():
+                    continue
+
                 is_excluded = False
                 for excluded_pattern in cls.EXCLUDED:
                     if filename.match(excluded_pattern):
