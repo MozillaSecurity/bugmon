@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.3 (2021-09-01)
+### Fix
+* Filter out directories during testcase iteration ([`f9f6270`](https://github.com/MozillaSecurity/bugmon/commit/f9f62708b43c21930e8d058e50e4d7b994ba3c87))
+* Simplify pref detection ([`0a12517`](https://github.com/MozillaSecurity/bugmon/commit/0a1251789f3eb411b6801fafe9ef27d07f6d7a5d))
+* Catch Fetcher errors when artifact doesn't exist ([`d010ab8`](https://github.com/MozillaSecurity/bugmon/commit/d010ab839a0fc2af5f8b2a425161b91fb0122e67))
+* Only close bug if we actually tested the original build ([`9ef08f2`](https://github.com/MozillaSecurity/bugmon/commit/9ef08f2014a56d2fd36f4c546b50a5e8a2653d9e))
+* Improve logging when bug repros on tip but not initial ([`9261167`](https://github.com/MozillaSecurity/bugmon/commit/92611676d4693c51707489c1254722ce58d07d15))
+
 ## v1.1.2 (2021-08-17)
 ### Fix
 * Don't yield the same build flags more than once ([`fdbf79f`](https://github.com/MozillaSecurity/bugmon/commit/fdbf79f83b1f1519b74d6dbea0fc36a021e3eed8))
