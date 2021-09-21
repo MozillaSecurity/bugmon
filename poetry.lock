@@ -56,7 +56,7 @@ tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>
 
 [[package]]
 name = "autobisect"
-version = "3.1.1"
+version = "3.1.3"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 category = "main"
 optional = false
@@ -1307,8 +1307,8 @@ attrs = [
     {file = "attrs-21.2.0.tar.gz", hash = "sha256:ef6aaac3ca6cd92904cdd0d83f629a15f18053ec84e6432106f7a4d04ae4f5fb"},
 ]
 autobisect = [
-    {file = "autobisect-3.1.1-py3-none-any.whl", hash = "sha256:dc6709120087a5704b09e8e717ff10ae758aa0d60614c539832b5b0fea3eba04"},
-    {file = "autobisect-3.1.1.tar.gz", hash = "sha256:0c4236b689c4771739d3b3c3ed801e6805fc32068af78941f06e1f31b3aba548"},
+    {file = "autobisect-3.1.3-py3-none-any.whl", hash = "sha256:a842e3b4f665f7e43997219b81e473a5cf158fee486368dac714a7e1e89a05f8"},
+    {file = "autobisect-3.1.3.tar.gz", hash = "sha256:dea7c8152945f3e0522f7102dfe4bf3cafe5a5da584639b98779cb39978f52a1"},
 ]
 "backports.entry-points-selectable" = [
     {file = "backports.entry_points_selectable-1.1.0-py2.py3-none-any.whl", hash = "sha256:a6d9a871cde5e15b4c4a53e3d43ba890cc6861ec1332c9c2428c92f977192acc"},
