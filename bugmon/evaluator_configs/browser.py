@@ -69,6 +69,9 @@ class BrowserConfiguration(BugConfiguration):
         for build_flags in BrowserConfiguration.iter_build_flags(bug):
             for env_variables in BrowserConfiguration.iter_env(bug):
                 for filename in BrowserConfiguration.iter_tests(working_dir):
+                    if prefs and prefs == filename:
+                        continue
+
                     for use_harness in [True, False]:
                         evaluator = BrowserEvaluator(
                             filename,
