@@ -47,7 +47,10 @@ class BrowserConfiguration(BugConfiguration):
         """
         yield bug.env
 
-        if bug.component == "Accessibility" and "GNOME_ACCESSIBILITY" not in bug.env:
+        if (
+            bug.component == "Disability Access APIs"
+            and "GNOME_ACCESSIBILITY" not in bug.env
+        ):
             env_variables = copy.deepcopy(bug.env)
             env_variables["GNOME_ACCESSIBILITY"] = "1"
             yield env_variables

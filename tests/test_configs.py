@@ -76,7 +76,7 @@ def test_browser_configuration_iter_tests_001():
 def test_browser_configuration_env_iter_001(bug_fixture_prefetch):
     """Test BugConfiguration.env_iter() with Accessibility component"""
     bug = copy.deepcopy(bug_fixture_prefetch)
-    bug["component"] = "Accessibility"
+    bug["component"] = "Disability Access APIs"
     bug = EnhancedBug(None, **bug)
     env_vars = list(BrowserConfiguration.iter_env(bug))
 
