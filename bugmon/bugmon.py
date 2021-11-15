@@ -400,8 +400,8 @@ class BugMonitor:
         for Config in BugConfigs:
             for config in Config.iterate(self.bug, self.working_dir):
                 name = type(config).__name__
-                params = ", ".join([f"{k}:{v}" for k, v in config.__dict__.items()])
-                log.info(f"Evaluator config: {name} - {params}")
+                opts = ", ".join([f"{k}: {v}" for k, v in config.params.items()])
+                log.info(f"Using config: {name} ({opts})")
                 result = self._reproduce_bug(config, branch, bid, False)
                 if result.status == EvaluatorResult.BUILD_CRASHED:
                     log.info("Successfully identified evaluator configuration!")

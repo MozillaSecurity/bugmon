@@ -4,7 +4,7 @@
 import itertools
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Iterator, Tuple
+from typing import Iterator, Tuple, Dict, Any
 
 from autobisect import Evaluator
 from fuzzfetch import BuildFlags
@@ -15,6 +15,8 @@ from bugmon.bug import EnhancedBug
 class BugConfiguration(ABC):
     """Base configuration class"""
 
+    params: Dict[str, Any]
+
     ALLOWED: Tuple[str, ...] = ("*",)
     EXCLUDED: Tuple[str, ...] = ()
 
@@ -22,6 +24,7 @@ class BugConfiguration(ABC):
         """Instaniate a new instance"""
         self.build_flags = build_flags
         self.evaluator = evaluator
+        self.params = {"flags": build_flags.build_string()[1:]}
 
     @classmethod
     def iter_build_flags(cls, bug: EnhancedBug) -> Iterator[BuildFlags]:

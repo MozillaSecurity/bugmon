@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Union, Iterator, Dict
 
 from autobisect import BrowserEvaluator
+from fuzzfetch import BuildFlags
 
 from .base import BugConfiguration
 from ..bug import EnhancedBug
@@ -31,6 +32,12 @@ class BrowserConfiguration(BugConfiguration):
 
     ALLOWED = ("*.htm", "*.html", "*.svg", "*.xml", "*")
     EXCLUDED = ("*.js", "*.txt")
+
+    def __init__(self, build_flags: BuildFlags, evaluator: BrowserEvaluator):
+        super().__init__(build_flags, evaluator)
+        self.params["entry_point"] = evaluator.testcase
+        self.params["use_harness"] = evaluator._use_harness
+        self.params["env_variables"] = evaluator._env_vars
 
     @staticmethod
     def iter_env(bug: EnhancedBug) -> Iterator[Dict[str, str]]:

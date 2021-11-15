@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Iterator
 
 from autobisect import JSEvaluator
+from fuzzfetch import BuildFlags
 
 from .base import BugConfiguration
 from ..bug import EnhancedBug
@@ -14,6 +15,11 @@ class JSConfiguration(BugConfiguration):
     """Simple Browser Evaluator Configuration"""
 
     ALLOWED = ("*.js", "*")
+
+    def __init__(self, build_flags: BuildFlags, evaluator: JSEvaluator):
+        super().__init__(build_flags, evaluator)
+        self.params["entry_point"] = str(evaluator.testcase)
+        self.params["run_flags"] = evaluator.flags
 
     @classmethod
     def iterate(
