@@ -2,8 +2,10 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # flake8: noqa
+from typing import List, Type
+
 from .base import BugConfiguration
 from .browser import BrowserConfiguration
 from .js import JSConfiguration
 
-BugConfigs = [BrowserConfiguration, JSConfiguration]
+BugConfigs: List[Type[BugConfiguration]] = [BrowserConfiguration, JSConfiguration]
