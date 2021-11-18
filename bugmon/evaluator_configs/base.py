@@ -60,7 +60,7 @@ class BugConfiguration(ABC):
         """
         processed = []
         for allowed_pattern in cls.ALLOWED:
-            for filename in working_dir.glob(f"{allowed_pattern}"):
+            for filename in working_dir.rglob(f"{allowed_pattern}"):
                 if not filename.is_file():
                     continue
 
