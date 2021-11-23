@@ -208,7 +208,11 @@ class BugMonitor:
                     self.bug.status = "VERIFIED"
 
             elif tip.status == EvaluatorResult.BUILD_CRASHED:
-                self.report(f"Bug marked as FIXED but still reproduces on {build_str}.")
+                self.report(
+                    f"Bug marked as FIXED but still reproduces on {build_str}.  "
+                    + "If you believe this to be incorrect, please remove the bugmon "
+                    + "keyword to prevent further analysis."
+                )
                 self.bug.status = "REOPENED"
                 self.add_command("confirmed")
 
