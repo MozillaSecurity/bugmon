@@ -93,15 +93,21 @@ class BugMonitor:
             start = None  # type: ignore
             end = self.bug.initial_build_id
 
-        bisector = Bisector(
-            config.evaluator,
-            self.bug.branch,
-            start,
-            end,
-            config.build_flags,
-            self.bug.platform,
-            find_fix,
-        )
+        try:
+            bisector = Bisector(
+                config.evaluator,
+                self.bug.branch,
+                start,
+                end,
+                config.build_flags,
+                self.bug.platform,
+                find_fix,
+            )
+        except FetcherException as e:
+            self.add_command("bisected")
+            self.report(f"Unable to bisect testcase ({str(e).lower()})")
+            return
+
         result = bisector.bisect()
 
         # Set bisected status and remove the bisect command
