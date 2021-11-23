@@ -117,7 +117,7 @@ class BugMonitor:
 
         if result.status != BisectionResult.SUCCESS:
             output = [
-                f"Failed to bisect testcase ({result.message}):",
+                f"Unable to bisect testcase ({result.message}):",
                 f"> Start: {result.start.changeset} ({result.start.id})",
                 f"> End: {result.end.changeset} ({result.end.id})",
                 f"> BuildFlags: {str(config.build_flags)}",
