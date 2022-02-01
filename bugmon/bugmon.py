@@ -469,7 +469,7 @@ class BugMonitor:
 
     def report(self, *messages: str) -> None:
         """Output and store messages in queue
-        :param messages: List of comments
+        :param *messages: List of comments
         """
         for message in messages:
             self.queue.append(message)
