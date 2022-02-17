@@ -41,5 +41,5 @@ repos:
       - id: toml-sort
         name: toml-sort
         entry: poetry run toml-sort --check -a
-        types: [toml]
+        files: "^\\.pyproject\\.toml$"
         language: system
