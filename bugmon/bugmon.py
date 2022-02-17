@@ -90,7 +90,7 @@ class BugMonitor:
             start = self.bug.initial_build_id
             end = "latest"
         else:
-            start = None  # type: ignore
+            start = None
             end = self.bug.initial_build_id
 
         try:
