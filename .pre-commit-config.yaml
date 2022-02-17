@@ -28,11 +28,13 @@ repos:
         entry: poetry run mypy bugmon
         language: system
         pass_filenames: false
+        types: [ python ]
       - id: pylint
         name: pylint
         entry: poetry run pylint -j 0 bugmon
         language: system
         pass_filenames: false
+        types: [ python ]
       - id: taskcluster_yml
         name: taskcluster_yml
         entry: poetry run taskcluster_yml_validator
