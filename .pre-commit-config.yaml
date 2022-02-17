@@ -26,22 +26,20 @@ repos:
       - id: mypy
         name: mypy
         entry: poetry run mypy bugmon
-        pass_filenames: false
         language: system
+        pass_filenames: false
       - id: pylint
         name: pylint
         entry: poetry run pylint -j 0 bugmon
-        pass_filenames: false
         language: system
+        pass_filenames: false
       - id: taskcluster_yml
         name: taskcluster_yml
-        entry: poetry run taskcluster_yml --check -a
-        pass_filenames: false
-        language: python
+        entry: poetry run taskcluster_yml_validator
         files: "^\\.taskcluster\\.yml$"
-        require_serial: false
+        language: system
       - id: toml-sort
         name: toml-sort
         entry: poetry run toml-sort --check -a
-        pass_filenames: false
+        types: [toml]
         language: system
