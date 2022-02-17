@@ -136,6 +136,10 @@ class BugMonitor:
                 *output,
             )
 
+            # If bisection succeeds and we're not bisecting a fix, add the regression keyword.
+            if not find_fix and "regression" not in self.bug.keywords:
+                self.bug.keywords.append("regression")
+
     def _confirm_open(self) -> None:
         """Attempt to confirm open test cases"""
         config = self.detect_config()
