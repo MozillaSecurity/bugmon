@@ -2,6 +2,25 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.0 (2022-03-02)
+### Feature
+* Add regression keyword if bisection succeeds ([`963ca70`](https://github.com/MozillaSecurity/bugmon/commit/963ca7026c491e72f067152461277e6f32236ffe))
+
+### Fix
+* Update lockfile to correct breakage in grizzly ([`9fc9dfa`](https://github.com/MozillaSecurity/bugmon/commit/9fc9dfa44ae6876ec0e958bb080b36b39b897d46))
+* Remove unused mypy comment ([`378fa22`](https://github.com/MozillaSecurity/bugmon/commit/378fa22caddd0f2f3f79bacb4de3abf7c17992a6))
+* Catch attempts to initialize bisector with an invalid range ([`e1e1b06`](https://github.com/MozillaSecurity/bugmon/commit/e1e1b069e03321a0c542b79689d02abc2cf3b649))
+* Expand failed verification message ([`8b23c11`](https://github.com/MozillaSecurity/bugmon/commit/8b23c1123b4d91359b48b8aea04cd8e294768984))
+* Identify testcases recursively ([`81979a9`](https://github.com/MozillaSecurity/bugmon/commit/81979a98a3e09eb46365d22052139775b665ac1e))
+* Exclude prefs from possible entry points ([`4ff9789`](https://github.com/MozillaSecurity/bugmon/commit/4ff978916ef1ccaf5f81695e20d739d4f09f3e5b))
+* Fix name for accessibility component ([`89ab663`](https://github.com/MozillaSecurity/bugmon/commit/89ab663a2cfcf3d7dd198b33766fc7c8a8f6fa72))
+* Set explicit type hint ([`1fab91a`](https://github.com/MozillaSecurity/bugmon/commit/1fab91a49ae451d58550b8d208a716dc6eac79da))
+* Add free-form params attr for reporting configuration ([`299faf1`](https://github.com/MozillaSecurity/bugmon/commit/299faf1f477259a3a2b97f39822807c2e8d4ed82))
+* Update autobisect to ignore unhandleable ooms ([`ff39c29`](https://github.com/MozillaSecurity/bugmon/commit/ff39c29b5e73dfd124ffdd77bd7730c26532e066))
+
+### Documentation
+* Fix report pydoc params ([`b7bc1f4`](https://github.com/MozillaSecurity/bugmon/commit/b7bc1f4970f307ef5f2de264db9c0049454c4bdf))
+
 ## v1.1.3 (2021-09-01)
 ### Fix
 * Filter out directories during testcase iteration ([`f9f6270`](https://github.com/MozillaSecurity/bugmon/commit/f9f62708b43c21930e8d058e50e4d7b994ba3c87))
