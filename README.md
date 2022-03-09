@@ -6,6 +6,11 @@
 
 Bugmon is a tool for the automatic analysis of bugs filed against Firefox or Spidermonkey in Mozilla's Bugzilla database. It is capable of automatically confirming open bugs, verifying closed bugs, and bisecting the bug's introduction or fix.
 
+
+More information on the Mozilla Hacks blog:
+
+- https://hacks.mozilla.org/2021/01/analyzing-bugzilla-testcases-with-bugmon/
+
 ## Table of Contents
   - [Installation](#installation)
   - [Basic Usage](#basic-usage)
