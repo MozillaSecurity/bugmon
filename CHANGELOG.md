@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.1 (2022-04-04)
+### Fix
+* Update autobisect to v5.0.0 ([`a8bf24c`](https://github.com/MozillaSecurity/bugmon/commit/a8bf24c13e00b281ee8e3439e0534ffbe687de08))
+* Update autobisect to 3.1.9 ([`200c7d5`](https://github.com/MozillaSecurity/bugmon/commit/200c7d5c754930d1ead26441f576d84da3a026b3))
+
 ## v1.2.0 (2022-03-02)
 ### Feature
 * Add regression keyword if bisection succeeds ([`963ca70`](https://github.com/MozillaSecurity/bugmon/commit/963ca7026c491e72f067152461277e6f32236ffe))
