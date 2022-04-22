@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.2 (2022-04-22)
+### Fix
+* Only set status to verified if not new ([`b5153ab`](https://github.com/MozillaSecurity/bugmon/commit/b5153ab9baab4d3c16f128f04c7b8ae5db1aba37))
+
 ## v1.2.1 (2022-04-04)
 ### Fix
 * Update autobisect to v5.0.0 ([`a8bf24c`](https://github.com/MozillaSecurity/bugmon/commit/a8bf24c13e00b281ee8e3439e0534ffbe687de08))
