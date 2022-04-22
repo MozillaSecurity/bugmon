@@ -215,7 +215,8 @@ class BugMonitor:
                     self._close_bug = True
                 else:
                     self.report(f"Verified bug as fixed on rev {build_str}.")
-                    self.bug.status = "VERIFIED"
+                    if self.bug.status != "NEW":
+                        self.bug.status = "VERIFIED"
 
             elif tip.status == EvaluatorResult.BUILD_CRASHED:
                 self.report(
