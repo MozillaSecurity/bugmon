@@ -237,6 +237,11 @@ class BugMonitor:
             # Only check branches if bug is marked as fixed
             if getattr(self.bug, flag) == "fixed":
                 patch_rev = self.bug.find_patch_rev(alias)
+                if patch_rev is None:
+                    log.warning(
+                        f"Unable to find commit for fx{rel_num}.  Cannot verify fix!"
+                    )
+                    return
                 branch = self._reproduce_bug(config, alias, patch_rev)
                 if branch.status == EvaluatorResult.BUILD_PASSED:
                     log.info(f"Verified fixed on {flag}")
