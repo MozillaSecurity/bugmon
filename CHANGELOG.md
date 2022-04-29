@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.3 (2022-04-29)
+### Fix
+* Exit early if no fix commit found ([`f755a43`](https://github.com/MozillaSecurity/bugmon/commit/f755a43dc07b595e8beb10e5c329bdb4f2f8c46a))
+
 ## v1.2.2 (2022-04-22)
 ### Fix
 * Only set status to verified if not new ([`b5153ab`](https://github.com/MozillaSecurity/bugmon/commit/b5153ab9baab4d3c16f128f04c7b8ae5db1aba37))
