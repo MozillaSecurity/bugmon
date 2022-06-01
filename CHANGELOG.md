@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.4 (2022-06-01)
+### Fix
+* Exclude nyx builds ([`8f17265`](https://github.com/MozillaSecurity/bugmon/commit/8f1726591948a100cad50f5a4866e10577803556))
+* Update autobisect to fix fuzzfetch errors ([`596646b`](https://github.com/MozillaSecurity/bugmon/commit/596646b3dc052e42d3d3a72029e61d2ea7bd00e3))
+
 ## v1.2.3 (2022-04-29)
 ### Fix
 * Exit early if no fix commit found ([`f755a43`](https://github.com/MozillaSecurity/bugmon/commit/f755a43dc07b595e8beb10e5c329bdb4f2f8c46a))
