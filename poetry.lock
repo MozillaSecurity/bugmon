@@ -48,7 +48,7 @@ tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>
 
 [[package]]
 name = "autobisect"
-version = "5.0.1"
+version = "5.0.2"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 category = "main"
 optional = false
@@ -314,7 +314,7 @@ dev = ["pre-commit", "tox"]
 
 [[package]]
 name = "filelock"
-version = "3.7.0"
+version = "3.7.1"
 description = "A platform independent file lock."
 category = "dev"
 optional = false
@@ -968,7 +968,7 @@ yaml = ["PyYaml (>=5.2)"]
 
 [[package]]
 name = "python-semantic-release"
-version = "7.29.0"
+version = "7.29.1"
 description = "Automatic Semantic Versioning for Python projects"
 category = "dev"
 optional = false
@@ -1390,8 +1390,8 @@ attrs = [
     {file = "attrs-21.4.0.tar.gz", hash = "sha256:626ba8234211db98e869df76230a137c4c40a12d72445c45d5f5b716f076e2fd"},
 ]
 autobisect = [
-    {file = "autobisect-5.0.1-py3-none-any.whl", hash = "sha256:05c92174c3ec7c2004c25576330a0653840dd4640189005268467aa2cbd9662e"},
-    {file = "autobisect-5.0.1.tar.gz", hash = "sha256:09a0fb6ffa60393123da426498b89d614949e5062fe4849fa623d25b7118b8da"},
+    {file = "autobisect-5.0.2-py3-none-any.whl", hash = "sha256:0b899ea753984456ad3e426eb3917b2a4793b321570546b024ecbde6b3ccd6d2"},
+    {file = "autobisect-5.0.2.tar.gz", hash = "sha256:382036c960c1e4b8675bd4ab01d21754427b2eab7e6954e9aaddb7ff9568925b"},
 ]
 black = [
     {file = "black-22.3.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:2497f9c2386572e28921fa8bec7be3e51de6801f7459dffd6e62492531c47e09"},
@@ -1602,8 +1602,8 @@ ffpuppet = [
     {file = "ffpuppet-0.9.0.tar.gz", hash = "sha256:1912031210ccc61665f7b6636a8df4e562e93fb7483bd2dd978280dec446bb98"},
 ]
 filelock = [
-    {file = "filelock-3.7.0-py3-none-any.whl", hash = "sha256:c7b5fdb219b398a5b28c8e4c1893ef5f98ece6a38c6ab2c22e26ec161556fed6"},
-    {file = "filelock-3.7.0.tar.gz", hash = "sha256:b795f1b42a61bbf8ec7113c341dad679d772567b936fbd1bf43c9a238e673e20"},
+    {file = "filelock-3.7.1-py3-none-any.whl", hash = "sha256:37def7b658813cda163b56fc564cdc75e86d338246458c4c28ae84cabefa2404"},
+    {file = "filelock-3.7.1.tar.gz", hash = "sha256:3a0fd85166ad9dbab54c9aec96737b744106dc5f15c0b09a6744a445299fcf04"},
 ]
 flake8 = [
     {file = "flake8-4.0.1-py2.py3-none-any.whl", hash = "sha256:479b1304f72536a55948cb40a32dce8bb0ffe3501e26eaf292c7e60eb5e0428d"},
@@ -1908,8 +1908,8 @@ python-gitlab = [
     {file = "python_gitlab-3.5.0-py3-none-any.whl", hash = "sha256:73b5aa6502efa557ee1a51227cceb0243fac5529627da34f08c5f265bf50417c"},
 ]
 python-semantic-release = [
-    {file = "python-semantic-release-7.29.0.tar.gz", hash = "sha256:63bc4f92e23442b87df87ca98a8b585efaa15bd4bd7a2caf028452cc01acda8f"},
-    {file = "python_semantic_release-7.29.0-py3-none-any.whl", hash = "sha256:c8f45390caaa1c32886bd0af498bdbf4c5d6c8b8c947d67fce821f1689c132b1"},
+    {file = "python-semantic-release-7.29.1.tar.gz", hash = "sha256:9bf10e1f9593259d9c139fb3dd2f54b7c61e8abdce62e4aada5b50253dd60dec"},
+    {file = "python_semantic_release-7.29.1-py3-none-any.whl", hash = "sha256:459ed4c09b4aa9ea94b5ceb240211cb7967069d635b1dd9b97b44a9893ec73fb"},
 ]
 pytz = [
     {file = "pytz-2022.1-py2.py3-none-any.whl", hash = "sha256:e68985985296d9a66a881eb3193b0906246245294a881e7c8afe623866ac6a5c"},
