@@ -145,6 +145,7 @@ class EnhancedBug(Bug):
             valgrind = "--enable-valgrind" in self.comment_zero
             no_opt = "--disable-optimize" in self.comment_zero
             fuzzilli = "--enable-js-fuzzilli" in self.comment_zero
+            nyx = False  # We don't support nyx builds
             self._build_flags = BuildFlags(
                 asan,
                 tsan,
@@ -154,6 +155,7 @@ class EnhancedBug(Bug):
                 valgrind,
                 no_opt,
                 fuzzilli,
+                nyx,
             )
 
         return self._build_flags
