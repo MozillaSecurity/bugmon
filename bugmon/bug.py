@@ -378,6 +378,22 @@ class EnhancedBug(Bug):
             raise TypeError("Method not supported when using a cached bug")
         super().add_comment(comment)
 
+    def add_needinfo(self, user: str) -> bool:
+        """Adds a needinfo request for the specified user.
+
+        :param user: The user to needinfo
+        """
+        if "flags" not in self._bug:
+            self._bug["flags"] = []
+
+        request = {"name": "needinfo", "status": "?", "requestee": user}
+        for flag in self._bug["flags"]:
+            if request.items() < flag.items():
+                return False
+
+        self._bug["flags"].append(request)
+        return True
+
     def diff(self) -> Dict[str, Union[str, Dict[str, Union[str, bool]]]]:
         """Overload Bug.diff() to strip attachments and comments"""
         changed = cast(
