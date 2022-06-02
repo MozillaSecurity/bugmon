@@ -13,7 +13,7 @@ import logging
 import os
 import zipfile
 from pathlib import Path
-from typing import Optional, List, Dict, cast
+from typing import Optional, List, Dict, cast, Union
 
 from autobisect.bisect import BisectionResult, Bisector
 from autobisect.build_manager import BuildManager
@@ -73,16 +73,18 @@ class BugMonitor:
 
         self._close_bug = False
 
-    def _bisect(self, config: Optional[BugConfiguration] = None) -> None:
+    def _bisect(
+        self, config: Optional[BugConfiguration] = None
+    ) -> Union[BisectionResult, None]:
         """Attempt to enumerate the changeset that introduced or fixed the bug"""
         config = config if config is not None else self.detect_config()
         if config is None:
-            return
+            return None
 
         tip = self._reproduce_bug(config, self.bug.branch)
         if tip.status == EvaluatorResult.BUILD_FAILED:
             log.warning("Failed to bisect bug (bad build)")
-            return
+            return None
 
         # If tip doesn't crash, bisect the fix
         find_fix = tip.status != EvaluatorResult.BUILD_CRASHED
@@ -106,7 +108,7 @@ class BugMonitor:
         except FetcherException as e:
             self.add_command("bisected")
             self.report(f"Unable to bisect testcase ({str(e).lower()})")
-            return
+            return None
 
         result = bisector.bisect()
 
@@ -140,6 +142,8 @@ class BugMonitor:
             if not find_fix and "regression" not in self.bug.keywords:
                 self.bug.keywords.append("regression")
 
+        return result
+
     def _confirm_open(self) -> None:
         """Attempt to confirm open test cases"""
         config = self.detect_config()
@@ -163,7 +167,15 @@ class BugMonitor:
                     f"Testcase crashes using the initial build ({orig.build_str}) "
                     f"but not with tip ({tip.build_str}.)"
                 )
-                self._bisect(config)
+                result = self._bisect(config)
+                if result and result.status == BisectionResult.SUCCESS:
+                    if self.bug.add_needinfo(self.bug.assignee["email"]):
+                        nick = self.bug.assignee["nick"]
+                        self.report(
+                            f"{nick}, can you confirm that the above bisection range "
+                            "is responsible for fixing this issue?"
+                        )
+
             elif orig.status == EvaluatorResult.BUILD_PASSED:
                 self.report(
                     "Unable to reproduce bug using the following builds:",
