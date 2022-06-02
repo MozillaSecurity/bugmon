@@ -57,7 +57,7 @@ COMMENT = {
 BUG = {
     "cf_webcompat_priority": "---",
     "cf_tracking_firefox79": "-",
-    "keywords": ["assertion", "testcase"],
+    "keywords": ["assertion", "bugmon", "testcase"],
     "cf_tracking_thunderbird_esr68": "---",
     "op_sys": "Linux",
     "cf_status_thunderbird_esr60": "---",
