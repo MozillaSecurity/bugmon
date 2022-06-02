@@ -372,7 +372,7 @@ class EnhancedBug(Bug):
     def add_comment(self, comment: Comment) -> None:
         """Add a new comment when a bugsy instance is present
 
-                :param comment: comment
+        :param comment: comment
         :raise TypeError: Raises if bug does not have a bugsy instance"""
         if self._bugsy is None:
             raise TypeError("Method not supported when using a cached bug")
