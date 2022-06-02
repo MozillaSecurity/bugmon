@@ -8,7 +8,7 @@ import json
 import platform
 import re
 from datetime import datetime
-from typing import Any, Dict, List, Union, Optional, NoReturn, cast, Type
+from typing import Any, Dict, List, Union, Optional, NoReturn, cast, Type, TypedDict
 
 import requests
 from autobisect import JSEvaluator
@@ -25,6 +25,12 @@ from .utils import HG_BASE, _get_milestone, _get_rev
 
 REV_MATCH = r"([a-f0-9]{12}|[a-f0-9]{40})"
 BID_MATCH = r"([0-9]{8}-)([a-f0-9]{12})"
+
+AsigneeDetail = TypedDict(
+    "AsigneeDetail",
+    {"id": int, "real_name": str, "nick": str, "name": str, "email": str},
+    total=True,
+)
 
 
 def sanitize_bug(obj: Any) -> Any:
@@ -91,6 +97,15 @@ class EnhancedBug(Bug):
             object.__setattr__(self, attr, value)
         else:
             super().__setattr__(attr, value)
+
+    @property
+    def assignee(self) -> AsigneeDetail:
+        """Get the bug assignee or original reporter if not available"""
+        dest = "assigned_to"
+        if self._bug["assigned_to"].startswith("nobody@"):
+            dest = "creator"
+
+        return cast(AsigneeDetail, self._bug[f"{dest}_detail"])
 
     @property
     def branch(self) -> str:
