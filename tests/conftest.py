@@ -4,8 +4,12 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 import copy
+from pathlib import Path
 
 import pytest
+from bugmon import BugMonitor
+from bugmon.bug import EnhancedBug
+from bugsy import Bugsy
 
 REV = "7bd6cb8b76c078f5e687574decdde97f1e4affce"
 SHORT_REV = REV[:12]
@@ -166,3 +170,12 @@ def bug_fixture_prefetch():
     bug_data["attachments"] = [ATTACHMENT]
     bug_data["comments"] = [COMMENT]
     return bug_data
+
+
+@pytest.fixture
+def mock_bugmon(mocker, tmpdir, request, bug_fixture_prefetch):
+    """Yields a mock bugmon instance"""
+    bugsy = mocker.Mock(Bugsy, autospec=True)
+    bug = EnhancedBug(None, **bug_fixture_prefetch)
+    dry_run = request.param if hasattr(request, "param") else True
+    yield BugMonitor(bugsy, bug, Path(tmpdir), dry_run)
