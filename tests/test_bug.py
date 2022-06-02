@@ -310,3 +310,27 @@ def test_bug_cache_bug(mocker, bug_fixture, comment_fixture, attachment_fixture)
     cached_bug = EnhancedBug.cache_bug(bug)
     assert cached_bug.get_attachments() == attachments
     assert cached_bug.get_comments() == comments
+
+
+@pytest.mark.parametrize("has_assignee", [True, False])
+def test_bug_assignee(bug_fixture_prefetch, has_assignee):
+    """Test that bug returns the correct assignee"""
+    data = copy.deepcopy(bug_fixture_prefetch)
+
+    if not has_assignee:
+        data["assigned_to"] = "nobody@mozilla.com"
+
+    bug = EnhancedBug(bugsy=None, **data)
+
+    expected = "creator" if not has_assignee else "assigned_to"
+    assert bug.assignee == data[f"{expected}_detail"]
+
+
+def test_bug_add_needinfo(bug_fixture_prefetch):
+    """Test that needinfo can be added to a bug"""
+    data = copy.deepcopy(bug_fixture_prefetch)
+    bug = EnhancedBug(bugsy=None, **data)
+    bug.add_needinfo("abc@mozilla.com")
+
+    expected = {"name": "needinfo", "status": "?", "requestee": "abc@mozilla.com"}
+    assert bug.flags[0] == expected
