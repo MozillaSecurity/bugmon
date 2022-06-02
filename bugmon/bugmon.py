@@ -122,14 +122,14 @@ class BugMonitor:
                 f"Unable to bisect testcase ({result.message}):",
                 f"> Start: {result.start.changeset} ({result.start.id})",
                 f"> End: {result.end.changeset} ({result.end.id})",
-                f"> BuildFlags: {str(config.build_flags)}",
+                f"> BuildFlags: {str(config.build_flags)}\n",
             ]
             self.report(*output)
         else:
             output = [
                 f"> Start: {result.start.changeset} ({result.start.id})",
                 f"> End: {result.end.changeset} ({result.end.id})",
-                f"> Pushlog: {result.pushlog}",
+                f"> Pushlog: {result.pushlog}\n\n",
             ]
 
             verb = "fixed" if find_fix else "introduced"
@@ -138,7 +138,7 @@ class BugMonitor:
                 *output,
             )
 
-            # If bisection succeeds and we're not bisecting a fix, add the regression keyword.
+            # If bisection succeeds, and we're not bisecting a fix, add the regression keyword.
             if not find_fix and "regression" not in self.bug.keywords:
                 self.bug.keywords.append("regression")
 
@@ -165,7 +165,7 @@ class BugMonitor:
             if orig.status == EvaluatorResult.BUILD_CRASHED:
                 self.report(
                     f"Testcase crashes using the initial build ({orig.build_str}) "
-                    f"but not with tip ({tip.build_str}.)"
+                    f"but not with tip ({tip.build_str}.)\n"
                 )
                 result = self._bisect(config)
                 if result and result.status == BisectionResult.SUCCESS:
