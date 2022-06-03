@@ -395,6 +395,7 @@ class EnhancedBug(Bug):
 
         request = {"name": "needinfo", "status": "?", "requestee": user}
         for flag in self._bug["flags"]:
+            # Don't insert needinfo flag if one already exists
             if request.items() < flag.items():
                 return False
 
