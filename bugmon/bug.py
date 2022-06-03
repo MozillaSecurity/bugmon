@@ -7,8 +7,9 @@
 import json
 import platform
 import re
+import sys
 from datetime import datetime
-from typing import Any, Dict, List, Union, Optional, NoReturn, cast, Type, TypedDict
+from typing import Any, Dict, List, Union, Optional, NoReturn, cast, Type
 
 import requests
 from autobisect import JSEvaluator
@@ -22,6 +23,12 @@ from fuzzfetch import (
 )
 
 from .utils import HG_BASE, _get_milestone, _get_rev
+
+if sys.version_info >= (3, 8):
+    from typing import TypedDict
+else:
+    from typing_extensions import TypedDict
+
 
 REV_MATCH = r"([a-f0-9]{12}|[a-f0-9]{40})"
 BID_MATCH = r"([0-9]{8}-)([a-f0-9]{12})"
