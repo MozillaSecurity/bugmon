@@ -2,6 +2,20 @@
 
 <!--next-version-placeholder-->
 
+## v1.3.0 (2022-06-03)
+### Feature
+* Add needinfo flag if bug fixed prematurely ([`b16fde7`](https://github.com/MozillaSecurity/bugmon/commit/b16fde72b2518a05d62ce4c2e91389dd7896d6e1))
+* Add method for setting the needinfo flag ([`b097be1`](https://github.com/MozillaSecurity/bugmon/commit/b097be18d8237c6f0dd21a8fcff4db9147797896))
+* Add property for retrieving the assignee or creator ([`b81bd1b`](https://github.com/MozillaSecurity/bugmon/commit/b81bd1bd77fedeebcf38621d2ffcc0f8a89f461c))
+
+### Fix
+* Add typing_extensions import for py37 ([`81f6a30`](https://github.com/MozillaSecurity/bugmon/commit/81f6a30409e785fe7d10f76afe533dabd04a3a44))
+* Minor reporter formatting changes ([`d3a9b2d`](https://github.com/MozillaSecurity/bugmon/commit/d3a9b2d6fa7bb9b4975b2ba97e4f0ee993a0ffae))
+
+### Documentation
+* Add comment ([`cc8128e`](https://github.com/MozillaSecurity/bugmon/commit/cc8128e20ba77fa3c421529cf3a1fb35c557b7d4))
+* Fix indent ([`604c0ed`](https://github.com/MozillaSecurity/bugmon/commit/604c0ed33baa7d8542ad92dfbcc4f4538ff32a5e))
+
 ## v1.2.4 (2022-06-01)
 ### Fix
 * Exclude nyx builds ([`8f17265`](https://github.com/MozillaSecurity/bugmon/commit/8f1726591948a100cad50f5a4866e10577803556))
