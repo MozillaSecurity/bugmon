@@ -206,6 +206,9 @@ class BugMonitor:
             patch_rev = self.bug.find_patch_rev(self.bug.branch)
             tip = self._reproduce_bug(config, self.bug.branch, patch_rev)
 
+            if "verify" in self.bug.commands:
+                self.remove_command("verify")
+
             build_str = tip.build_str
             if tip.status == EvaluatorResult.BUILD_PASSED:
                 initial = self._reproduce_bug(
