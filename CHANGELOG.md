@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.3.1 (2022-07-07)
+### Fix
+* Remove verify from commands after verification ([`e22d8a5`](https://github.com/MozillaSecurity/bugmon/commit/e22d8a59ba5ef2b5aa5f88cdbfa992436dd7cc66))
+
 ## v1.3.0 (2022-06-03)
 ### Feature
 * Add needinfo flag if bug fixed prematurely ([`b16fde7`](https://github.com/MozillaSecurity/bugmon/commit/b16fde72b2518a05d62ce4c2e91389dd7896d6e1))
