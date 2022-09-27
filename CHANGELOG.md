@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.3.2 (2022-09-27)
+### Fix
+* Update autobisect to ensure relaunch is set to 1 ([`695b80f`](https://github.com/MozillaSecurity/bugmon/commit/695b80f7863664b3fc68284a233f1024979180e2))
+
 ## v1.3.1 (2022-07-07)
 ### Fix
 * Remove verify from commands after verification ([`e22d8a5`](https://github.com/MozillaSecurity/bugmon/commit/e22d8a59ba5ef2b5aa5f88cdbfa992436dd7cc66))
