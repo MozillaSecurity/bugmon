@@ -36,8 +36,8 @@ class BrowserConfiguration(BugConfiguration):
     def __init__(self, build_flags: BuildFlags, evaluator: BrowserEvaluator):
         super().__init__(build_flags, evaluator)
         self.params["entry_point"] = evaluator.testcase
-        self.params["use_harness"] = evaluator._use_harness
-        self.params["env_variables"] = evaluator._env_vars
+        self.params["use_harness"] = evaluator.use_harness
+        self.params["env_variables"] = evaluator.env_vars
 
     @staticmethod
     def iter_env(bug: EnhancedBug) -> Iterator[Dict[str, str]]:
