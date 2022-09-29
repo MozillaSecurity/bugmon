@@ -4,15 +4,16 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 from autobisect.bisect import BisectionResult
 from autobisect.evaluators import EvaluatorResult
+
 from bugmon import ReproductionResult
 from bugmon.bug import EnhancedBug
 
 
-def test_bugmon_need_info_on_bisect_fix(mocker, mock_bugmon):
+def test_bugmon_need_info_on_bisect_fix(mocker, bugmon):
     """Test that the assignee is NI'd when the testcase no longer reproduces"""
-    mocker.patch.object(mock_bugmon, "detect_config", return_value=True)
+    mocker.patch.object(bugmon, "detect_config", return_value=True)
     mocker.patch.object(
-        mock_bugmon,
+        bugmon,
         "_reproduce_bug",
         side_effect=[
             ReproductionResult(EvaluatorResult.BUILD_PASSED),
@@ -21,10 +22,10 @@ def test_bugmon_need_info_on_bisect_fix(mocker, mock_bugmon):
     )
     bisect_result = mocker.Mock(BisectionResult, autospec=True)
     bisect_result.status = BisectionResult.SUCCESS
-    mocker.patch.object(mock_bugmon, "_bisect", return_value=bisect_result)
+    mocker.patch.object(bugmon, "_bisect", return_value=bisect_result)
     mock_bug = mocker.MagicMock(EnhancedBug, autospec=True)
-    mock_bugmon.bug = mock_bug
+    bugmon.bug = mock_bug
 
-    mock_bugmon._confirm_open()
+    bugmon._confirm_open()
 
     assert mock_bug.add_needinfo.call_count == 1
