@@ -6,9 +6,14 @@
 import copy
 
 import pytest
+from autobisect import BrowserEvaluator, JSEvaluator
+from fuzzfetch import BuildFlags, Fetcher
+
 from bugmon import BugMonitor
 from bugmon.bug import EnhancedBug
 from bugsy import Bugsy
+
+from bugmon.evaluator_configs import BrowserConfiguration, JSConfiguration
 
 REV = "7bd6cb8b76c078f5e687574decdde97f1e4affce"
 SHORT_REV = REV[:12]
@@ -18,7 +23,7 @@ BUILD_ID = f"20200811-{SHORT_REV}"
 @pytest.fixture
 def attachment_data():
     """Simple attachment"""
-    yield {
+    return {
         "flags": [],
         "attacher": "foobar@example.com",
         "last_change_time": "2020-06-30T12:40:45Z",
@@ -48,7 +53,7 @@ def attachment_data():
 @pytest.fixture
 def comment_data():
     """Simple comment"""
-    yield {
+    return {
         "id": 123456,
         "is_private": False,
         "time": "2020-06-30T12:40:45Z",
@@ -65,7 +70,7 @@ def comment_data():
 @pytest.fixture
 def bug_data_base():
     """Simple bug"""
-    yield {
+    return {
         "cf_webcompat_priority": "---",
         "cf_tracking_firefox79": "-",
         "keywords": ["assertion", "bugmon", "testcase"],
@@ -162,20 +167,77 @@ def bug_data(attachment_data, bug_data_base, comment_data):
     bug_data = copy.deepcopy(bug_data_base)
     bug_data["attachments"] = [attachment_data]
     bug_data["comments"] = [comment_data]
-    yield bug_data
+    return bug_data
 
 
 @pytest.fixture
 def bug(bug_data):
-    """Yields a mock bug instance"""
-    yield EnhancedBug(None, **bug_data)
+    """returns a mock bug instance"""
+    return EnhancedBug(None, **bug_data)
 
 
 @pytest.fixture
 def bugmon(mocker, tmp_path, request, bug):
-    """Yields a mock bugmon instance"""
+    """returns a mock bugmon instance"""
+    working_dir = tmp_path / "working_dir"
+    working_dir.mkdir()
+    log_dir = tmp_path / "log_dir"
+    log_dir.mkdir()
     bugsy = mocker.Mock(Bugsy, autospec=True)
     bug_instance = request.param if hasattr(request, "bug") else bug
     dry_run = request.param if hasattr(request, "param") else True
-    logs = request.param if hasattr(request, "logs") else None
-    yield BugMonitor(bugsy, bug_instance, tmp_path, logs, dry_run)
+    return BugMonitor(bugsy, bug_instance, working_dir, log_dir, dry_run)
+
+
+@pytest.fixture
+def build_flags():
+    return BuildFlags(
+        asan=False,
+        tsan=False,
+        debug=False,
+        fuzzing=False,
+        coverage=False,
+        valgrind=False,
+        no_opt=False,
+        fuzzilli=False,
+        nyx=False,
+    )
+
+
+@pytest.fixture
+def build(mocker, build_flags):
+    build = mocker.Mock(Fetcher, autospec=True)
+    build._branch = "central"
+    build.build_flags = build_flags
+    build.changeset = "0e384d802c84057a296e06a6b05f0326ed8c46e3"
+    build.id = "20221004040915"
+
+    return build
+
+
+@pytest.fixture
+def browser_evaluator(tmp_path):
+    """returns a BrowserEvaluator instance"""
+    testcase = tmp_path / "testcase.html"
+    testcase.touch()
+    return BrowserEvaluator(testcase)
+
+
+@pytest.fixture
+def browser_config(build_flags, browser_evaluator):
+    """returns a BrowserConfiguration instance"""
+    return BrowserConfiguration(build_flags, browser_evaluator)
+
+
+@pytest.fixture
+def js_evaluator(tmp_path):
+    """returns a JSEvaluator instance"""
+    testcase = tmp_path / "testcase.html"
+    testcase.touch()
+    return JSEvaluator(testcase)
+
+
+@pytest.fixture
+def js_config(build_flags, js_evaluator):
+    """returns a JSConfiguration instance"""
+    return JSConfiguration(build_flags, js_evaluator)
