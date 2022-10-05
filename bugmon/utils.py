@@ -1,8 +1,9 @@
-# -*- coding: utf-8 -*-
-
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+from pathlib import Path
+from typing import Union
+
 import requests
 from requests.adapters import HTTPAdapter, Retry
 from requests.models import Response
@@ -38,3 +39,15 @@ def _get_rev(branch: str, rev: str) -> Response:
         url = f"{HG_BASE}/releases/mozilla-{branch}/json-rev/{rev}"
 
     return _get_url(url)
+
+
+def find_pernosco_trace_dir(parent_dir: Path) -> Union[Path, None]:
+    """Identify path to pernosco trace directory.
+
+    :param parent_dir: Parent directory path.
+    """
+    matches = list((parent_dir / "reports").glob("**/rr-traces/"))
+    if len(matches) == 1:
+        return matches[0]
+
+    return None

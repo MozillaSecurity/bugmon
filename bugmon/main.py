@@ -40,6 +40,12 @@ def parse_args(argv: Any = None) -> argparse.Namespace:
         action="store_true",
         help="Force bug confirmation regardless of status",
     )
+    parser.add_argument(
+        "-l",
+        "--log_location",
+        type=Path,
+        help="Path to record results",
+    )
 
     # Bug selection
     bugs = parser.add_mutually_exclusive_group(required=True)
@@ -51,6 +57,9 @@ def parse_args(argv: Any = None) -> argparse.Namespace:
         help="Path to advanced search parameters",
     )
     args = parser.parse_args(argv)
+
+    if args.log_location and not args.log_location.is_dir():
+        parser.error("Path to log location does not exist!")
 
     if args.search and not args.search.is_file():
         parser.error("Search parameter path does not exist!")
@@ -99,7 +108,14 @@ def main(argv: Optional[Dict[str, Any]] = None) -> int:
     for bug in bugs:
         with tempfile.TemporaryDirectory() as temp_dir:
             try:
-                bugmon = BugMonitor(bugsy, bug, Path(temp_dir), args.dry_run)
+                working_dir = Path(temp_dir)
+                bugmon = BugMonitor(
+                    bugsy,
+                    bug,
+                    working_dir,
+                    args.log_location,
+                    args.dry_run,
+                )
                 log.info(
                     f"Analyzing bug {bug.id} "
                     f"(Status: {bugmon.bug.status}, "

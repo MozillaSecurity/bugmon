@@ -11,19 +11,21 @@ import io
 import json
 import logging
 import os
+import shutil
+import tempfile
 import zipfile
 from pathlib import Path
 from typing import Optional, List, Dict, cast, Union
 
 from autobisect.bisect import BisectionResult, Bisector
 from autobisect.build_manager import BuildManager
-from autobisect.evaluators import EvaluatorResult
+from autobisect.evaluators import EvaluatorResult, BrowserEvaluator, JSEvaluator
 from bugsy.bugsy import Bugsy
 from fuzzfetch import BuildSearchOrder, Fetcher, FetcherException
 
 from bugmon.bug import EnhancedBug
-from bugmon.evaluator_configs import BugConfigs
-from bugmon.evaluator_configs.base import BugConfiguration
+from bugmon.evaluator_configs import BugConfigs, BugConfiguration
+from bugmon.utils import find_pernosco_trace_dir
 
 log = logging.getLogger("bugmon")
 
@@ -40,10 +42,16 @@ class ReproductionResult:
     """Class for storing reproduction results"""
 
     def __init__(
-        self, status: EvaluatorResult, build_str: Optional[str] = None
+        self, status: EvaluatorResult, build: Optional[Fetcher] = None
     ) -> None:
         self.status = status
-        self.build_str = build_str
+        self.build = build
+
+        self.build_str = None
+        if build:
+            self.build_str = (
+                f"mozilla-{build._branch} {build.id}-{build.changeset[:12]}"
+            )
 
 
 class BugMonitor:
@@ -54,19 +62,23 @@ class BugMonitor:
         bugsy: Bugsy,
         bug: EnhancedBug,
         working_dir: Path,
-        dry_run: bool = False,
+        log_location: Optional[Path] = None,
+        dry_run: Optional[bool] = False,
     ) -> None:
         """Initializes new BugMonitor instance
 
         :param bugsy: Bugsy instance used for retrieving bugs
         :param bug: Bug to analyze
         :param working_dir: Path to working directory
+        :param log_location: Path to record results
         :param dry_run: Boolean indicating if changes should be made to the bug
         """
         self.bugsy = bugsy
         self.bug = bug
         self.working_dir = working_dir
         self.dry_run = dry_run
+        self.log_location = log_location
+
         self.queue: List[str] = []
         self.results: Dict[str, Dict[str, ReproductionResult]] = {}
         self.build_manager = BuildManager()
@@ -192,6 +204,74 @@ class BugMonitor:
         if "confirm" in self.bug.commands:
             self.remove_command("confirm")
 
+
+    def _pernosco(self) -> None:
+        """Attempt to record a pernosco session"""
+        if self.log_location is None:
+            log.error("Cannot record a pernosco session without a log location!")
+            return None
+
+        config = self.detect_config()
+        if config is None:
+            return None
+
+        if isinstance(config.evaluator, BrowserEvaluator):
+            log.info("Attempting to record an rr session (this may take a while)...")
+
+            with tempfile.TemporaryDirectory() as temp_dir:
+                dest = Path(temp_dir)
+                # Update config to use no-opt
+                config.build_flags = config.build_flags._replace(no_opt=True)
+                # Update evaluator settings
+                config.evaluator.logs = dest
+                config.evaluator.pernosco = True
+                config.evaluator.repeat = 100
+                config.evaluator.relaunch = 1
+                config.evaluator.timeout = 300
+
+                result = self._reproduce_bug(
+                    config, self.bug.branch, self.bug.initial_build_id
+                )
+                if result.status == EvaluatorResult.BUILD_CRASHED and result.build:
+                    log.info("Successfully recorded an rr session.")
+
+                    trace_dir = find_pernosco_trace_dir(dest)
+                    if trace_dir is None:
+                        log.error("Cannot find rr-trace directory!")
+                        return None
+
+                    trace_dest = self.log_location / "rr-trace"
+                    build_path = self.log_location / "build.json"
+                    for dest in (trace_dest, build_path):
+                        if dest.exists():
+                            log.error(f"Cannot write to ({build_path}).  Path exists!")
+                            return None
+
+                    with open(build_path, "w", encoding="utf-8") as file:
+                        build_data = {
+                            # pylint: disable=protected-access
+                            "branch": result.build._branch,
+                            "rev": result.build.changeset,
+                        }
+                        json.dump(build_data, file, indent=2)
+
+                    log.info("Compressing rr trace (this may take a while)...")
+                    shutil.make_archive(
+                        base_name="rr-trace",
+                        format="gztar",
+                        root_dir=str(trace_dir),
+                        base_dir="firefox-0",
+                    )
+
+                elif result.status == EvaluatorResult.BUILD_PASSED:
+                    self.report("Failed to record an rr session for this bug.")
+        elif isinstance(config.evaluator, JSEvaluator):
+            self.report("Pernosco sessions are only supported for Firefox bugs!")
+
+        self.remove_command("pernosco")
+
+        return None
+
     def _verify_fixed(self) -> None:
         """Attempt to verify the bug state
 
@@ -307,21 +387,21 @@ class BugMonitor:
             log.error(f"Error fetching build: {e}")
             return ReproductionResult(EvaluatorResult.BUILD_FAILED)
 
+        build_name = build.get_auto_name()
         # Check if this branch and build was already tested
         if branch in self.results:
-            if use_cache and build.id in self.results[branch]:
-                return self.results[branch][build.id]
+            if use_cache and build_name in self.results[branch]:
+                return self.results[branch][build_name]
         else:
             self.results[branch] = {}
 
-        build_str = f"mozilla-{self.bug.branch} {build.id}-{build.changeset[:12]}"
-        log.info(f"Attempting to reproduce bug on {build_str}...")
+        log.info(f"Attempting to reproduce bug on {build_name}...")
 
         try:
             with self.build_manager.get_build(build, config.evaluator.target) as path:
                 status = config.evaluator.evaluate_testcase(path)
-                self.results[branch][build.id] = ReproductionResult(status, build_str)
-                return self.results[branch][build.id]
+                self.results[branch][build_name] = ReproductionResult(status, build)
+                return self.results[branch][build_name]
         except FetcherException as e:
             log.error(f"Error fetching build: {e}")
             return ReproductionResult(EvaluatorResult.BUILD_FAILED)
@@ -395,6 +475,10 @@ class BugMonitor:
             return True
 
         return False
+
+    def needs_pernosco(self) -> bool:
+        """Helper function to determine eligibility for 'pernosco'"""
+        return "pernosco" in self.bug.commands
 
     def needs_verify(self) -> bool:
         """Helper function to determine eligibility for 'verify'"""
@@ -486,6 +570,8 @@ class BugMonitor:
             "REOPENED",
         ]:
             self._confirm_open()
+        elif self.needs_pernosco():
+            self._pernosco()
         else:
             log.info("No actions necessary.  Exiting")
 
