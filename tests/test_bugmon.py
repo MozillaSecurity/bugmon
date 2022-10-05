@@ -3,23 +3,19 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 from autobisect.bisect import BisectionResult
-from autobisect.evaluators import EvaluatorResult
 from bugsy import Bugsy
 
-from bugmon import ReproductionResult, BugMonitor
+from bugmon import BugMonitor, ReproductionPassed, ReproductionCrashed
 from bugmon.bug import EnhancedBug
 
 
-def test_bugmon_need_info_on_bisect_fix(mocker, bugmon):
+def test_bugmon_need_info_on_bisect_fix(mocker, bugmon, build):
     """Test that the assignee is NI'd when the testcase no longer reproduces"""
     mocker.patch.object(bugmon, "detect_config", return_value=True)
     mocker.patch.object(
         bugmon,
         "_reproduce_bug",
-        side_effect=[
-            ReproductionResult(EvaluatorResult.BUILD_PASSED),
-            ReproductionResult(EvaluatorResult.BUILD_CRASHED),
-        ],
+        side_effect=[ReproductionPassed(build), ReproductionCrashed(build)],
     )
     bisect_result = mocker.Mock(BisectionResult, autospec=True)
     bisect_result.status = BisectionResult.SUCCESS
@@ -83,7 +79,7 @@ def test_bugmon_pernosco_browser_bug_success(
     bugmon.add_command("pernosco")
     mocker.patch.object(bugmon, "detect_config", return_value=browser_config)
 
-    result = ReproductionResult(EvaluatorResult.BUILD_CRASHED, build)
+    result = ReproductionCrashed(build)
     mocker.patch.object(bugmon, "_reproduce_bug", return_value=result)
     mocker.patch("bugmon.bugmon.find_pernosco_trace_dir", return_value=tmp_path)
     mocker.patch("bugmon.bugmon.shutil.make_archive", return_value=tmp_path)
@@ -97,14 +93,16 @@ def test_bugmon_pernosco_browser_bug_success(
     assert (bugmon.log_location / "rr-trace.tar.gz").exists
 
 
-def test_bugmon_pernosco_browser_bug_failure(mocker, tmp_path, bugmon, browser_config):
+def test_bugmon_pernosco_browser_bug_failure(
+    mocker, tmp_path, bugmon, browser_config, build
+):
     """Verify bugmon correctly reports when recording a pernosco session fails"""
     bugmon.add_command("pernosco")
 
     bugmon.logs = tmp_path
     mocker.patch.object(bugmon, "detect_config", return_value=browser_config)
 
-    result = ReproductionResult(EvaluatorResult.BUILD_PASSED)
+    result = ReproductionPassed(build)
     mocker.patch.object(bugmon, "_reproduce_bug", return_value=result)
     bugmon._pernosco()
 
