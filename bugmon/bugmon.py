@@ -27,7 +27,7 @@ from bugmon.bug import EnhancedBug
 from bugmon.evaluator_configs import BugConfigs, BugConfiguration
 from bugmon.utils import find_pernosco_trace_dir
 
-log = logging.getLogger("bugmon")
+log = logging.getLogger(__name__)
 
 AVAILABLE_BRANCHES = ["mozilla-central", "mozilla-beta", "mozilla-release"]
 
