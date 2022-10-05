@@ -32,7 +32,11 @@ def _get_milestone() -> int:
 
 
 def _get_rev(branch: str, rev: str) -> Response:
-    """Determine if revision exists for branch"""
+    """Determine if revision exists for branch
+
+    :param branch: Branch.
+    :param rev: Revision.
+    """
     if branch == "central":
         url = f"{HG_BASE}/mozilla-{branch}/json-rev/{rev}"
     else:

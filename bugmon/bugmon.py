@@ -411,6 +411,7 @@ class BugMonitor:
 
     def add_command(self, key: str, value: None = None) -> None:
         """Add a bugmon command to the whiteboard
+
         :param key: The command key name
         :param value: The command value
         """
@@ -420,6 +421,7 @@ class BugMonitor:
 
     def remove_command(self, key: str) -> None:
         """Remove a bugmon command to the whiteboard
+
         :param key: The command key name
         """
         commands = copy.deepcopy(self.bug.commands)
@@ -585,7 +587,7 @@ class BugMonitor:
 
     def report(self, *messages: str) -> None:
         """Output and store messages in queue
-        :param *messages: List of comments
+        :param messages: List of comments
         """
         for message in messages:
             self.queue.append(message)
