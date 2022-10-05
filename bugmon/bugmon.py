@@ -160,12 +160,12 @@ class BugMonitor:
         """Attempt to confirm open test cases"""
         config = self.detect_config()
         if config is None:
-            return
+            return None
 
         tip = self._reproduce_bug(config, self.bug.branch)
         if tip.status == EvaluatorResult.BUILD_FAILED:
             log.warning("Failed to confirm bug (bad build)")
-            return
+            return None
 
         if tip.status == EvaluatorResult.BUILD_CRASHED:
             if "confirmed" not in self.bug.commands:
@@ -204,6 +204,7 @@ class BugMonitor:
         if "confirm" in self.bug.commands:
             self.remove_command("confirm")
 
+        return None
 
     def _pernosco(self) -> None:
         """Attempt to record a pernosco session"""
@@ -280,7 +281,7 @@ class BugMonitor:
         """
         config = self.detect_config()
         if config is None:
-            return
+            return None
 
         if self.bug.status != "VERIFIED":
             patch_rev = self.bug.find_patch_rev(self.bug.branch)
@@ -336,7 +337,7 @@ class BugMonitor:
                     log.warning(
                         f"Unable to find commit for fx{rel_num}.  Cannot verify fix!"
                     )
-                    return
+                    return None
                 branch = self._reproduce_bug(config, alias, patch_rev)
                 if branch.status == EvaluatorResult.BUILD_PASSED:
                     log.info(f"Verified fixed on {flag}")
@@ -351,6 +352,8 @@ class BugMonitor:
         if self.bug.status == "VERIFIED" and branches_verified:
             # Remove from further analysis
             self._close_bug = True
+
+        return None
 
     def _reproduce_bug(
         self,
@@ -555,7 +558,7 @@ class BugMonitor:
         """
         if not self.is_supported():
             self.commit()
-            return
+            return None
 
         if self.needs_verify():
             self._verify_fixed()
@@ -577,6 +580,8 @@ class BugMonitor:
 
         # Post updates and comments
         self.commit()
+
+        return None
 
     def report(self, *messages: str) -> None:
         """Output and store messages in queue
