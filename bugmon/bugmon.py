@@ -541,9 +541,7 @@ class BugMonitor:
                 + "Without a baseline, bugmon is unable to analyze this bug."
             )
         else:
-            self.report(
-                "Bugmon was unable to identify a testcase that reproduces this issue."
-            )
+            self.report("Bugmon was unable reproduce this issue.")
 
         self._close_bug = True
         return None
