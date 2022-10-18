@@ -11,12 +11,13 @@ import os
 import sys
 import tempfile
 from pathlib import Path
-from typing import Any, Optional, Dict
+from typing import Any, Optional, Dict, cast
 
 from bugsy import Bugsy
 
-from . import BugmonException, BugMonitor
 from .bug import EnhancedBug
+from .bugmon import PernoscoCreds, BugMonitor
+from .exceptions import BugmonException
 
 log = logging.getLogger("bugmon")
 
@@ -84,6 +85,21 @@ def main(argv: Optional[Dict[str, Any]] = None) -> int:
     if api_root is None or api_key is None:
         raise BugmonException("BZ_API_ROOT and BZ_API_KEY must be set!")
 
+    pernosco_creds: Optional[PernoscoCreds] = None
+    for name in ("PERNOSCO_USER", "PERNOSCO_GROUP", "PERNOSCO_USER_SECRET_KEY"):
+        if os.environ.get(name) is None:
+            log.warning(f"Cannot find Pernosco env variable {name}!")
+            break
+    else:
+        pernosco_creds = cast(
+            PernoscoCreds,
+            {
+                "PERNOSCO_USER": os.environ["PERNOSCO_USER"],
+                "PERNOSCO_GROUP": os.environ["PERNOSCO_GROUP"],
+                "PERNOSCO_USER_SECRET_KEY": os.environ["PERNOSCO_USER_SECRET_KEY"],
+            },
+        )
+
     bugsy = Bugsy(api_key=api_key, bugzilla_url=api_root)
 
     if args.bugs:
@@ -99,7 +115,14 @@ def main(argv: Optional[Dict[str, Any]] = None) -> int:
     for bug in bugs:
         with tempfile.TemporaryDirectory() as temp_dir:
             try:
-                bugmon = BugMonitor(bugsy, bug, Path(temp_dir), args.dry_run)
+                working_dir = Path(temp_dir)
+                bugmon = BugMonitor(
+                    bugsy,
+                    bug,
+                    working_dir,
+                    pernosco_creds,
+                    args.dry_run,
+                )
                 log.info(
                     f"Analyzing bug {bug.id} "
                     f"(Status: {bugmon.bug.status}, "
