@@ -7,12 +7,10 @@ import copy
 
 import pytest
 from autobisect import BrowserEvaluator, JSEvaluator
+from bugsy import Bugsy
 from fuzzfetch import BuildFlags, Fetcher
 
-from bugmon import BugMonitor
-from bugmon.bug import EnhancedBug
-from bugsy import Bugsy
-
+from bugmon import BugMonitor, EnhancedBug
 from bugmon.evaluator_configs import BrowserConfiguration, JSConfiguration
 
 REV = "7bd6cb8b76c078f5e687574decdde97f1e4affce"
