@@ -3,27 +3,33 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-
+import abc
 import base64
 import binascii
 import copy
 import io
 import json
 import logging
-import os
 import zipfile
 from pathlib import Path
-from typing import Optional, List, Dict, cast, Union
+from typing import Optional, List, Dict, cast, Union, TypedDict
 
 from autobisect.bisect import BisectionResult, Bisector
 from autobisect.build_manager import BuildManager
-from autobisect.evaluators import EvaluatorResult
+from autobisect.evaluators import EvaluatorResult, BrowserEvaluator, JSEvaluator
 from bugsy.bugsy import Bugsy
 from fuzzfetch import BuildSearchOrder, Fetcher, FetcherException
 
-from bugmon.bug import EnhancedBug
-from bugmon.evaluator_configs import BugConfigs
-from bugmon.evaluator_configs.base import BugConfiguration
+from .exceptions import BugmonException
+from .bug import EnhancedBug
+from .evaluator_configs import BugConfigs, BugConfiguration
+from .utils import (
+    is_pernosco_available,
+    get_pernosco_trace,
+    get_source_url,
+    download_zip_archive,
+    submit_pernosco,
+)
 
 log = logging.getLogger("bugmon")
 
@@ -32,18 +38,36 @@ AVAILABLE_BRANCHES = ["mozilla-central", "mozilla-beta", "mozilla-release"]
 TESTCASE_URL = "https://github.com/MozillaSecurity/bugmon#testcase-identification"
 
 
-class BugmonException(Exception):
-    """Exception for Bugmon related issues"""
+class ReproductionBase(metaclass=abc.ABCMeta):
+    """Base reproduction result class"""
 
 
-class ReproductionResult:
-    """Class for storing reproduction results"""
+class ReproductionFailed(ReproductionBase):
+    """Reproduction result representing build failures"""
 
-    def __init__(
-        self, status: EvaluatorResult, build_str: Optional[str] = None
-    ) -> None:
-        self.status = status
-        self.build_str = build_str
+
+class ReproductionBuildBase(ReproductionBase, metaclass=abc.ABCMeta):
+    """Base reproduction class that includes build information"""
+
+    def __init__(self, build: Fetcher) -> None:
+        self.build = build
+        self.build_str = f"mozilla-{build._branch} {build.id}-{build.changeset[:12]}"
+
+
+class ReproductionCrashed(ReproductionBuildBase):
+    """Reproduction result representing crashes"""
+
+
+class ReproductionPassed(ReproductionBuildBase):
+    """Reproduction result representing passes"""
+
+
+class PernoscoCreds(TypedDict):
+    """Interface representing required pernosco creds"""
+
+    PERNOSCO_USER: str
+    PERNOSCO_GROUP: str
+    PERNOSCO_USER_SECRET_KEY: str
 
 
 class BugMonitor:
@@ -54,21 +78,34 @@ class BugMonitor:
         bugsy: Bugsy,
         bug: EnhancedBug,
         working_dir: Path,
-        dry_run: bool = False,
+        pernosco_creds: Optional[PernoscoCreds] = None,
+        dry_run: Optional[bool] = False,
     ) -> None:
         """Initializes new BugMonitor instance
 
         :param bugsy: Bugsy instance used for retrieving bugs
         :param bug: Bug to analyze
         :param working_dir: Path to working directory
+        :param pernosco_creds: Optional pernosco credentials.
         :param dry_run: Boolean indicating if changes should be made to the bug
+        :raises BugmonException: If pernosco_creds is supplied but pernosco is not configured
         """
         self.bugsy = bugsy
         self.bug = bug
-        self.working_dir = working_dir
+
+        self.test_dir = working_dir / "testcase"
+        self.test_dir.mkdir()
+        self.log_dir = working_dir / "logs"
+        self.log_dir.mkdir()
+
         self.dry_run = dry_run
+        self.pernosco_creds = pernosco_creds
+        if pernosco_creds is not None and not is_pernosco_available():
+            if not dry_run:
+                raise BugmonException("Pernosco-submit is not properly configured!")
+
         self.queue: List[str] = []
-        self.results: Dict[str, Dict[str, ReproductionResult]] = {}
+        self.results: Dict[str, Dict[str, ReproductionBase]] = {}
         self.build_manager = BuildManager()
 
         self._close_bug = False
@@ -82,12 +119,12 @@ class BugMonitor:
             return None
 
         tip = self._reproduce_bug(config, self.bug.branch)
-        if tip.status == EvaluatorResult.BUILD_FAILED:
+        if isinstance(tip, ReproductionFailed):
             log.warning("Failed to bisect bug (bad build)")
             return None
 
         # If tip doesn't crash, bisect the fix
-        find_fix = tip.status != EvaluatorResult.BUILD_CRASHED
+        find_fix = isinstance(tip, ReproductionPassed)
         if find_fix:
             start = self.bug.initial_build_id
             end = "latest"
@@ -151,18 +188,18 @@ class BugMonitor:
             return
 
         tip = self._reproduce_bug(config, self.bug.branch)
-        if tip.status == EvaluatorResult.BUILD_FAILED:
+        if isinstance(tip, ReproductionFailed):
             log.warning("Failed to confirm bug (bad build)")
             return
 
-        if tip.status == EvaluatorResult.BUILD_CRASHED:
+        if isinstance(tip, ReproductionCrashed):
             if "confirmed" not in self.bug.commands:
                 self.report(f"Verified bug as reproducible on {tip.build_str}.")
                 self._bisect(config)
-        elif tip.status == EvaluatorResult.BUILD_PASSED:
+        elif isinstance(tip, ReproductionPassed):
             bid = self.bug.initial_build_id
             orig = self._reproduce_bug(config, self.bug.branch, bid)
-            if orig.status == EvaluatorResult.BUILD_CRASHED:
+            if isinstance(orig, ReproductionCrashed):
                 self.report(
                     f"Testcase crashes using the initial build ({orig.build_str}) "
                     f"but not with tip ({tip.build_str}.)\n"
@@ -176,7 +213,7 @@ class BugMonitor:
                             "is responsible for fixing this issue?"
                         )
 
-            elif orig.status == EvaluatorResult.BUILD_PASSED:
+            elif isinstance(orig, ReproductionPassed):
                 self.report(
                     "Unable to reproduce bug using the following builds:",
                     f"> {tip.build_str}",
@@ -184,13 +221,77 @@ class BugMonitor:
                 )
 
             # Remove from further analysis
-            if orig.status != EvaluatorResult.BUILD_FAILED:
+            if not isinstance(orig, ReproductionFailed):
                 self._close_bug = True
 
         # Set confirmed status and remove the confirm command
         self.add_command("confirmed")
         if "confirm" in self.bug.commands:
             self.remove_command("confirm")
+
+
+    def _pernosco(self) -> None:
+        """Attempt to record a pernosco session"""
+        config = self.detect_config()
+        if config is None:
+            return None
+
+        if isinstance(config.evaluator, BrowserEvaluator):
+            log.info("Attempting to record an rr session (this may take a while)...")
+
+            # Update config to use no-opt
+            config.build_flags = config.build_flags._replace(no_opt=True)
+            # Update evaluator settings
+            config.evaluator.logs = self.log_dir
+            config.evaluator.pernosco = True
+            config.evaluator.repeat = 100
+            config.evaluator.relaunch = 1
+            config.evaluator.timeout = 300
+
+            result = self._reproduce_bug(
+                config,
+                self.bug.branch,
+                self.bug.initial_build_id,
+            )
+
+            if isinstance(result, ReproductionCrashed):
+                log.info("Successfully recorded an rr session.")
+
+                latest_trace = get_pernosco_trace(self.log_dir)
+                if latest_trace is None:
+                    log.error("Unable to identify a pernosco trace!")
+                    return None
+
+                branch = result.build._branch  # pylint: disable=W0212
+                rev = result.build.changeset
+
+                # Write build.json.  Only used for bugmon-tc
+                build_info = latest_trace / "build.json"
+                build_info.write_text(json.dumps({"branch": branch, "rev": rev}))
+
+                if not self.dry_run:
+                    if not self.pernosco_creds:
+                        log.error("Pernosco creds required for submitting traces!")
+                        return None
+
+                    source_archive_url = get_source_url(branch, rev)
+                    with download_zip_archive(source_archive_url) as source_dir:
+                        log.info("Uploading pernosco session...")
+                        submit_pernosco(
+                            latest_trace,
+                            source_dir,
+                            self.bug.id,
+                            cast(Dict[str, str], self.pernosco_creds),
+                        )
+
+            elif isinstance(result, ReproductionPassed):
+                self.report("Failed to record an rr session for this bug.")
+        elif isinstance(config.evaluator, JSEvaluator):
+            self.report("Pernosco sessions are only supported for Firefox bugs!")
+
+        self.remove_command("pernosco")
+
+        return None
 
     def _verify_fixed(self) -> None:
         """Attempt to verify the bug state
@@ -209,33 +310,32 @@ class BugMonitor:
             if "verify" in self.bug.commands:
                 self.remove_command("verify")
 
-            build_str = tip.build_str
-            if tip.status == EvaluatorResult.BUILD_PASSED:
+            if isinstance(tip, ReproductionPassed):
                 initial = self._reproduce_bug(
                     config,
                     self.bug.branch,
                     self.bug.initial_build_id,
                 )
-                if initial.status == EvaluatorResult.BUILD_PASSED:
+                if isinstance(initial, ReproductionPassed):
                     self.report(
-                        f"Bug appears to be fixed on {build_str} but "
+                        f"Bug appears to be fixed on {tip.build_str} but "
                         f"BugMon was unable to reproduce using {initial.build_str}."
                     )
                     self._close_bug = True
-                elif initial.status == EvaluatorResult.BUILD_FAILED:
+                elif isinstance(initial, ReproductionFailed):
                     self.report(
-                        f"Bug appears to be fixed on {build_str} but "
+                        f"Bug appears to be fixed on {tip.build_str} but "
                         f"BugMon was unable to find a usable build for {self.bug.initial_build_id}."
                     )
                     self._close_bug = True
                 else:
-                    self.report(f"Verified bug as fixed on rev {build_str}.")
+                    self.report(f"Verified bug as fixed on rev {tip.build_str}.")
                     if self.bug.status != "NEW":
                         self.bug.status = "VERIFIED"
 
-            elif tip.status == EvaluatorResult.BUILD_CRASHED:
+            elif isinstance(tip, ReproductionCrashed):
                 self.report(
-                    f"Bug marked as FIXED but still reproduces on {build_str}.  "
+                    f"Bug marked as FIXED but still reproduces on {tip.build_str}.  "
                     + "If you believe this to be incorrect, please remove the bugmon "
                     + "keyword to prevent further analysis."
                 )
@@ -258,13 +358,13 @@ class BugMonitor:
                     )
                     return
                 branch = self._reproduce_bug(config, alias, patch_rev)
-                if branch.status == EvaluatorResult.BUILD_PASSED:
+                if isinstance(branch, ReproductionPassed):
                     log.info(f"Verified fixed on {flag}")
                     setattr(self.bug, flag, "verified")
                     continue
 
                 branches_verified = False
-                if branch.status == EvaluatorResult.BUILD_CRASHED:
+                if isinstance(branch, ReproductionCrashed):
                     log.info(f"Bug remains vulnerable on {flag}")
                     setattr(self.bug, flag, "affected")
 
@@ -278,7 +378,7 @@ class BugMonitor:
         branch: str,
         bid: Optional[str] = None,
         use_cache: Optional[bool] = True,
-    ) -> ReproductionResult:
+    ) -> ReproductionBase:
         """Reproduces the bug
 
         Attempts to reproduce the bug using the specified branch.  If a build id is not
@@ -305,26 +405,33 @@ class BugMonitor:
             )
         except FetcherException as e:
             log.error(f"Error fetching build: {e}")
-            return ReproductionResult(EvaluatorResult.BUILD_FAILED)
+            return ReproductionFailed()
 
+        build_name = build.get_auto_name()
         # Check if this branch and build was already tested
         if branch in self.results:
-            if use_cache and build.id in self.results[branch]:
-                return self.results[branch][build.id]
+            if use_cache and build_name in self.results[branch]:
+                return self.results[branch][build_name]
         else:
             self.results[branch] = {}
 
-        build_str = f"mozilla-{self.bug.branch} {build.id}-{build.changeset[:12]}"
-        log.info(f"Attempting to reproduce bug on {build_str}...")
+        log.info(f"Attempting to reproduce bug on {build_name}...")
 
         try:
             with self.build_manager.get_build(build, config.evaluator.target) as path:
                 status = config.evaluator.evaluate_testcase(path)
-                self.results[branch][build.id] = ReproductionResult(status, build_str)
-                return self.results[branch][build.id]
+                result: ReproductionBase
+                if status == EvaluatorResult.BUILD_CRASHED:
+                    result = ReproductionCrashed(build)
+                elif status == EvaluatorResult.BUILD_PASSED:
+                    result = ReproductionPassed(build)
+                else:
+                    result = ReproductionFailed()
+                self.results[branch][build_name] = result
+                return self.results[branch][build_name]
         except FetcherException as e:
             log.error(f"Error fetching build: {e}")
-            return ReproductionResult(EvaluatorResult.BUILD_FAILED)
+            return ReproductionFailed()
 
     def add_command(self, key: str, value: None = None) -> None:
         """Add a bugmon command to the whiteboard
@@ -366,15 +473,15 @@ class BugMonitor:
                 try:
                     with zipfile.ZipFile(io.BytesIO(data)) as z:
                         for filename in z.namelist():
-                            if os.path.exists(self.working_dir / filename):
+                            if (self.test_dir / filename).exists():
                                 log.warning("Duplicate filename: %s", filename)
-                            z.extract(filename, self.working_dir)
+                            z.extract(filename, self.test_dir)
                 except zipfile.BadZipFile as e:
                     log.warning("Failed to decompress attachment: %s", e)
                     continue
 
             else:
-                Path(self.working_dir, attachment.file_name).write_bytes(data)
+                Path(self.test_dir, attachment.file_name).write_bytes(data)
 
     def needs_bisect(self) -> bool:
         """Helper function to determine eligibility for 'bisect'"""
@@ -395,6 +502,10 @@ class BugMonitor:
             return True
 
         return False
+
+    def needs_pernosco(self) -> bool:
+        """Helper function to determine eligibility for 'pernosco'"""
+        return "pernosco" in self.bug.commands
 
     def needs_verify(self) -> bool:
         """Helper function to determine eligibility for 'verify'"""
@@ -433,17 +544,17 @@ class BugMonitor:
         self.fetch_attachments()
         log.info("Attempting to identify an evaluator configuration...")
         for Config in BugConfigs:
-            for config in Config.iterate(self.bug, self.working_dir):
+            for config in Config.iterate(self.bug, self.test_dir):
                 name = type(config).__name__
                 opts = ", ".join([f"{k}: {v}" for k, v in config.params.items()])
                 log.info(f"Using config: {name} ({opts})")
                 result = self._reproduce_bug(config, branch, bid, False)
-                if result.status == EvaluatorResult.BUILD_CRASHED:
+                if isinstance(result, ReproductionCrashed):
                     log.info("Successfully identified evaluator configuration!")
                     return config
 
                 # Record build string for reporting failed result
-                if build_str is None and result.build_str is not None:
+                if build_str is None and isinstance(result, ReproductionBuildBase):
                     build_str = result.build_str
 
         if build_str is not None:
@@ -452,9 +563,7 @@ class BugMonitor:
                 + "Without a baseline, bugmon is unable to analyze this bug."
             )
         else:
-            self.report(
-                "Bugmon was unable to identify a testcase that reproduces this issue."
-            )
+            self.report("Bugmon was unable reproduce this issue.")
 
         self._close_bug = True
         return None
@@ -486,8 +595,10 @@ class BugMonitor:
             "REOPENED",
         ]:
             self._confirm_open()
-        else:
-            log.info("No actions necessary.  Exiting")
+
+        # Pernosco sessions can be recorded at any time
+        if self.needs_pernosco():
+            self._pernosco()
 
         # Post updates and comments
         self.commit()
