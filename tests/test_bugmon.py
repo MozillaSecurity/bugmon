@@ -5,7 +5,8 @@
 import pytest
 from autobisect.bisect import BisectionResult
 
-from bugmon import ReproductionPassed, ReproductionCrashed, BugMonitor, BugmonException
+from bugmon import ReproductionPassed, ReproductionCrashed, BugMonitor
+from bugmon.exceptions import BugmonException
 from bugmon.bug import EnhancedBug
 
 
