@@ -438,6 +438,7 @@ class BugMonitor:
 
     def add_command(self, key: str, value: None = None) -> None:
         """Add a bugmon command to the whiteboard
+
         :param key: The command key name
         :param value: The command value
         """
@@ -447,6 +448,7 @@ class BugMonitor:
 
     def remove_command(self, key: str) -> None:
         """Remove a bugmon command to the whiteboard
+
         :param key: The command key name
         """
         commands = copy.deepcopy(self.bug.commands)
@@ -456,7 +458,7 @@ class BugMonitor:
         self.bug.commands = commands
 
     def fetch_attachments(self, unpack: Optional[bool] = True) -> None:
-        """Download all attachments and store them in self.working_dir
+        """Download all attachments and store them in self.test_dir
 
         :param unpack: Boolean indicating if archives should be unpacked
         """
@@ -585,6 +587,7 @@ class BugMonitor:
             self.commit()
             return None
 
+        # The following actions are mutually exclusive
         if self.needs_verify():
             self._verify_fixed()
         elif self.needs_confirm():
@@ -606,9 +609,11 @@ class BugMonitor:
         # Post updates and comments
         self.commit()
 
+        return None
+
     def report(self, *messages: str) -> None:
         """Output and store messages in queue
-        :param *messages: List of comments
+        :param messages: List of comments
         """
         for message in messages:
             self.queue.append(message)
