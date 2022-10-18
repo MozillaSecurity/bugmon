@@ -31,7 +31,7 @@ from .utils import (
     submit_pernosco,
 )
 
-log = logging.getLogger("bugmon")
+log = logging.getLogger(__name__)
 
 AVAILABLE_BRANCHES = ["mozilla-central", "mozilla-beta", "mozilla-release"]
 
