@@ -12,7 +12,12 @@ import json
 import logging
 import zipfile
 from pathlib import Path
-from typing import Optional, List, Dict, cast, Union, TypedDict
+from typing import Optional, List, Dict, cast, Union
+
+try:
+    from typing import TypedDict
+except ImportError:
+    from typing_extensions import TypedDict
 
 from autobisect.bisect import BisectionResult, Bisector
 from autobisect.build_manager import BuildManager
