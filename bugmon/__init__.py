@@ -11,3 +11,4 @@ from .bugmon import (
 )
 
 from .bug import EnhancedBug
+from .exceptions import BugmonException
