@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.0.1 (2022-10-20)
+### Fix
+* Update autobisect to ensure log path is set ([`4722d0e`](https://github.com/MozillaSecurity/bugmon/commit/4722d0e26324ad23f52be5f1f9e85576761a53df))
+
 ## v2.0.0 (2022-10-20)
 ### Feature
 * Export BugmonException ([`e30804a`](https://github.com/MozillaSecurity/bugmon/commit/e30804a2bb4d51c0b75e51a3a241c39ad2c0c2b7))
