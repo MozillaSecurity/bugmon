@@ -107,7 +107,7 @@ class BugMonitor:
         self.pernosco_creds = pernosco_creds
         if pernosco_creds is not None and not is_pernosco_available():
             if not dry_run:
-                raise BugmonException("Pernosco-submit is not properly configured!")
+                raise BugmonException("pernosco-submit is not properly configured!")
 
         self.queue: List[str] = []
         self.results: Dict[str, Dict[str, ReproductionBase]] = {}

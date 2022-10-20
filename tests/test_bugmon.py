@@ -31,7 +31,7 @@ def test_bugmon_need_info_on_bisect_fix(mocker, bugmon, build):
 
 def test_bugmon_throws_without_pernosco_submit(bug, bugsy, pernosco_creds, working_dir):
     """Test that bugmon throws when pernosco-submit is not available"""
-    expected = "Pernosco-submit is not properly configured!"
+    expected = "pernosco-submit is not properly configured!"
     with pytest.raises(BugmonException, match=expected):
         BugMonitor(bugsy, bug, working_dir, pernosco_creds, False)
 
