@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.0.3 (2022-10-20)
+### Fix
+* Post to bug that pernosco session has been recorded ([`bf030c9`](https://github.com/MozillaSecurity/bugmon/commit/bf030c94d189529a9de1f36916c6f6261bfac9dd))
+
 ## v2.0.2 (2022-10-20)
 ### Fix
 * Update path to pernoscoshared lib ([`8ac091b`](https://github.com/MozillaSecurity/bugmon/commit/8ac091bd464e760b770af4ef073399316f9beb8b))
