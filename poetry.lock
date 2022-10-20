@@ -41,7 +41,7 @@ tests_no_zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy 
 
 [[package]]
 name = "autobisect"
-version = "6.0.0"
+version = "6.0.1"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 category = "main"
 optional = false
@@ -1385,7 +1385,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "d2932607a896d4f8d6e7359f1399f707d132bbaa79545ad641350556e9c0c22c"
+content-hash = "49af9cb76168f1af4e56534d0d8b9192536f5017e77527ed7cb3d505696a0bf5"
 
 [metadata.files]
 arrow = [
@@ -1401,8 +1401,8 @@ attrs = [
     {file = "attrs-22.1.0.tar.gz", hash = "sha256:29adc2665447e5191d0e7c568fde78b21f9672d344281d0c6e1ab085429b22b6"},
 ]
 autobisect = [
-    {file = "autobisect-6.0.0-py3-none-any.whl", hash = "sha256:36abf639507a941719070099828717b4a6333662b3c21155e7defe56a52fd363"},
-    {file = "autobisect-6.0.0.tar.gz", hash = "sha256:f8ee23afa926193eb37a61511194fc26a339696bca49f596e5aeb9501ea4473c"},
+    {file = "autobisect-6.0.1-py3-none-any.whl", hash = "sha256:700528519f22df8502d4421273b12d5e4a7054aad42f24f20a93c7b51f7d75e7"},
+    {file = "autobisect-6.0.1.tar.gz", hash = "sha256:3c71c23f0497e92d2dcc9657ca0876beea22fd350f68212e306cedef14e9445a"},
 ]
 black = [
     {file = "black-22.10.0-1fixedarch-cp310-cp310-macosx_11_0_x86_64.whl", hash = "sha256:5cc42ca67989e9c3cf859e84c2bf014f6633db63d1cbdf8fdb666dcd9e77e3fa"},
