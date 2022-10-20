@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.0.2 (2022-10-20)
+### Fix
+* Update path to pernoscoshared lib ([`8ac091b`](https://github.com/MozillaSecurity/bugmon/commit/8ac091bd464e760b770af4ef073399316f9beb8b))
+
 ## v2.0.1 (2022-10-20)
 ### Fix
 * Update autobisect to ensure log path is set ([`4722d0e`](https://github.com/MozillaSecurity/bugmon/commit/4722d0e26324ad23f52be5f1f9e85576761a53df))
