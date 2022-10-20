@@ -261,8 +261,6 @@ class BugMonitor:
             )
 
             if isinstance(result, ReproductionCrashed):
-                log.info("Successfully recorded an rr session.")
-
                 latest_trace = get_pernosco_trace(self.log_dir)
                 if latest_trace is None:
                     log.error("Unable to identify a pernosco trace!")
@@ -274,6 +272,11 @@ class BugMonitor:
                 # Write build.json.  Only used for bugmon-tc
                 build_info = latest_trace / "build.json"
                 build_info.write_text(json.dumps({"branch": branch, "rev": rev}))
+
+                self.report(
+                    "Successfully recorded an rr session.  "
+                    "A link to the pernosco-session will be added here shortly."
+                )
 
                 if not self.dry_run:
                     if not self.pernosco_creds:
