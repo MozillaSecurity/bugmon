@@ -105,7 +105,7 @@ def download_zip_archive(url: str) -> Generator[Path, None, None]:
 def is_pernosco_available() -> bool:
     """Determines if pernosco-submit is properly configured"""
     py_path = Path(sysconfig.get_path("platlib"))
-    pernosco_shared = py_path / "pernosco_shared"
+    pernosco_shared = py_path / "pernoscoshared"
     return PERNOSCO is not None and pernosco_shared.exists()
 
 

@@ -14,7 +14,7 @@ def test_is_pernosco_available(binary, library, mocker, tmp_path):
     mocker.patch("bugmon.utils.PERNOSCO", bin_path)
 
     if library:
-        pernosco_shared = tmp_path / "pernosco_shared"
+        pernosco_shared = tmp_path / "pernoscoshared"
         pernosco_shared.mkdir()
 
     mocker.patch(
