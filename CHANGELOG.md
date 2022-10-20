@@ -2,6 +2,21 @@
 
 <!--next-version-placeholder-->
 
+## v2.0.0 (2022-10-20)
+### Feature
+* Export BugmonException ([`e30804a`](https://github.com/MozillaSecurity/bugmon/commit/e30804a2bb4d51c0b75e51a3a241c39ad2c0c2b7))
+* Add support for record pernosco sessions ([`778599f`](https://github.com/MozillaSecurity/bugmon/commit/778599fe6bf4228f3376fd0815dd0993ffef3e44))
+
+### Fix
+* Conditionally import typing_extensions for py37 ([`886f9a3`](https://github.com/MozillaSecurity/bugmon/commit/886f9a33a107003619dcbcb8f624c352e1ac3827))
+* Use __name__ when declaring logger ([`145f4e5`](https://github.com/MozillaSecurity/bugmon/commit/145f4e5a0312906c3a76603efc555e22f771cb4a))
+
+### Breaking
+* This commit makes numerous changes to the BugMonitor API  ([`778599f`](https://github.com/MozillaSecurity/bugmon/commit/778599fe6bf4228f3376fd0815dd0993ffef3e44))
+
+### Documentation
+* Minor pydoc updates ([`36f9c2e`](https://github.com/MozillaSecurity/bugmon/commit/36f9c2e9196554b96d1295d38cb905ccb3b7cee0))
+
 ## v1.3.2 (2022-09-27)
 ### Fix
 * Update autobisect to ensure relaunch is set to 1 ([`695b80f`](https://github.com/MozillaSecurity/bugmon/commit/695b80f7863664b3fc68284a233f1024979180e2))
