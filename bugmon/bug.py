@@ -20,7 +20,7 @@ from fuzzfetch import (
     BuildSearchOrder,
 )
 
-from bugmon.utils import HG_BASE, _get_milestone, _get_rev
+from .utils import HG_BASE, _get_milestone, _get_rev
 
 if sys.version_info >= (3, 8):
     from typing import TypedDict
