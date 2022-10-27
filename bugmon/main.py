@@ -102,6 +102,9 @@ def main(argv: Optional[Dict[str, Any]] = None) -> int:
             },
         )
 
+        for key in ("PERNOSCO_USER", "PERNOSCO_GROUP", "PERNOSCO_USER_SECRET_KEY"):
+            os.environ.pop(key)
+
     bugsy = Bugsy(api_key=api_key, bugzilla_url=api_root)
 
     if args.bugs:
