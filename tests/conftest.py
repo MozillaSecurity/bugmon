@@ -169,7 +169,7 @@ def bug_data(attachment_data, bug_data_base, comment_data):
 
 
 @pytest.fixture
-def bug(bug_data, mocker):
+def bug(bug_data):
     """returns a mock bug instance"""
     bug = EnhancedBug(None, **bug_data)
     # This rev matches the rev listed in comment 0
@@ -202,7 +202,7 @@ def pernosco_creds():
 
 
 @pytest.fixture
-def bugmon(mocker, tmp_path, request, bug, bugsy):
+def bugmon(tmp_path, request, bug, bugsy):
     """returns a mock bugmon instance"""
     working_dir = tmp_path / "working_dir"
     working_dir.mkdir()
