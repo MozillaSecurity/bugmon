@@ -12,12 +12,7 @@ import json
 import logging
 import zipfile
 from pathlib import Path
-from typing import Optional, List, Dict, cast, Union
-
-try:
-    from typing import TypedDict
-except ImportError:
-    from typing_extensions import TypedDict
+from typing import Dict, List, Optional, Union, cast
 
 from autobisect.bisect import BisectionResult, Bisector
 from autobisect.build_manager import BuildManager
@@ -30,6 +25,7 @@ from .bug import EnhancedBug
 from .evaluator_configs import BugConfigs, BugConfiguration
 from .utils import (
     is_pernosco_available,
+    PernoscoCreds,
     get_pernosco_trace,
     get_source_url,
     download_zip_archive,
@@ -65,14 +61,6 @@ class ReproductionCrashed(ReproductionBuildBase):
 
 class ReproductionPassed(ReproductionBuildBase):
     """Reproduction result representing passes"""
-
-
-class PernoscoCreds(TypedDict):
-    """Interface representing required pernosco creds"""
-
-    PERNOSCO_USER: str
-    PERNOSCO_GROUP: str
-    PERNOSCO_USER_SECRET_KEY: str
 
 
 class BugMonitor:

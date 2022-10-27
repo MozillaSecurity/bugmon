@@ -10,8 +10,13 @@ import tempfile
 import zipfile
 from contextlib import contextmanager
 from pathlib import Path, PurePosixPath
-from typing import Dict, Any, Optional, IO, Generator
 from urllib.parse import urlparse
+
+try:
+    from typing import IO, Any, Dict, Generator, Optional, TypedDict, cast
+except ImportError:
+    from typing import IO, Any, Dict, Generator, Optional, cast
+    from typing_extensions import TypedDict
 
 import requests
 from requests.adapters import HTTPAdapter, Retry
@@ -30,6 +35,14 @@ MILESTONE = f"{HG_BASE}/mozilla-central/raw-file/tip/config/milestone.txt"
 PERNOSCO = shutil.which("pernosco-submit")
 
 log = logging.getLogger(__name__)
+
+
+class PernoscoCreds(TypedDict):
+    """Interface representing required pernosco creds"""
+
+    PERNOSCO_USER: str
+    PERNOSCO_GROUP: str
+    PERNOSCO_USER_SECRET_KEY: str
 
 
 def _get_url(url: str) -> Response:
