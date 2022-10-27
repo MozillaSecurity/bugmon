@@ -231,7 +231,9 @@ class BugMonitor:
             return None
 
         if isinstance(config.evaluator, BrowserEvaluator):
-            log.info("Attempting to record an rr session (this may take a while)...")
+            log.info(
+                "Attempting to record a pernosco session (this may take a while)..."
+            )
 
             # Update config to use no-opt
             config.build_flags = config.build_flags._replace(no_opt=True)
@@ -261,10 +263,7 @@ class BugMonitor:
                 build_info = latest_trace / "build.json"
                 build_info.write_text(json.dumps({"branch": branch, "rev": rev}))
 
-                self.report(
-                    "Successfully recorded an rr session.  "
-                    "A link to the pernosco-session will be added here shortly."
-                )
+                log.info("Successfully recorded a pernosco session.")
 
                 if not self.dry_run:
                     if not self.pernosco_creds:
@@ -272,6 +271,7 @@ class BugMonitor:
                         return None
 
                     source_archive_url = get_source_url(branch, rev)
+                    log.info("Downloading and unpacking source archive...")
                     with download_zip_archive(source_archive_url) as source_dir:
                         log.info("Uploading pernosco session...")
                         submit_pernosco(
@@ -280,9 +280,14 @@ class BugMonitor:
                             self.bug.id,
                             self.pernosco_creds,
                         )
-
+                    self.report(
+                        "Successfully recorded a pernosco session.  "
+                        "A link to the pernosco-session will be added here shortly."
+                    )
             elif isinstance(result, ReproductionPassed):
-                self.report("Failed to record an rr session for this bug.")
+                self.report(
+                    "Bugmon was unable to record a pernosco session for this bug."
+                )
         elif isinstance(config.evaluator, JSEvaluator):
             self.report("Pernosco sessions are only supported for Firefox bugs!")
 
@@ -629,7 +634,7 @@ class BugMonitor:
         if self.queue:
             results = "\n".join(self.queue)
             self.bug.comment = {
-                "body": f"**Bugmon Analysis**\n{results}",
+                "body": results,
                 "is_private": False,
                 "is_markdown": True,
             }
