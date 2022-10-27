@@ -11,12 +11,14 @@ import os
 import sys
 import tempfile
 from pathlib import Path
-from typing import Any, Optional, Dict, cast
+from typing import Any, Dict, Optional, cast
 
 from bugsy import Bugsy
 
+from bugmon import PernoscoCreds
+
 from .bug import EnhancedBug
-from .bugmon import PernoscoCreds, BugMonitor
+from .bugmon import BugMonitor
 from .exceptions import BugmonException
 
 log = logging.getLogger("bugmon")

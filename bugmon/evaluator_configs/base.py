@@ -4,7 +4,7 @@
 import itertools
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Iterator, Tuple, Dict, Any
+from typing import Any, Dict, Iterator, Tuple
 
 from autobisect import Evaluator
 from fuzzfetch import BuildFlags

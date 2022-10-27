@@ -7,8 +7,8 @@ from typing import Iterator
 from autobisect import JSEvaluator
 from fuzzfetch import BuildFlags
 
-from .base import BugConfiguration
 from ..bug import EnhancedBug
+from .base import BugConfiguration
 
 
 class JSConfiguration(BugConfiguration):

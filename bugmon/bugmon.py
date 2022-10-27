@@ -16,19 +16,19 @@ from typing import Dict, List, Optional, Union, cast
 
 from autobisect.bisect import BisectionResult, Bisector
 from autobisect.build_manager import BuildManager
-from autobisect.evaluators import EvaluatorResult, BrowserEvaluator, JSEvaluator
+from autobisect.evaluators import BrowserEvaluator, EvaluatorResult, JSEvaluator
 from bugsy.bugsy import Bugsy
 from fuzzfetch import BuildSearchOrder, Fetcher, FetcherException
 
-from .exceptions import BugmonException
 from .bug import EnhancedBug
 from .evaluator_configs import BugConfigs, BugConfiguration
+from .exceptions import BugmonException
 from .utils import (
-    is_pernosco_available,
     PernoscoCreds,
+    download_zip_archive,
     get_pernosco_trace,
     get_source_url,
-    download_zip_archive,
+    is_pernosco_available,
     submit_pernosco,
 )
 

@@ -6,12 +6,13 @@
 import copy
 import tempfile
 from pathlib import Path
+
 from fuzzfetch import BuildFlags
 
 from bugmon.bug import EnhancedBug
 from bugmon.evaluator_configs import (
-    BugConfiguration,
     BrowserConfiguration,
+    BugConfiguration,
     JSConfiguration,
 )
 

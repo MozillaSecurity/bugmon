@@ -5,9 +5,9 @@
 import pytest
 from autobisect.bisect import BisectionResult
 
-from bugmon import ReproductionPassed, ReproductionCrashed, BugMonitor
-from bugmon.exceptions import BugmonException
+from bugmon import BugMonitor, ReproductionCrashed, ReproductionPassed
 from bugmon.bug import EnhancedBug
+from bugmon.exceptions import BugmonException
 
 
 def test_bugmon_need_info_on_bisect_fix(mocker, bugmon, build):

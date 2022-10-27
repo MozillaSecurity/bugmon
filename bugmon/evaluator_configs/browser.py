@@ -3,13 +3,13 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 import copy
 from pathlib import Path
-from typing import Union, Iterator, Dict
+from typing import Dict, Iterator, Union
 
 from autobisect import BrowserEvaluator
 from fuzzfetch import BuildFlags
 
-from .base import BugConfiguration
 from ..bug import EnhancedBug
+from .base import BugConfiguration
 
 
 def identify_prefs(attachment_dir: Path) -> Union[Path, None]:

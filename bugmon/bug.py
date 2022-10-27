@@ -7,18 +7,12 @@ import platform
 import re
 import sys
 from datetime import datetime
-from typing import Any, Dict, List, Union, Optional, NoReturn, cast, Type
+from typing import Any, Dict, List, NoReturn, Optional, Type, Union, cast
 
 import requests
 from autobisect import JSEvaluator
-from bugsy import Attachment, Bug, Comment, Bugsy
-from fuzzfetch import (
-    BuildFlags,
-    Fetcher,
-    FetcherException,
-    Platform,
-    BuildSearchOrder,
-)
+from bugsy import Attachment, Bug, Bugsy, Comment
+from fuzzfetch import BuildFlags, BuildSearchOrder, Fetcher, FetcherException, Platform
 
 from .utils import HG_BASE, _get_milestone, _get_rev
 
