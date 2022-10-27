@@ -139,14 +139,14 @@ def submit_pernosco(
     trace_dir: Path,
     source_dir: Path,
     bug_id: int,
-    env: Optional[Dict[str, Any]] = None,
+    creds: PernoscoCreds,
 ) -> None:
     """Submit pernosco trace
 
     :param trace_dir: Path to trace directory
     :param source_dir: Path to source snapshot directory
     :param bug_id: Bug number
-    :param env: Optional environment variables.
+    :param creds: Pernosco credentials
     :raises BugmonException: If subprocess call fails
     """
     assert PERNOSCO is not None, "`pernosco-submit` executable not found"
@@ -161,11 +161,10 @@ def submit_pernosco(
     ]
 
     try:
-
         subprocess.run(
             [str(arg) for arg in args],
             check=True,
-            env=env if env else os.environ,
+            env={**os.environ, **cast(Dict[str, Any], creds)},
             capture_output=True,
             text=True,
         )

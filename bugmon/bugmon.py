@@ -278,7 +278,7 @@ class BugMonitor:
                             latest_trace,
                             source_dir,
                             self.bug.id,
-                            cast(Dict[str, str], self.pernosco_creds),
+                            self.pernosco_creds,
                         )
 
             elif isinstance(result, ReproductionPassed):
