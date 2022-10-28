@@ -104,7 +104,10 @@ def test_bugmon_pernosco_browser_bug_failure(
 
     # Verify that bugmon reports the failure
     assert len(bugmon.queue) == 1
-    assert bugmon.queue[0] == "Failed to record an rr session for this bug."
+    assert (
+        bugmon.queue[0]
+        == "Bugmon was unable to record a pernosco session for this bug."
+    )
     # Verify that the pernosco command is removed
     assert "pernosco" not in bugmon.bug.commands
 
