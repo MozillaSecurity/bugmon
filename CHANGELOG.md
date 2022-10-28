@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v2.0.4 (2022-10-28)
+### Fix
+* Use default timeout for browser evaluator ([`b131550`](https://github.com/MozillaSecurity/bugmon/commit/b13155032a436ff513d893755823c533b4daad0e))
+* Set grizzly time-limit instead of timeout for pernosco sessions ([`1344f10`](https://github.com/MozillaSecurity/bugmon/commit/1344f100e6d23b2343f791daa2efdd3a9e3ca0e8))
+* Minor changes to logging and comment output ([`d272d3c`](https://github.com/MozillaSecurity/bugmon/commit/d272d3c0e90dd574152bf64e4f64bc0d793ffde9))
+* Require pernosco creds in submit_pernosco ([`2949a4c`](https://github.com/MozillaSecurity/bugmon/commit/2949a4cc7e07366236ee70ef10ebe7f31e62f35d))
+* Remove pernosco creds from environment ([`78c5898`](https://github.com/MozillaSecurity/bugmon/commit/78c5898ed660cfb489a146dfc3a1f22f433e22ea))
+
 ## v2.0.3 (2022-10-20)
 ### Fix
 * Post to bug that pernosco session has been recorded ([`bf030c9`](https://github.com/MozillaSecurity/bugmon/commit/bf030c94d189529a9de1f36916c6f6261bfac9dd))
