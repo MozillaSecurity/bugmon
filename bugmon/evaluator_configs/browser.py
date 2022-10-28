@@ -78,7 +78,6 @@ class BrowserConfiguration(BugConfiguration):
                             env=env_variables,
                             prefs=prefs,
                             repeat=10,
-                            timeout=30,
                             use_harness=use_harness,
                         )
 
