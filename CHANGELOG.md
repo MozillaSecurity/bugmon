@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.0 (2022-11-07)
+### Feature
+* Relaunch browser after every attempt ([`83f1d19`](https://github.com/MozillaSecurity/bugmon/commit/83f1d1982e1e3a57141f123d51de487e505ee048))
+
 ## v2.0.4 (2022-10-28)
 ### Fix
 * Use default timeout for browser evaluator ([`b131550`](https://github.com/MozillaSecurity/bugmon/commit/b13155032a436ff513d893755823c533b4daad0e))
