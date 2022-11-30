@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.1 (2022-11-30)
+### Fix
+* Minor change in bug comment ([`3acfef8`](https://github.com/MozillaSecurity/bugmon/commit/3acfef8b96e7029401287725d0ac569d288f71d9))
+
 ## v2.1.0 (2022-11-07)
 ### Feature
 * Relaunch browser after every attempt ([`83f1d19`](https://github.com/MozillaSecurity/bugmon/commit/83f1d1982e1e3a57141f123d51de487e505ee048))
