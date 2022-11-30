@@ -282,7 +282,7 @@ class BugMonitor:
                         )
                     self.report(
                         "Successfully recorded a pernosco session.  "
-                        "A link to the pernosco-session will be added here shortly."
+                        "A link to the pernosco session will be added here shortly."
                     )
             elif isinstance(result, ReproductionPassed):
                 self.report(
