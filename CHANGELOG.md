@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.2 (2022-12-01)
+### Fix
+* Log pernosco-submit error message ([`784be5c`](https://github.com/MozillaSecurity/bugmon/commit/784be5c38b15826f71f0db0d5577f91357bc913d))
+
 ## v2.1.1 (2022-11-30)
 ### Fix
 * Minor change in bug comment ([`3acfef8`](https://github.com/MozillaSecurity/bugmon/commit/3acfef8b96e7029401287725d0ac569d288f71d9))
