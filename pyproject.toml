@@ -58,7 +58,7 @@ version = "2.1.2"
 [tool.poetry.dependencies]
 autobisect = "^6.1.0"
 bugsy = { git = "https://github.com/AutomatedTester/Bugsy.git" }
-fuzzfetch = "^2.0.1"
+fuzzfetch = "^2.2.2"
 python = "^3.7"
 typing-extensions = "^4.2.0"
 
