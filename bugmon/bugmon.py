@@ -280,10 +280,11 @@ class BugMonitor:
                             self.bug.id,
                             self.pernosco_creds,
                         )
-                    self.report(
-                        "Successfully recorded a pernosco session.  "
-                        "A link to the pernosco session will be added here shortly."
-                    )
+
+                self.report(
+                    "Successfully recorded a pernosco session.  "
+                    "A link to the pernosco session will be added here shortly."
+                )
             elif isinstance(result, ReproductionPassed):
                 self.report(
                     "Bugmon was unable to record a pernosco session for this bug."
