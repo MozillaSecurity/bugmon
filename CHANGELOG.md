@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.4 (2022-12-06)
+### Fix
+* Report success on pernosco before upload ([`492378f`](https://github.com/MozillaSecurity/bugmon/commit/492378f8471d8ee2a7dfb5ad69736665db0e30f8))
+
 ## v2.1.3 (2022-12-01)
 ### Fix
 * Update fuzzfetch ([`4d533ae`](https://github.com/MozillaSecurity/bugmon/commit/4d533ae6b92cc4ac389118e15e3c74f2c5e55c4d))
