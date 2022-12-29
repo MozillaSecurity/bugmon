@@ -736,11 +736,11 @@ virtualenv = ">=20.0.8"
 
 [[package]]
 name = "prefpicker"
-version = "1.1.2"
+version = "1.5.0"
 description = "PrefPicker - Manage & generate prefs.js files"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 PyYAML = "*"
@@ -1329,7 +1329,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "7264feca9245053b11273cdd28a47f147cfba26599b695194bdd89b6ddca7e2f"
+content-hash = "3ac4c766007012097f367692f2488d9670346f2c9eadd105e3c70d8829f70a09"
 
 [metadata.files]
 arrow = [
@@ -1751,8 +1751,8 @@ pre-commit = [
     {file = "pre_commit-2.20.0.tar.gz", hash = "sha256:a978dac7bc9ec0bcee55c18a277d553b0f419d259dadb4b9418ff2d00eb43959"},
 ]
 prefpicker = [
-    {file = "prefpicker-1.1.2-py3-none-any.whl", hash = "sha256:1404cb0e7c07acca060a09fcc3d9203ae2d8784741b6fe97600a707b9b3ff75e"},
-    {file = "prefpicker-1.1.2.tar.gz", hash = "sha256:ea25b33e92a342a0bf2c38f5588dd4baf9d381f70faf7ae2145ca5cad49a2644"},
+    {file = "prefpicker-1.5.0-py3-none-any.whl", hash = "sha256:83063a955ac239218a8c69863c2afee55f1d98b099b7718a83a7b8d121352763"},
+    {file = "prefpicker-1.5.0.tar.gz", hash = "sha256:5cf776939920576c87468feb1fa5253362dfe0ec281d8cd08ca7587fc1c485cb"},
 ]
 psutil = [
     {file = "psutil-5.9.4-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:c1ca331af862803a42677c120aff8a814a804e09832f166f226bfd22b56feee8"},
