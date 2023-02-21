@@ -75,9 +75,8 @@ In addition to Bugmon's automatic analysis, specific actions can be requested vi
 
 ### Valid Commands
 
-- `confirm` - Request manual bug confirmation
-- `verify` - Request manual verification
-- `bisect` - Request manual bisection
+- `analyze` - Request to determine if a bug is still reproducible
+- `bisect` - Request to perform bisection
 
 ### Status Flags
 In addition to requesting manual actions, some actions can be excluded by adding the following status flags to the bugmon whiteboard.

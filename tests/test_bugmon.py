@@ -135,3 +135,53 @@ def test_bugmon_pernosco_no_creds(browser_config, bugmon, build, caplog, mocker)
     bugmon._pernosco()
 
     assert caplog.messages[-1] == "Pernosco creds required for submitting traces!"
+
+
+@pytest.mark.parametrize("status", ["ASSIGNED", "NEW", "UNCONFIRMED", "REOPENED"])
+def test_bugmon_needs_confirm_status(status, bugmon):
+    """Test that bug is confirmed based on status"""
+    bugmon.bug.status = status
+    bugmon.remove_command("confirmed")
+    assert bugmon.needs_confirm() is True
+
+
+@pytest.mark.parametrize("status", ["ASSIGNED", "NEW", "UNCONFIRMED", "REOPENED"])
+def test_bugmon_already_confirmed(status, bugmon):
+    """Test that bug is not reconfirmed"""
+    bugmon.bug.status = status
+    bugmon.add_command("confirmed")
+    assert bugmon.needs_confirm() is False
+
+
+@pytest.mark.parametrize("status", ["ASSIGNED", "NEW", "UNCONFIRMED", "REOPENED"])
+def test_bugmon_confirm_requested(status, bugmon):
+    """Test that bug is confirmed when requested regardless if it was already confirmed"""
+    bugmon.bug.status = status
+    bugmon.add_command("analyze")
+    bugmon.add_command("confirmed")
+    assert bugmon.needs_confirm() is True
+
+
+def test_bugmon_needs_verify_status(bugmon):
+    """Test that bug is verified based on status"""
+    bugmon.bug.status = "RESOLVED"
+    bugmon.bug.resolution = "FIXED"
+    bugmon.remove_command("verified")
+    assert bugmon.needs_verify() is True
+
+
+def test_bugmon_already_verified(bugmon):
+    """Test that bug is not re-verified"""
+    bugmon.bug.status = "RESOLVED"
+    bugmon.bug.resolution = "FIXED"
+    bugmon.add_command("verified")
+    assert bugmon.needs_verify() is False
+
+
+def test_bugmon_verify_requested(bugmon):
+    """Test that bug is verified when requested regardless if it was already verified"""
+    bugmon.bug.status = "RESOLVED"
+    bugmon.bug.resolution = "FIXED"
+    bugmon.add_command("analyze")
+    bugmon.add_command("verified")
+    assert bugmon.needs_verify() is True
