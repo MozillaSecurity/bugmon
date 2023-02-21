@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v2.2.0 (2023-02-21)
+### Feature
+* Replace confirm/verify commands with analyze ([`8683418`](https://github.com/MozillaSecurity/bugmon/commit/86834183067a3064f4f44e50bd2704f739f619ef))
+
+### Fix
+* Check that command exists before adding or removing it ([`17ee883`](https://github.com/MozillaSecurity/bugmon/commit/17ee883b64f5a9201f443ecb5ec809b73a396463))
+
 ## v2.1.4 (2022-12-06)
 ### Fix
 * Report success on pernosco before upload ([`492378f`](https://github.com/MozillaSecurity/bugmon/commit/492378f8471d8ee2a7dfb5ad69736665db0e30f8))
