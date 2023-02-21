@@ -507,11 +507,10 @@ class BugMonitor:
 
     def needs_confirm(self) -> bool:
         """Helper function to determine eligibility for 'confirm'"""
-        if "confirmed" in self.bug.commands:
-            return False
-        if "confirm" in self.bug.commands:
+        confirmable = self.bug.status in ("ASSIGNED", "NEW", "UNCONFIRMED", "REOPENED")
+        if confirmable and "analyze" in self.bug.commands:
             return True
-        if self.bug.status in ["ASSIGNED", "NEW", "UNCONFIRMED", "REOPENED"]:
+        if confirmable and "confirmed" not in self.bug.commands:
             return True
 
         return False
@@ -522,11 +521,10 @@ class BugMonitor:
 
     def needs_verify(self) -> bool:
         """Helper function to determine eligibility for 'verify'"""
-        if "verified" in self.bug.commands:
-            return False
-        if "verify" in self.bug.commands:
+        verifiable = self.bug.status == "RESOLVED" and self.bug.resolution == "FIXED"
+        if "analyze" in self.bug.commands and verifiable:
             return True
-        if self.bug.status == "RESOLVED" and self.bug.resolution == "FIXED":
+        if verifiable and "verified" not in self.bug.commands:
             return True
 
         return False
