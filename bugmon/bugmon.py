@@ -136,14 +136,17 @@ class BugMonitor:
                 find_fix,
             )
         except FetcherException as e:
-            self.add_command("bisected")
+            if "bisected" not in self.bug.commands:
+                self.add_command("bisected")
+
             self.report(f"Unable to bisect testcase ({str(e).lower()})")
             return None
 
         result = bisector.bisect()
 
         # Set bisected status and remove the bisect command
-        self.add_command("bisected")
+        if "bisected" not in self.bug.commands:
+            self.add_command("bisected")
         if "bisect" in self.bug.commands:
             self.remove_command("bisect")
 
@@ -218,7 +221,8 @@ class BugMonitor:
                 self._close_bug = True
 
         # Set confirmed status and remove the confirm command
-        self.add_command("confirmed")
+        if "confirmed" not in self.bug.commands:
+            self.add_command("confirmed")
         if "confirm" in self.bug.commands:
             self.remove_command("confirm")
 
@@ -292,7 +296,8 @@ class BugMonitor:
         elif isinstance(config.evaluator, JSEvaluator):
             self.report("Pernosco sessions are only supported for Firefox bugs!")
 
-        self.remove_command("pernosco")
+        if "pernosco" in self.bug.commands:
+            self.remove_command("pernosco")
 
         return None
 
@@ -343,7 +348,8 @@ class BugMonitor:
                     + "keyword to prevent further analysis."
                 )
                 self.bug.status = "REOPENED"
-                self.add_command("confirmed")
+                if "confirmed" not in self.bug.commands:
+                    self.add_command("confirmed")
 
         branches_verified = True
         for alias, rel_num in self.bug.branches.items():
