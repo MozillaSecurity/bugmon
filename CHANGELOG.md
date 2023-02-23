@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.3.0 (2023-02-23)
+### Feature
+* Update pernosco related keywords if trace successful ([`e357be2`](https://github.com/MozillaSecurity/bugmon/commit/e357be2c5b2ed495117608c8017327829335a577))
+
 ## v2.2.0 (2023-02-21)
 ### Feature
 * Replace confirm/verify commands with analyze ([`8683418`](https://github.com/MozillaSecurity/bugmon/commit/86834183067a3064f4f44e50bd2704f739f619ef))
