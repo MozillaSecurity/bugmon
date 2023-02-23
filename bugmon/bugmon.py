@@ -299,6 +299,10 @@ class BugMonitor:
         if "pernosco" in self.bug.commands:
             self.remove_command("pernosco")
 
+        if "pernosco-wanted" in self.bug.keywords:
+            self.bug.keywords.remove("pernosco-wanted")
+        self.bug.keywords.append("pernosco")
+
         return None
 
     def _verify_fixed(self) -> None:
@@ -517,7 +521,7 @@ class BugMonitor:
 
     def needs_pernosco(self) -> bool:
         """Helper function to determine eligibility for 'pernosco'"""
-        return "pernosco" in self.bug.commands
+        return "pernosco" in self.bug.commands or "pernosco-wanted" in self.bug.keywords
 
     def needs_verify(self) -> bool:
         """Helper function to determine eligibility for 'verify'"""
