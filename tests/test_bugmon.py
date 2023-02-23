@@ -137,6 +137,15 @@ def test_bugmon_pernosco_no_creds(browser_config, bugmon, build, caplog, mocker)
     assert caplog.messages[-1] == "Pernosco creds required for submitting traces!"
 
 
+def test_bugmon_add_command(bugmon):
+    """Test that add_command updates the whiteboard"""
+    bugmon.bug.whiteboard = "[some-command]"
+    bugmon.add_command("bisected")
+    bugmon.add_command("confirmed")
+
+    assert bugmon.bug.whiteboard == "[some-command][bugmon:bisected,confirmed]"
+
+
 @pytest.mark.parametrize("status", ["ASSIGNED", "NEW", "UNCONFIRMED", "REOPENED"])
 def test_bugmon_needs_confirm_status(status, bugmon):
     """Test that bug is confirmed based on status"""
