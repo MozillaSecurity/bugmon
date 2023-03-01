@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.3.1 (2023-03-01)
+### Fix
+* Add punctuation to report messages ([`675dbe5`](https://github.com/MozillaSecurity/bugmon/commit/675dbe5e20300576bf642a85bf89dc8d2a62cc53))
+
 ## v2.3.0 (2023-02-23)
 ### Feature
 * Update pernosco related keywords if trace successful ([`e357be2`](https://github.com/MozillaSecurity/bugmon/commit/e357be2c5b2ed495117608c8017327829335a577))
