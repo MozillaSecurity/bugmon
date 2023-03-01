@@ -160,9 +160,8 @@ def submit_pernosco(
         "--consent-to-current-privacy-policy",
     ]
 
-    result = None
     try:
-        result = subprocess.run(
+        subprocess.run(
             [str(arg) for arg in args],
             check=True,
             env={**os.environ, **cast(Dict[str, Any], creds)},
@@ -170,8 +169,7 @@ def submit_pernosco(
             text=True,
         )
     except subprocess.CalledProcessError as e:
-        if result:
-            log.error("Failed to upload pernosco session: %s", result.stderr)
+        log.error("Failed to upload pernosco session: %s", e.stderr)
         raise BugmonException("Failed to upload pernosco session") from e
 
 
