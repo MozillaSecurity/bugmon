@@ -139,7 +139,7 @@ class BugMonitor:
             if "bisected" not in self.bug.commands:
                 self.add_command("bisected")
 
-            self.report(f"Unable to bisect testcase ({str(e).lower()})")
+            self.report(f"Unable to bisect testcase ({str(e).lower()}).")
             return None
 
         result = bisector.bisect()
@@ -538,12 +538,12 @@ class BugMonitor:
 
         # Check that the branch is available on taskcluster
         if self.bug.branch is None:
-            self.report(f"Bug filed against non-supported branch ({self.bug.version})")
+            self.report(f"Bug filed against non-supported branch ({self.bug.version}).")
             self._close_bug = True
             return False
 
         if self.bug.resolution in ("DUPLICATE", "INVALID", "WORKSFORME", "WONTFIX"):
-            self.report(f"No valid actions for resolution ({self.bug.resolution})")
+            self.report(f"No valid actions for resolution ({self.bug.resolution}).")
             self._close_bug = True
             return False
 
