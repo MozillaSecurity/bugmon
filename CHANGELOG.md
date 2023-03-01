@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.3.2 (2023-03-01)
+### Fix
+* Report pernosco-submit error on failure ([`3dbd79d`](https://github.com/MozillaSecurity/bugmon/commit/3dbd79d0137cf73fd0cf8a52e75048f4706293c5))
+
 ## v2.3.1 (2023-03-01)
 ### Fix
 * Add punctuation to report messages ([`675dbe5`](https://github.com/MozillaSecurity/bugmon/commit/675dbe5e20300576bf642a85bf89dc8d2a62cc53))
