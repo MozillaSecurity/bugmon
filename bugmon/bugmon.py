@@ -290,18 +290,23 @@ class BugMonitor:
                     "A link to the pernosco session will be added here shortly."
                 )
             elif isinstance(result, ReproductionPassed):
+                self.add_command("pernosco-failed")
                 self.report(
                     "Bugmon was unable to record a pernosco session for this bug."
                 )
         elif isinstance(config.evaluator, JSEvaluator):
-            self.report("Pernosco sessions are only supported for Firefox bugs!")
+            self.add_command("pernosco-failed")
+            self.report(
+                "Pernosco sessions are currently only supported for Firefox bugs!"
+            )
 
         if "pernosco" in self.bug.commands:
             self.remove_command("pernosco")
 
-        if "pernosco-wanted" in self.bug.keywords:
-            self.bug.keywords.remove("pernosco-wanted")
-        self.bug.keywords.append("pernosco")
+        if not "pernosco-failed" in self.bug.commands:
+            if "pernosco-wanted" in self.bug.keywords:
+                self.bug.keywords.remove("pernosco-wanted")
+            self.bug.keywords.append("pernosco")
 
         return None
 
@@ -521,6 +526,9 @@ class BugMonitor:
 
     def needs_pernosco(self) -> bool:
         """Helper function to determine eligibility for 'pernosco'"""
+        if "pernosco-failed" in self.bug.commands:
+            return False
+
         return "pernosco" in self.bug.commands or "pernosco-wanted" in self.bug.keywords
 
     def needs_verify(self) -> bool:
