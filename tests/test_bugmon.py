@@ -36,6 +36,13 @@ def test_bugmon_throws_without_pernosco_submit(bug, bugsy, pernosco_creds, worki
         BugMonitor(bugsy, bug, working_dir, pernosco_creds, False)
 
 
+def test_bugmon_no_need_pernosco_with_pernosco_failed(bugmon):
+    """Test that bugmon does not attempt to record a pernosco session when the
+    pernosco-failed status command is present"""
+    bugmon.add_command("pernosco-failed")
+    assert bugmon.needs_pernosco() is False
+
+
 def test_bugmon_pernosco_no_config_identified(mocker, tmp_path, bugmon):
     """Verify that bugmon exits early when no configuration was identified"""
     bugmon.add_command("pernosco")
