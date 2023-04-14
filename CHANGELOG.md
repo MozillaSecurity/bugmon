@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.4.0 (2023-04-14)
+### Feature
+* Add pernosco-failed status command ([`b7ae968`](https://github.com/MozillaSecurity/bugmon/commit/b7ae9686c657ef01576cf40903d4f3794cd5f8f9))
+
 ## v2.3.2 (2023-03-01)
 ### Fix
 * Report pernosco-submit error on failure ([`3dbd79d`](https://github.com/MozillaSecurity/bugmon/commit/3dbd79d0137cf73fd0cf8a52e75048f4706293c5))
