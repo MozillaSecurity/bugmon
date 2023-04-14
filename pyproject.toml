@@ -64,7 +64,7 @@ typing-extensions = "^4.2.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
-codecov = "^2.1.11"
+coverage = {extras = ["toml"], version = "^7.2.3"}
 gitlint = "^0.17.0"
 isort = "^5.10.1"
 mypy = "^0.931"
