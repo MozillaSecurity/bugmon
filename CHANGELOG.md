@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v3.0.0 (2023-04-25)
+### Feature
+* Update autobisect to v7.0.0 ([`4852dba`](https://github.com/MozillaSecurity/bugmon/commit/4852dba01d4dc8c5a293ff05a3a5b3ead47264f5))
+
+### Breaking
+* drop support for python 3.7 ([`87b5d98`](https://github.com/MozillaSecurity/bugmon/commit/87b5d98d93c012e72adbe3092cb42760c9a5f02a))
+
 ## v2.4.0 (2023-04-14)
 ### Feature
 * Add pernosco-failed status command ([`b7ae968`](https://github.com/MozillaSecurity/bugmon/commit/b7ae9686c657ef01576cf40903d4f3794cd5f8f9))
