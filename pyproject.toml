@@ -1,6 +1,6 @@
 [build-system]
 build-backend = "poetry.masonry.api"
-requires = ["poetry>=1.0.5"]
+requires = ["poetry>=1.0.8"]
 
 [tool.coverage.report]
 exclude_lines = [
