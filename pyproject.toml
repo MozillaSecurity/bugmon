@@ -39,9 +39,11 @@ classifiers = [
     "Topic :: Software Development :: Testing",
     "Topic :: Security",
     "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+
 ]
 description = "A python module for analyzing SpiderMonkey and Firefox bugs"
 homepage = "https://github.com/MozillaSecurity/bugmon"
@@ -59,7 +61,7 @@ version = "2.4.0"
 autobisect = "^6.1.0"
 bugsy = { git = "https://github.com/AutomatedTester/Bugsy.git" }
 fuzzfetch = "^2.2.2"
-python = "^3.7"
+python = "^3.8"
 typing-extensions = "^4.2.0"
 
 [tool.poetry.dev-dependencies]
