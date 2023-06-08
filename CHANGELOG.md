@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.0.2 (2023-06-08)
+
+### Fix
+
+* Autobisect update includes fix for recent taskcluster build changes ([`13f7524`](https://github.com/MozillaSecurity/bugmon/commit/13f752497325e6608df59963d358c539684280d8))
+
 ## v3.0.1 (2023-05-03)
 ### Fix
 * Update autobisect to 7.0.1 ([`3ab270a`](https://github.com/MozillaSecurity/bugmon/commit/3ab270a22c362a4bc8fd2497c4898ef633df4994))
