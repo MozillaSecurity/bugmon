@@ -42,14 +42,14 @@ tests-no-zope = ["cloudpickle", "hypothesis", "mypy (>=1.1.1)", "pympler", "pyte
 
 [[package]]
 name = "autobisect"
-version = "7.0.1"
+version = "7.0.2"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 
 [package.dependencies]
-fuzzfetch = ">=2.0.0,<3.0.0"
+fuzzfetch = ">=2.3.0,<3.0.0"
 grizzly-framework = ">=0.16.5,<0.17.0"
 lithium-reducer = ">=0.6.2,<0.7.0"
 
@@ -331,7 +331,7 @@ testing = ["covdefaults (>=2.3)", "coverage (>=7.2.3)", "diff-cover (>=7.5)", "p
 
 [[package]]
 name = "fuzzfetch"
-version = "2.2.2"
+version = "2.3.0"
 description = "Downloader for firefox/jsshell builds."
 category = "main"
 optional = false
@@ -1328,7 +1328,7 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "46ea9bc8483ef6fd26fb1d258f5c18efd16f34d07933809575d32bc5415c6b48"
+content-hash = "e5f44251168058bc6db84f723b1b91da6ef5e71cff20a8c6c06e3b618984c4eb"
 
 [metadata.files]
 arrow = [
@@ -1344,8 +1344,8 @@ attrs = [
     {file = "attrs-23.1.0.tar.gz", hash = "sha256:6279836d581513a26f1bf235f9acd333bc9115683f14f7e8fae46c98fc50e015"},
 ]
 autobisect = [
-    {file = "autobisect-7.0.1-py3-none-any.whl", hash = "sha256:622354ac95aa41cd0f6a7f201180385cdc9c2f3a644755bcadda18f80590dc24"},
-    {file = "autobisect-7.0.1.tar.gz", hash = "sha256:30325642a6bccd36949242fbedec971865fa3a689a4039de7635cd60833662a4"},
+    {file = "autobisect-7.0.2-py3-none-any.whl", hash = "sha256:3df23eedab1911846be79f7b3fb1f533e53767415b5d192dec6bb58d72f5e770"},
+    {file = "autobisect-7.0.2.tar.gz", hash = "sha256:8c17d1a316041a3c9e65a264a6de6f452de1fe39247bd0bb9a3bc5ea4b7c41f9"},
 ]
 black = [
     {file = "black-22.12.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9eedd20838bd5d75b80c9f5487dbcb06836a43833a37846cf1d8c1cc01cef59d"},
@@ -1578,8 +1578,8 @@ filelock = [
     {file = "filelock-3.12.0.tar.gz", hash = "sha256:fc03ae43288c013d2ea83c8597001b1129db351aad9c57fe2409327916b8e718"},
 ]
 fuzzfetch = [
-    {file = "fuzzfetch-2.2.2-py3-none-any.whl", hash = "sha256:dda943517352a1d1324cd37660b5ad4095c8d7353387b3aa5b0aadcbebaeb0a8"},
-    {file = "fuzzfetch-2.2.2.tar.gz", hash = "sha256:63d64de507a118af8f9faf8983a8c0588077d01ba9f0cb7d5cb1e042064f8397"},
+    {file = "fuzzfetch-2.3.0-py3-none-any.whl", hash = "sha256:56b4528e98d1351c323fc20cfb9f02774a8f87a2d7c04e2b050362d25be38229"},
+    {file = "fuzzfetch-2.3.0.tar.gz", hash = "sha256:94c6ee8b3345797bba5bcefd178ad859c5f5093d6a9e568896ea6365429add60"},
 ]
 fuzzmanager = [
     {file = "FuzzManager-0.5.1-py3-none-any.whl", hash = "sha256:d78956d8b0a51c8066359508d6079cb5be9ca5626f49382f27a694026bee272c"},
