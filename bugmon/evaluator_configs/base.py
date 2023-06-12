@@ -36,14 +36,23 @@ class BugConfiguration(ABC):
         if not all(flag is False for flag in bug.build_flags):
             yield bug.build_flags
 
-        for debug, fuzzing in itertools.product(
+        for asan, debug, fuzzing in itertools.product(
+            (True, None) if not bug.build_flags.asan else (None,),
             (True, None) if not bug.build_flags.debug else (None,),
             (True, None) if not bug.build_flags.fuzzing else (None,),
         ):
-            if debug is None and fuzzing is None:
+            # Don't yield and empty build flags object
+            if all(flag is None for flag in [asan, debug, fuzzing]):
+                continue
+
+            # Avoid asan-debug builds because they're not used for fuzzing
+            if asan is True and debug is True:
                 continue
 
             raw_flags = bug.build_flags._asdict()
+            if asan is not None:
+                raw_flags["asan"] = asan
+
             if debug is not None:
                 raw_flags["debug"] = debug
 
