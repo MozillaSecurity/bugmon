@@ -42,7 +42,12 @@ class BugConfiguration(ABC):
             (True, None) if not bug.build_flags.fuzzing else (None,),
         ):
             # Don't yield and empty build flags object
-            if all(flag is None for flag in [asan, debug, fuzzing]):
+            if all(bug.build_flags):
+                continue
+
+            # Avoid non-fuzzing debug builds now that crashreporter-symbols has been
+            # removed from taskcluster
+            if debug is None and fuzzing is None:
                 continue
 
             # Avoid asan-debug builds because they're not used for fuzzing
