@@ -26,7 +26,7 @@ def test_bug_configuration_iter_build_flags_001(bug_data):
     build_flags = list(BugConfiguration.iter_build_flags(bug))
 
     # Check for the expected number of flag combinations
-    assert len(build_flags) == 4
+    assert len(build_flags) == 5
     # Check that all results are BuildFlags
     assert all(isinstance(x, BuildFlags) for x in build_flags)
     # Check for duplicates
@@ -41,7 +41,7 @@ def test_bug_configuration_iter_build_flags_002(bug_data):
     build_flags = list(BugConfiguration.iter_build_flags(bug))
 
     # Check for the expected number of flag combinations
-    assert len(build_flags) == 2
+    assert len(build_flags) == 3
     # Check that all results are BuildFlags
     assert all(isinstance(x, BuildFlags) for x in build_flags)
     # Check for duplicates
@@ -95,7 +95,7 @@ def test_browser_configuration_iterate_001(bug_data):
         Path(tmp_path / "3.js").touch()
 
         bug = EnhancedBug(None, **bug_data)
-        assert len(list(BrowserConfiguration.iterate(bug, tmp_path))) == 8
+        assert len(list(BrowserConfiguration.iterate(bug, tmp_path))) == 16
 
 
 def test_js_configuration_iterate_001(mocker, bug_data):
@@ -111,4 +111,4 @@ def test_js_configuration_iterate_001(mocker, bug_data):
         )
         mock.return_value = []
         bug = EnhancedBug(None, **bug_data)
-        assert len(list(JSConfiguration.iterate(bug, tmp_path))) == 6
+        assert len(list(JSConfiguration.iterate(bug, tmp_path))) == 12
