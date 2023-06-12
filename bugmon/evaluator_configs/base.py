@@ -32,7 +32,9 @@ class BugConfiguration(ABC):
 
         :param bug: Bug instance used to detect build flags.
         """
-        yield bug.build_flags
+        # Don't yield and empty build flags object
+        if not all(flag is False for flag in bug.build_flags):
+            yield bug.build_flags
 
         for debug, fuzzing in itertools.product(
             (True, None) if not bug.build_flags.debug else (None,),
