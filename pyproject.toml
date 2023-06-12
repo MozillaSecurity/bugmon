@@ -95,7 +95,6 @@ max-line-length = 88
 
 [tool.pylint.messages_control]
 disable = [
-    "bad-continuation",
     "fixme",
     "invalid-name",
     "line-too-long",
