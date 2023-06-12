@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.1.1 (2023-06-12)
+
+### Fix
+
+* Avoid non-fuzzing debug builds now that crashreporter-symbols.zip is no longer indexed ([`880baff`](https://github.com/MozillaSecurity/bugmon/commit/880baff111421f2e2c5f6c04d80a47ab84edcb37))
+
 ## v3.1.0 (2023-06-12)
 
 ### Feature
