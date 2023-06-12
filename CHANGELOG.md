@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v3.1.0 (2023-06-12)
+
+### Feature
+
+* Add asan to the build flag iterator ([`3a44d5f`](https://github.com/MozillaSecurity/bugmon/commit/3a44d5f806d68c13ceb691b2c9b05c33f101c962))
+
+### Fix
+
+* Avoid opt builds now that crashreporter-symbols.zip is no longer indexed ([`90a8889`](https://github.com/MozillaSecurity/bugmon/commit/90a88895585a44328a0f19bf7e9327a857df0d24))
+
 ## v3.0.2 (2023-06-08)
 
 ### Fix
