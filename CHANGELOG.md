@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v3.1.2 (2023-07-14)
+
+### Fix
+
+* Expand list of build configurations to avoid ([`de44324`](https://github.com/MozillaSecurity/bugmon/commit/de44324b95c8c2ac457441cfbc6798fee87638cd))
+* Catch failed attempts at fetching builds ([`c29532d`](https://github.com/MozillaSecurity/bugmon/commit/c29532de82d7279b025cebefea7879273e2a6e57))
+
 ## v3.1.1 (2023-06-12)
 
 ### Fix
