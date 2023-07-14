@@ -34,7 +34,10 @@ class BugConfiguration(ABC):
         """
         # Don't yield and empty build flags object
         if not all(flag is False for flag in bug.build_flags):
-            yield bug.build_flags
+            # Avoid non-fuzzing debug builds now that crashreporter-symbols has been
+            # removed from taskcluster
+            if not (bug.build_flags.debug and not bug.build_flags.fuzzing):
+                yield bug.build_flags
 
         for asan, debug, fuzzing in itertools.product(
             (True, None) if not bug.build_flags.asan else (None,),
@@ -45,23 +48,22 @@ class BugConfiguration(ABC):
             if all(bug.build_flags):
                 continue
 
-            # Avoid non-fuzzing debug builds now that crashreporter-symbols has been
-            # removed from taskcluster
-            if debug is None and fuzzing is None:
+            # Avoid non-fuzzing debug builds
+            if debug and not fuzzing:
                 continue
 
             # Avoid asan-debug builds because they're not used for fuzzing
-            if asan is True and debug is True:
+            if asan and debug:
                 continue
 
-            raw_flags = bug.build_flags._asdict()
-            if asan is not None:
+            raw_flags = dict.fromkeys(bug.build_flags._asdict(), None)
+            if asan:
                 raw_flags["asan"] = asan
 
-            if debug is not None:
+            if debug:
                 raw_flags["debug"] = debug
 
-            if fuzzing is not None:
+            if fuzzing:
                 raw_flags["fuzzing"] = fuzzing
 
             new_flags = BuildFlags(**raw_flags)
