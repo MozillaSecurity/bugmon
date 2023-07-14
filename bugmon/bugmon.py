@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Union, cast
 
 from autobisect.bisect import BisectionResult, Bisector
-from autobisect.build_manager import BuildManager
+from autobisect.build_manager import BuildManager, BuildManagerException
 from autobisect.evaluators import BrowserEvaluator, EvaluatorResult, JSEvaluator
 from bugsy.bugsy import Bugsy
 from fuzzfetch import BuildSearchOrder, Fetcher, FetcherException
@@ -449,7 +449,7 @@ class BugMonitor:
                     result = ReproductionFailed()
                 self.results[branch][build_name] = result
                 return self.results[branch][build_name]
-        except FetcherException as e:
+        except BuildManagerException as e:
             log.error(f"Error fetching build: {e}")
             return ReproductionFailed()
 
