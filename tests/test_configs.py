@@ -26,7 +26,7 @@ def test_bug_configuration_iter_build_flags_001(bug_data):
     build_flags = list(BugConfiguration.iter_build_flags(bug))
 
     # Check for the expected number of flag combinations
-    assert len(build_flags) == 5
+    assert len(build_flags) == 4
     # Check that all results are BuildFlags
     assert all(isinstance(x, BuildFlags) for x in build_flags)
     # Check for duplicates
@@ -41,7 +41,7 @@ def test_bug_configuration_iter_build_flags_002(bug_data):
     build_flags = list(BugConfiguration.iter_build_flags(bug))
 
     # Check for the expected number of flag combinations
-    assert len(build_flags) == 3
+    assert len(build_flags) == 5
     # Check that all results are BuildFlags
     assert all(isinstance(x, BuildFlags) for x in build_flags)
     # Check for duplicates
