@@ -34,16 +34,17 @@ class BugConfiguration(ABC):
         """
         # Don't yield and empty build flags object
         if not all(flag is False for flag in bug.build_flags):
+            pass
             # Avoid non-fuzzing debug builds now that crashreporter-symbols has been
             # removed from taskcluster
-            if not (bug.build_flags.debug and not bug.build_flags.fuzzing):
-                yield bug.build_flags
+            # if not (bug.build_flags.debug and not bug.build_flags.fuzzing):
+            #     yield bug.build_flags
 
         for asan, debug, fuzzing in itertools.product([True, None], repeat=3):
 
-            # Avoid non-fuzzing debug builds
-            if debug and not fuzzing:
-                continue
+            # # Avoid non-fuzzing debug builds
+            # if debug and not fuzzing:
+            #     continue
 
             # Avoid asan-debug builds because they're not used for fuzzing
             if asan and debug:

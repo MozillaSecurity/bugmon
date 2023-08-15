@@ -556,13 +556,13 @@ testing = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "diff-cover (>=7.5)", "p
 
 [[package]]
 name = "fuzzfetch"
-version = "2.4.0"
+version = "2.4.1"
 description = "Downloader for firefox/jsshell builds."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "fuzzfetch-2.4.0-py3-none-any.whl", hash = "sha256:804f8f13f8bc76d9495881667625a7dbaf366d6920e1748c3b4c4b6225fb44fc"},
-    {file = "fuzzfetch-2.4.0.tar.gz", hash = "sha256:f6319023b0bbd4930a924884f09ee85b4235ed811a9f34ad44ed91cccd3bd631"},
+    {file = "fuzzfetch-2.4.1-py3-none-any.whl", hash = "sha256:3be510597d749f666d1fad419537c9f94bb9264aa03c4857b352a24558f7f9a7"},
+    {file = "fuzzfetch-2.4.1.tar.gz", hash = "sha256:f9782362fcffc4018256c3bf7f6bff50b0dc68c55a5ff2bd57b6b113ff0bfab4"},
 ]
 
 [package.dependencies]
@@ -1988,4 +1988,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "faf851a7c47e840dc05938b3285eedc51d34838155a22a969207309fb2f29560"
+content-hash = "0333ab34282b2346e9c3c00adf8a1a7a5c5834311ab10ae5c18b181ccdddb79d"
