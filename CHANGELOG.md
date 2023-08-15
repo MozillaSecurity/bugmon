@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v3.1.3 (2023-08-15)
+
+### Fix
+
+* Update autobisect to set LD_LIBRARY_PATH to build dir for js shell ([`630e95e`](https://github.com/MozillaSecurity/bugmon/commit/630e95e512de8e38fcd999e4faab61381033f8b7))
+* Allow non-fuzzing builds in config iterator ([`21cff9a`](https://github.com/MozillaSecurity/bugmon/commit/21cff9a76bbf1f6f9879466950c88188b05aeb28))
+* Don't check existing bug flags when generating products ([`a56aad9`](https://github.com/MozillaSecurity/bugmon/commit/a56aad92b45561209c7cc695a807ffcb6ad68086))
+
 ## v3.1.2 (2023-07-14)
 
 ### Fix
