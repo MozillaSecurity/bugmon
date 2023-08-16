@@ -55,7 +55,7 @@ maintainers = [
 name = "bugmon"
 readme = "README.md"
 repository = "https://github.com/MozillaSecurity/bugmon"
-version = "3.1.3"
+version = "3.1.4"
 
 [tool.poetry.dependencies]
 autobisect = "^7.0.4"

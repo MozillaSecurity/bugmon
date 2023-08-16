@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.1.4 (2023-08-16)
+
+### Fix
+
+* Update autobisect to fix LD_LIBRARY_PATH issue ([`2b154a4`](https://github.com/MozillaSecurity/bugmon/commit/2b154a445437e99f129c288b639a76ab2be6ac60))
+
 ## v3.1.3 (2023-08-15)
 
 ### Fix
