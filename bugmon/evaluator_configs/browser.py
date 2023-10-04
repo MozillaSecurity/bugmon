@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 import copy
+from itertools import product
 from pathlib import Path
 from typing import Dict, Iterator, Union
 
@@ -66,20 +67,23 @@ class BrowserConfiguration(BugConfiguration):
         """
         prefs = identify_prefs(working_dir)
 
-        for build_flags in BrowserConfiguration.iter_build_flags(bug):
-            for env_variables in BrowserConfiguration.iter_env(bug):
-                for filename in BrowserConfiguration.iter_tests(working_dir):
-                    if prefs and prefs == filename:
-                        continue
+        for build_flags, env_variables, testcase in product(
+            BrowserConfiguration.iter_build_flags(bug),
+            BrowserConfiguration.iter_env(bug),
+            BrowserConfiguration.iter_tests(working_dir),
+        ):
+            if prefs and prefs == testcase:
+                continue
 
-                    for use_harness in [True, False]:
-                        evaluator = BrowserEvaluator(
-                            filename,
-                            env=env_variables,
-                            prefs=prefs,
-                            repeat=10,
-                            relaunch=1,
-                            use_harness=use_harness,
-                        )
+            for use_harness in [True, False]:
+                evaluator = BrowserEvaluator(
+                    testcase,
+                    env=env_variables,
+                    headless="default",
+                    prefs=prefs,
+                    repeat=10,
+                    relaunch=1,
+                    use_harness=use_harness,
+                )
 
-                        yield cls(build_flags, evaluator)
+                yield cls(build_flags, evaluator)
