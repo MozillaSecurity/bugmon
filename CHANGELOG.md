@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.2.1 (2023-10-04)
+
+### Fix
+
+* Use xvfb as default headless mode ([`1beeb04`](https://github.com/MozillaSecurity/bugmon/commit/1beeb04707421942aa05db4dd52f00a603a25af7))
+
 ## v3.2.0 (2023-10-04)
 
 ### Feature
