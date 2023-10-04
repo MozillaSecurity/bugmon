@@ -2,6 +2,17 @@
 
 <!--next-version-placeholder-->
 
+## v3.2.0 (2023-10-04)
+
+### Feature
+
+* Simplify product generation ([`c526585`](https://github.com/MozillaSecurity/bugmon/commit/c52658598fdaea046ef3ad90481960958f29b3b5))
+
+### Fix
+
+* Update autobisect to 7.2.1 ([`923447e`](https://github.com/MozillaSecurity/bugmon/commit/923447ea0c54985cb437cc63efbcf8cce90bccac))
+* Re-enable use of opt and non-fuzzing builds ([`dfc864e`](https://github.com/MozillaSecurity/bugmon/commit/dfc864e7f7660a6c93e2e1bbc0a40227df17a2a8))
+
 ## v3.1.4 (2023-08-16)
 
 ### Fix
