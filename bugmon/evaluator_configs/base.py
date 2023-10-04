@@ -32,13 +32,11 @@ class BugConfiguration(ABC):
 
         :param bug: Bug instance used to detect build flags.
         """
+        yielded = []
         # Don't yield and empty build flags object
         if not all(flag is False for flag in bug.build_flags):
-            pass
-            # Avoid non-fuzzing debug builds now that crashreporter-symbols has been
-            # removed from taskcluster
-            # if not (bug.build_flags.debug and not bug.build_flags.fuzzing):
-            #     yield bug.build_flags
+            yielded.append(bug.build_flags)
+            yield bug.build_flags
 
         for asan, debug, fuzzing in itertools.product([True, None], repeat=3):
 
@@ -50,7 +48,7 @@ class BugConfiguration(ABC):
             if asan and debug:
                 continue
 
-            raw_flags = dict.fromkeys(bug.build_flags._asdict(), None)
+            raw_flags = dict.fromkeys(bug.build_flags._asdict(), False)
             if asan:
                 raw_flags["asan"] = asan
 
@@ -61,7 +59,7 @@ class BugConfiguration(ABC):
                 raw_flags["fuzzing"] = fuzzing
 
             new_flags = BuildFlags(**raw_flags)
-            if new_flags != bug.build_flags and not all(new_flags) and any(new_flags):
+            if not any(flags == new_flags for flags in yielded):
                 yield new_flags
 
     @classmethod
