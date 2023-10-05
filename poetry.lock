@@ -72,13 +72,13 @@ tests-no-zope = ["cloudpickle", "hypothesis", "mypy (>=1.1.1)", "pympler", "pyte
 
 [[package]]
 name = "autobisect"
-version = "7.2.1"
+version = "7.3.0"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "autobisect-7.2.1-py3-none-any.whl", hash = "sha256:a2e9611028153ae63690655dc23147b2af88f5d24ea6589828127682c9c8aca5"},
-    {file = "autobisect-7.2.1.tar.gz", hash = "sha256:e1d15dbb47e67d920a1835a2695e2c17f948d1a5912266c47e947bee9ebcb879"},
+    {file = "autobisect-7.3.0-py3-none-any.whl", hash = "sha256:f843319a48b88cda2858abd160ae265df4901e7aa146da62f4662bd2c22406cd"},
+    {file = "autobisect-7.3.0.tar.gz", hash = "sha256:2b59d0ec32cd08cc226b83859d811474c2eb997f233a942d5954bb0073bea899"},
 ]
 
 [package.dependencies]
@@ -1150,13 +1150,13 @@ virtualenv = ">=20.10.0"
 
 [[package]]
 name = "prefpicker"
-version = "1.13.0"
+version = "1.14.0"
 description = "PrefPicker - Manage & generate prefs.js files"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "prefpicker-1.13.0-py3-none-any.whl", hash = "sha256:3b1a6d917e94964d3c61bb83bf71b83d4bc1ef0333998076204700ca01daefea"},
-    {file = "prefpicker-1.13.0.tar.gz", hash = "sha256:81983b57583345d4838f3c5af83f38e95ec88e60cc3003efd4fe9ce78ff0d07d"},
+    {file = "prefpicker-1.14.0-py3-none-any.whl", hash = "sha256:91bb935fed846bdfba2e7fa188854bb44171fa4e10c30935f49656571ea572f0"},
+    {file = "prefpicker-1.14.0.tar.gz", hash = "sha256:ef8c38f8bbe09c3dda9d80ae9601718124054929861e99689884d774fd2de14b"},
 ]
 
 [package.dependencies]
@@ -2032,4 +2032,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "6a9cbf0f963a063d26ab0343a089a99b4d928707c630f953a96c51544ff4c055"
+content-hash = "ae8d1b5fa77d7c2aa3f2ffd31ddee52bea6678ccd1ed81aa38c33776f3871ea5"
