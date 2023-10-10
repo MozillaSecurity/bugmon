@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v3.3.0 (2023-10-10)
+
+### Feature
+
+* Update autobisect ([`54e50d4`](https://github.com/MozillaSecurity/bugmon/commit/54e50d42f4a10d01e554a340e435183e935cecb7))
+
+### Fix
+
+* Avoid non fuzzing builds as they are tier 2 ([`47c12aa`](https://github.com/MozillaSecurity/bugmon/commit/47c12aa2309d1e8242589c3481dbd46be00e9aa8))
+
 ## v3.2.1 (2023-10-04)
 
 ### Fix
