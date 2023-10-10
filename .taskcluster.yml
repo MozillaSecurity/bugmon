@@ -61,7 +61,10 @@ tasks:
                 key: key
 
   in:
-    $if: 'tasks_for != "github-pull-request" || event["action"] in ["opened", "reopened", "synchronize"]'
+    $if: >
+      (tasks_for == "github-push")
+      || (tasks_for == "github-pull-request" && event["action"] in ["opened", "reopened", "synchronize"])
+      || (tasks_for == "github-release" && event["ac tion"] in ["published"])
     then:
       - created: {$fromNow: ''}
         deadline: {$fromNow: '1 hour'}
@@ -95,3 +98,4 @@ tasks:
           description: Schedule CI tasks for ${project_name}
           owner: jkratzer@mozilla.com
           source: https://github.com/MozillaSecurity/orion
+    else: []
