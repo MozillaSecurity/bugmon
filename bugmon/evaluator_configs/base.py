@@ -33,19 +33,20 @@ class BugConfiguration(ABC):
         :param bug: Bug instance used to detect build flags.
         """
         yielded = []
-        # Don't yield and empty build flags object
-        if not all(flag is False for flag in bug.build_flags):
+        # Ignore opt builds and non-fuzzing enabled builds
+        is_opt = all(flag is False for flag in bug.build_flags)
+        if not is_opt and bug.build_flags.fuzzing:
             yielded.append(bug.build_flags)
             yield bug.build_flags
 
-        for asan, debug, fuzzing in itertools.product([True, None], repeat=3):
-
-            # # Avoid non-fuzzing debug builds
-            # if debug and not fuzzing:
-            #     continue
-
+        fuzzing = True
+        for asan, debug in itertools.product([True, None], repeat=2):
             # Avoid asan-debug builds because they're not used for fuzzing
             if asan and debug:
+                continue
+
+            # Avoid opt builds
+            if not asan and not debug:
                 continue
 
             raw_flags = dict.fromkeys(bug.build_flags._asdict(), False)
