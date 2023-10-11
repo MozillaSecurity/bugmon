@@ -80,8 +80,8 @@ tasks:
             namespace: project.fuzzing.orion.orion-decision.master
           env:
             PROJECT_NAME: ${project_name}
-            CI_MATRIX: {$json: {$eval: matrix}}
-            GITHUB_EVENT: {$json: {$eval: event}}
+            CI_MATRIX: { $json: { $eval: matrix } }
+            GITHUB_EVENT: { $json: { $eval: event } }
             GITHUB_ACTION: ${tasks_for}
             TASKCLUSTER_NOW: ${now}
           command:
@@ -98,4 +98,4 @@ tasks:
           description: schedule ci tasks for ${project_name}
           owner: '${event.sender.login}@users.noreply.github.com'
           source: https://github.com/MozillaSecurity/bugzilla
-    else: []
+    else: [ ]
