@@ -66,8 +66,8 @@ tasks:
       || (tasks_for == "github-pull-request" && event["action"] in ["opened", "reopened", "synchronize"])
       || (tasks_for == "github-release" && event["action"] in ["published"])
     then:
-      - created: {$fromNow: ''}
-        deadline: {$fromNow: '1 hour'}
+      - created: { $fromNow: '' }
+        deadline: { $fromNow: '1 hour' }
         provisionerId: proj-fuzzing
         workerType: ci
         payload:
@@ -94,8 +94,8 @@ tasks:
           - secrets:get:project/fuzzing/codecov-bugmon
           - secrets:get:project/fuzzing/deploy-bugmon
         metadata:
-          name: ${project_name} CI decision
-          description: Schedule CI tasks for ${project_name}
-          owner: jkratzer@mozilla.com
-          source: https://github.com/MozillaSecurity/orion
+          name: ${project_name} ci decision
+          description: schedule ci tasks for ${project_name}
+          owner: '${event.sender.login}@users.noreply.github.com'
+          source: https://github.com/MozillaSecurity/bugzilla
     else: []
