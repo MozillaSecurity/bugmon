@@ -72,18 +72,18 @@ tests-no-zope = ["cloudpickle", "hypothesis", "mypy (>=1.1.1)", "pympler", "pyte
 
 [[package]]
 name = "autobisect"
-version = "7.3.0"
+version = "7.4.0"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "autobisect-7.3.0-py3-none-any.whl", hash = "sha256:f843319a48b88cda2858abd160ae265df4901e7aa146da62f4662bd2c22406cd"},
-    {file = "autobisect-7.3.0.tar.gz", hash = "sha256:2b59d0ec32cd08cc226b83859d811474c2eb997f233a942d5954bb0073bea899"},
+    {file = "autobisect-7.4.0-py3-none-any.whl", hash = "sha256:a37c664bc924301e928351bcc09749f05e1ba13065a0dca5ccb4b94cc7da6ad2"},
+    {file = "autobisect-7.4.0.tar.gz", hash = "sha256:03fb7269a1b72d6efe18568e46a0dd88e48f5857048f49723268aeae1de9dfe1"},
 ]
 
 [package.dependencies]
 fuzzfetch = ">=2.4.2,<3.0.0"
-grizzly-framework = ">=0.16.5,<0.17.0"
+grizzly-framework = ">=0.17.0,<0.18.0"
 lithium-reducer = ">=1.0.0,<2.0.0"
 platformdirs = ">=3.10.0,<4.0.0"
 
@@ -527,17 +527,17 @@ files = [
 
 [[package]]
 name = "ffpuppet"
-version = "0.11.0"
+version = "0.11.2"
 description = "A Python module that aids in the automation of Firefox at the process level"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "ffpuppet-0.11.0-py3-none-any.whl", hash = "sha256:9a506fd5adcaa35f1cb02f3f2197866d1919ffe79673c68182232472cefc6f91"},
-    {file = "ffpuppet-0.11.0.tar.gz", hash = "sha256:4aa57770c45f39b1edad6c8c2a7d3176fbeff9cbe2d85d82644065190464c88e"},
+    {file = "ffpuppet-0.11.2-py3-none-any.whl", hash = "sha256:e46cecc350f9ec6f2caac99c0a85a502cd78ba781c81ff1ff8a7c5f4725a0897"},
+    {file = "ffpuppet-0.11.2.tar.gz", hash = "sha256:589bda8b411dbb1de0ab1c8878e0e4facb3409c3a09dc479ce0ba7bf8e602237"},
 ]
 
 [package.dependencies]
-psutil = ">=4.4.0"
+psutil = ">=5.9.0"
 xvfbwrapper = {version = ">=0.2.9", markers = "sys_platform == \"linux\" or sys_platform == \"linux2\""}
 
 [package.extras]
@@ -667,24 +667,25 @@ test = ["black", "coverage[toml]", "ddt (>=1.1.1,!=1.4.3)", "mypy", "pre-commit"
 
 [[package]]
 name = "grizzly-framework"
-version = "0.16.5"
+version = "0.17.0"
 description = "A framework for developing and running browser fuzzers"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "grizzly-framework-0.16.5.tar.gz", hash = "sha256:697f1299fd85047f249358c336e6c09dbbcdfcdebe074fc0567c3ad7f853424d"},
-    {file = "grizzly_framework-0.16.5-py3-none-any.whl", hash = "sha256:e8af73867d57f7883e39c05889fcc4597416baa2924b00023b88aeda9744782b"},
+    {file = "grizzly-framework-0.17.0.tar.gz", hash = "sha256:62e94e11acf9c9d45ee98de8542f418ee9cc5edfe55e7cfc37cd6642ed803620"},
+    {file = "grizzly_framework-0.17.0-py3-none-any.whl", hash = "sha256:e0137068eeefcf3224882ea478ae03868b412269a47b32a341a636e42473fdef"},
 ]
 
 [package.dependencies]
+cryptography = "*"
 cssbeautifier = "*"
 fasteners = "*"
-ffpuppet = ">=0.10.0"
+ffpuppet = ">=0.11.1"
 FuzzManager = "*"
 jsbeautifier = "*"
 lithium-reducer = ">=0.5.3"
 prefpicker = ">=1.1.0"
-psutil = ">=4.4.0"
+psutil = ">=5.9.0"
 
 [package.extras]
 dev = ["pre-commit", "tox"]
@@ -1150,13 +1151,13 @@ virtualenv = ">=20.10.0"
 
 [[package]]
 name = "prefpicker"
-version = "1.14.0"
+version = "1.15.0"
 description = "PrefPicker - Manage & generate prefs.js files"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "prefpicker-1.14.0-py3-none-any.whl", hash = "sha256:91bb935fed846bdfba2e7fa188854bb44171fa4e10c30935f49656571ea572f0"},
-    {file = "prefpicker-1.14.0.tar.gz", hash = "sha256:ef8c38f8bbe09c3dda9d80ae9601718124054929861e99689884d774fd2de14b"},
+    {file = "prefpicker-1.15.0-py3-none-any.whl", hash = "sha256:ec11a79f2b2e32f588ffa736c01bb8f215042a105cc90a815957bf543d5aa809"},
+    {file = "prefpicker-1.15.0.tar.gz", hash = "sha256:d90a898f61b4ce532d502e74cb9492d2062f14be8d2aa2622fe196b2f588992a"},
 ]
 
 [package.dependencies]
@@ -2032,4 +2033,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "ae8d1b5fa77d7c2aa3f2ffd31ddee52bea6678ccd1ed81aa38c33776f3871ea5"
+content-hash = "034f4a3f92441b767722aadeaa1d9585b5a5c074c28ee7cb0971aac40d2acdfa"
