@@ -4,6 +4,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 import pytest
 from autobisect.bisect import BisectionResult
+from fuzzfetch import Platform
 
 from bugmon import BugMonitor, ReproductionCrashed, ReproductionPassed
 from bugmon.bug import EnhancedBug
@@ -128,6 +129,20 @@ def test_bugmon_pernosco_failed_to_find_trace(
     bugmon._pernosco()
 
     assert caplog.messages[-1] == "Unable to identify a pernosco trace!"
+
+
+def test_bugmon_pernosco_x86(bugmon):
+    """Verify bugmon reports that pernosco is not supported for x86 bugs"""
+    bugmon.add_command("pernosco")
+    bugmon.bug.keywords.append("pernosco-wanted")
+
+    bugmon.bug._platform = Platform("Linux", "x86")
+    bugmon._pernosco()
+
+    assert len(bugmon.queue) == 1
+    assert bugmon.queue[0] == "Pernosco is only supported for x86_64 bugs."
+    assert "pernosco" not in bugmon.bug.commands
+    assert "pernosco-wanted" not in bugmon.bug.keywords
 
 
 def test_bugmon_pernosco_no_creds(browser_config, bugmon, build, caplog, mocker):

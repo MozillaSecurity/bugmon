@@ -230,6 +230,14 @@ class BugMonitor:
 
     def _pernosco(self) -> None:
         """Attempt to record a pernosco session"""
+        if self.bug.platform.machine != "x86_64":
+            self.report("Pernosco is only supported for x86_64 bugs.")
+            if "pernosco" in self.bug.commands:
+                self.remove_command("pernosco")
+            if "pernosco-wanted" in self.bug.keywords:
+                self.bug.keywords.remove("pernosco-wanted")
+            return None
+
         config = self.detect_config()
         if config is None:
             return None
