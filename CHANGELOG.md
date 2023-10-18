@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.4.1 (2023-10-18)
+
+### Fix
+
+* Notify when pernosco is requested for non 64-bit bugs ([`6dfaebd`](https://github.com/MozillaSecurity/bugmon/commit/6dfaebd4919f5e416f1b9ddea3da563adcbb6b94))
+
 ## v3.4.0 (2023-10-16)
 
 ### Feature
