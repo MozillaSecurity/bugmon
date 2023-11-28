@@ -58,7 +58,7 @@ repository = "https://github.com/MozillaSecurity/bugmon"
 version = "3.4.1"
 
 [tool.poetry.dependencies]
-autobisect = "^7.4.0"
+autobisect = "^7.4.1"
 bugsy = { git = "https://github.com/AutomatedTester/Bugsy.git" }
 fuzzfetch = "^2.4.2"
 python = "^3.8.1"
