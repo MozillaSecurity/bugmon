@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.4.2 (2023-11-28)
+
+### Fix
+
+* Update autobisect to 7.4.1 ([`2b87b25`](https://github.com/MozillaSecurity/bugmon/commit/2b87b2509c23c8f09b899259ed299e92e21d91d7))
+
 ## v3.4.1 (2023-10-18)
 
 ### Fix
