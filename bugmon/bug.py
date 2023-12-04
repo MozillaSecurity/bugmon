@@ -3,6 +3,7 @@
 # obtain one at http://mozilla.org/MPL/2.0/.
 # pylint: disable=too-many-public-methods,protected-access
 import json
+import logging
 import platform
 import re
 import sys
@@ -15,6 +16,8 @@ from bugsy import Attachment, Bug, Bugsy, Comment
 from fuzzfetch import BuildFlags, BuildSearchOrder, Fetcher, FetcherException, Platform
 
 from .utils import HG_BASE, _get_milestone, _get_rev
+
+log = logging.getLogger(__name__)
 
 if sys.version_info >= (3, 8):
     from typing import TypedDict
@@ -302,7 +305,7 @@ class EnhancedBug(Bug):
                 os_ = "Darwin"
 
             if os_ != platform.system():
-                raise BugException(f"Cannot process non-native bug ({os_})")
+                log.warning(f"Attempting to process non-native bug ({os_})")
 
             arch = platform.machine()
             if self._bug["platform"] == "ARM":
