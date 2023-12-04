@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.4.3 (2023-12-04)
+
+### Fix
+
+* Warn when attempting to process non-native bugs ([`2c33f05`](https://github.com/MozillaSecurity/bugmon/commit/2c33f057221fc58efe3de0c17540f872f4376b02))
+
 ## v3.4.2 (2023-11-28)
 
 ### Fix
