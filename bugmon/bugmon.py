@@ -379,10 +379,11 @@ class BugMonitor:
             if getattr(self.bug, flag) == "fixed":
                 patch_rev = self.bug.find_patch_rev(alias)
                 if patch_rev is None:
+                    # This may have been fixed in another bug.
                     log.warning(
                         f"Unable to find commit for fx{rel_num}.  Cannot verify fix!"
                     )
-                    return None
+                    continue
                 branch = self._reproduce_bug(config, alias, patch_rev)
                 if isinstance(branch, ReproductionPassed):
                     log.info(f"Verified fixed on {flag}")
