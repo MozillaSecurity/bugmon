@@ -96,7 +96,7 @@ def bug_data_base():
         "is_open": True,
         "severity": "S2",
         "cf_status_thunderbird_esr78": "---",
-        "cf_status_firefox80": "affected",
+        "cf_status_firefox80": "fixed",
         "priority": "P1",
         "cf_root_cause": "---",
         "cf_status_firefox79": "wontfix",

@@ -548,6 +548,17 @@ class BugMonitor:
         if verifiable and "verified" not in self.bug.commands:
             return True
 
+        if self.bug.status == "VERIFIED":
+            for alias, rel_num in self.bug.branches.items():
+                base = "cf_status_firefox"
+                flag = (
+                    f"{base}{rel_num}"
+                    if isinstance(rel_num, int)
+                    else f"{base}_{rel_num}"
+                )
+                if getattr(self.bug, flag) == "fixed":
+                    return True
+
         return False
 
     def is_supported(self) -> bool:

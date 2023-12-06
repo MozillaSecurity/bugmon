@@ -216,3 +216,16 @@ def test_bugmon_verify_requested(bugmon):
     bugmon.add_command("analyze")
     bugmon.add_command("verified")
     assert bugmon.needs_verify() is True
+
+
+def test_bugmon_already_verified_but_not_branches(bugmon):
+    """Test that bug is verified if the branches have not been confirmed"""
+    bugmon.bug.status = "VERIFIED"
+    bugmon.bug.resolution = "FIXED"
+    # patch branches to match the bug fixture
+    bugmon.bug._branches = {
+        "central": 80,
+        "beta": 79,
+        "release": 78,
+    }
+    assert bugmon.needs_verify() is True
