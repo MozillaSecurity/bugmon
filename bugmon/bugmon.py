@@ -309,7 +309,7 @@ class BugMonitor:
         if "pernosco" in self.bug.commands:
             self.remove_command("pernosco")
 
-        if not "pernosco-failed" in self.bug.commands:
+        if "pernosco-failed" not in self.bug.commands:
             if "pernosco-wanted" in self.bug.keywords:
                 self.bug.keywords.remove("pernosco-wanted")
             self.bug.keywords.append("pernosco")
