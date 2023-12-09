@@ -549,7 +549,7 @@ class BugMonitor:
             return True
 
         if self.bug.status == "VERIFIED":
-            for alias, rel_num in self.bug.branches.items():
+            for rel_num in self.bug.branches.values():
                 base = "cf_status_firefox"
                 flag = (
                     f"{base}{rel_num}"
