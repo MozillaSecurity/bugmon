@@ -230,10 +230,6 @@ class BugMonitor:
 
     def _pernosco(self) -> None:
         """Attempt to record a pernosco session"""
-        if not self.pernosco_creds:
-            log.warning("Cannot record a pernosco session without credentials!")
-            return None
-
         if (
             self.bug.platform.system != "Linux"
             and self.bug.platform.machine != "x86_64"
