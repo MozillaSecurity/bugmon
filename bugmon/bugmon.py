@@ -230,8 +230,15 @@ class BugMonitor:
 
     def _pernosco(self) -> None:
         """Attempt to record a pernosco session"""
-        if self.bug.platform.machine != "x86_64":
-            self.report("Pernosco is only supported for x86_64 bugs.")
+        if not self.pernosco_creds:
+            log.warning("Cannot record a pernosco session without credentials!")
+            return None
+
+        if (
+            self.bug.platform.system != "Linux"
+            and self.bug.platform.machine != "x86_64"
+        ):
+            self.report("Pernosco is only supported for Linux x86_64 bugs.")
             if "pernosco" in self.bug.commands:
                 self.remove_command("pernosco")
             if "pernosco-wanted" in self.bug.keywords:
@@ -243,9 +250,7 @@ class BugMonitor:
             return None
 
         if isinstance(config.evaluator, BrowserEvaluator):
-            log.info(
-                "Attempting to record a pernosco session (this may take a while)..."
-            )
+            log.info("Attempting to record a pernosco session...")
 
             # Update config to use no-opt
             config.build_flags = config.build_flags._replace(no_opt=True)
