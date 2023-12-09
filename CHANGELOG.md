@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v3.5.1 (2023-12-09)
+
+### Fix
+
+* Only run pernosco on 64-bit Linux bugs ([`2287c5d`](https://github.com/MozillaSecurity/bugmon/commit/2287c5d6226c9f0e5c1b0e3218db10623e962221))
+* Remove duplicate pernosco credential warning ([`a278b8b`](https://github.com/MozillaSecurity/bugmon/commit/a278b8be06a261ea86037b2c19e599589c22ee3f))
+* Improve error handling for pernosco recordings ([`c78be3e`](https://github.com/MozillaSecurity/bugmon/commit/c78be3e85d8c90bd7c81eb35dedcac96a7a7b66d))
+
 ## v3.5.0 (2023-12-09)
 
 ### Feature
