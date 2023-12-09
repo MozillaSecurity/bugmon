@@ -54,7 +54,7 @@ name = "bugmon"
 packages = [{from = "src", include = "bugmon"}]
 readme = "README.md"
 repository = "https://github.com/MozillaSecurity/bugmon"
-version = "3.5.2"
+version = "3.5.3"
 
 [tool.poetry.dependencies]
 autobisect = "^7.4.3"

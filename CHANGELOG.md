@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.5.3 (2023-12-09)
+
+### Fix
+
+* Remove unused dependencies ([`1179adf`](https://github.com/MozillaSecurity/bugmon/commit/1179adfc3f48e6433ccb167fa125209b858cff24))
+
 ## v3.5.2 (2023-12-09)
 
 ### Fix
