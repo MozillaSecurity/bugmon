@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v3.5.2 (2023-12-09)
+
+### Fix
+
+* Replace typing pipe operator with union ([`9a098a6`](https://github.com/MozillaSecurity/bugmon/commit/9a098a66e58e8ca67c30cb9f1b311adb5ad0e73b))
+* Apply linter fixes ([`c5a9906`](https://github.com/MozillaSecurity/bugmon/commit/c5a9906e545e9d8e94416299bc4c63c3dda62a18))
+
 ## v3.5.1 (2023-12-09)
 
 ### Fix
