@@ -29,13 +29,13 @@ repos:
         stages: [commit-msg]
       - id: mypy
         name: mypy
-        entry: poetry run mypy bugmon
+        entry: poetry run mypy src
         language: system
         pass_filenames: false
         types: [ python ]
       - id: pylint
         name: pylint
-        entry: poetry run pylint -j 0 bugmon
+        entry: poetry run pylint -j 0 src
         language: system
         pass_filenames: false
         types: [ python ]

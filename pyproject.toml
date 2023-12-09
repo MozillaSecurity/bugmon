@@ -51,6 +51,7 @@ maintainers = [
   "Mozilla Fuzzing Team <fuzzing@mozilla.com>"
 ]
 name = "bugmon"
+packages = [{from = "src", include = "bugmon"}]
 readme = "README.md"
 repository = "https://github.com/MozillaSecurity/bugmon"
 version = "3.5.2"
