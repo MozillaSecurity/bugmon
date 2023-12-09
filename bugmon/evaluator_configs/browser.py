@@ -4,6 +4,7 @@
 import copy
 from itertools import product
 from pathlib import Path
+from platform import system
 from typing import Dict, Iterator, Union
 
 from autobisect import BrowserEvaluator
@@ -79,7 +80,7 @@ class BrowserConfiguration(BugConfiguration):
                 evaluator = BrowserEvaluator(
                     testcase,
                     env=env_variables,
-                    headless="xvfb",
+                    headless="default" if system() == "Windows" else "xvfb",
                     prefs=prefs,
                     repeat=10,
                     relaunch=1,
