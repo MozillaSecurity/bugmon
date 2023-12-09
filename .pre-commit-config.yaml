@@ -4,6 +4,10 @@ repos:
     rev: v0.0.6
     hooks:
       - id: orion_ci
+  - repo: https://github.com/marco-c/taskcluster_yml_validator
+    rev: v0.0.9
+    hooks:
+      - id: taskcluster_yml
   - repo: local
     hooks:
       - id: black
@@ -11,9 +15,9 @@ repos:
         entry: poetry run black --check --diff
         language: system
         types: [ python ]
-      - id: isort
-        name: isort
-        entry: poetry run isort
+      - id: flake8
+        name: flake8
+        entry: poetry run flake8
         language: system
         types: [ python ]
         require_serial: true
@@ -25,21 +29,16 @@ repos:
         stages: [commit-msg]
       - id: mypy
         name: mypy
-        entry: poetry run mypy bugmon
+        entry: poetry run mypy src
         language: system
         pass_filenames: false
         types: [ python ]
       - id: pylint
         name: pylint
-        entry: poetry run pylint -j 0 bugmon
+        entry: poetry run pylint -j 0 src
         language: system
         pass_filenames: false
         types: [ python ]
-      - id: taskcluster_yml
-        name: taskcluster_yml
-        entry: poetry run taskcluster_yml_validator
-        files: "^\\.taskcluster\\.yml$"
-        language: system
       - id: toml-sort
         name: toml-sort
         entry: poetry run toml-sort --check -a
