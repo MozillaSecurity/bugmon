@@ -68,7 +68,6 @@ typing-extensions = "^4.2.0"
 black = "^23.11.0"
 coverage = {extras = ["toml"], version = "^7.2.3"}
 gitlint = "^0.19.1"
-isort = "^5.13.0"
 mypy = "^1.7.1"
 pre-commit = "^3.5.0"
 pylint = "^3.0.2"
@@ -82,6 +81,9 @@ toml = "^0.10.2"
 toml-sort = "^0.23.1"
 tox = "^4.11.4"
 types-requests = "^2.31.0.10"
+flake8 = "^6.1.0"
+flake8-isort = "^6.1.1"
+flake8-quotes = "^3.3.2"
 
 [tool.poetry.scripts]
 bugmon = "bugmon.main:main"
