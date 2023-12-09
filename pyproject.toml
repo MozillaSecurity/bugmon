@@ -4,17 +4,17 @@ requires = ["poetry>=1.0.8"]
 
 [tool.coverage.report]
 exclude_lines = [
-    "pragma: no cover",
+  "pragma: no cover"
 ]
 
 [tool.coverage.run]
 omit = [
-    "*/setup.py",
-    "*/tests/*",
-    "*/build/*",
-    "*/dist/*",
-    "*/.tox/*",
-    "*/.egg/*",
+  "*/.egg/*",
+  "*/.tox/*",
+  "*/build/*",
+  "*/dist/*",
+  "*/setup.py",
+  "*/tests/*"
 ]
 
 [tool.isort]
@@ -24,33 +24,31 @@ profile = "black"
 
 [tool.mypy]
 disallow_subclassing_any = "False"
-exclude = "^.*tests.*$"
 ignore_missing_imports = "True"
 implicit_reexport = "True"
 strict = "True"
 
 [tool.poetry]
 authors = [
-    "Christian Holler <choller@mozilla.com>",
-    "Jason Kratzer <jkratzer@mozilla.com>"
+  "Christian Holler <choller@mozilla.com>",
+  "Jason Kratzer <jkratzer@mozilla.com>"
 ]
 classifiers = [
-    "Intended Audience :: Developers",
-    "Topic :: Software Development :: Testing",
-    "Topic :: Security",
-    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Topic :: Security",
+  "Topic :: Software Development :: Testing"
 ]
 description = "A python module for analyzing SpiderMonkey and Firefox bugs"
 homepage = "https://github.com/MozillaSecurity/bugmon"
-keywords = ["fuzz", "fuzzing", "security", "test", "testing", "bisection"]
+keywords = ["bisection", "fuzz", "fuzzing", "security", "test", "testing"]
 license = "MPL-2.0"
 maintainers = [
-    "Mozilla Fuzzing Team <fuzzing@mozilla.com>"
+  "Mozilla Fuzzing Team <fuzzing@mozilla.com>"
 ]
 name = "bugmon"
 readme = "README.md"
@@ -59,7 +57,7 @@ version = "3.5.1"
 
 [tool.poetry.dependencies]
 autobisect = "^7.4.3"
-bugsy = { git = "https://github.com/AutomatedTester/Bugsy.git" }
+bugsy = {git = "https://github.com/AutomatedTester/Bugsy.git"}
 fuzzfetch = "^2.4.2"
 python = "^3.8.1"
 typing-extensions = "^4.2.0"
@@ -67,6 +65,9 @@ typing-extensions = "^4.2.0"
 [tool.poetry.group.dev.dependencies]
 black = "^23.11.0"
 coverage = {extras = ["toml"], version = "^7.2.3"}
+flake8 = "^6.1.0"
+flake8-isort = "^6.1.1"
+flake8-quotes = "^3.3.2"
 gitlint = "^0.19.1"
 mypy = "^1.7.1"
 pre-commit = "^3.5.0"
@@ -81,9 +82,6 @@ toml = "^0.10.2"
 toml-sort = "^0.23.1"
 tox = "^4.11.4"
 types-requests = "^2.31.0.10"
-flake8 = "^6.1.0"
-flake8-isort = "^6.1.1"
-flake8-quotes = "^3.3.2"
 
 [tool.poetry.scripts]
 bugmon = "bugmon.main:main"
@@ -96,24 +94,24 @@ max-line-length = 88
 
 [tool.pylint.messages_control]
 disable = [
-    "fixme",
-    "invalid-name",
-    "line-too-long",
-    "logging-format-interpolation",
-    "logging-fstring-interpolation",
-    "missing-module-docstring",
-    "missing-return-doc",
-    "missing-yield-doc",
-    "too-few-public-methods",
-    "too-many-arguments",
-    "too-many-branches",
-    "too-many-instance-attributes",
-    "too-many-lines",
-    "too-many-locals",
-    "too-many-nested-blocks",
-    "too-many-return-statements",
-    "too-many-statements",
-    "useless-object-inheritance"
+  "fixme",
+  "invalid-name",
+  "line-too-long",
+  "logging-format-interpolation",
+  "logging-fstring-interpolation",
+  "missing-module-docstring",
+  "missing-return-doc",
+  "missing-yield-doc",
+  "too-few-public-methods",
+  "too-many-arguments",
+  "too-many-branches",
+  "too-many-instance-attributes",
+  "too-many-lines",
+  "too-many-locals",
+  "too-many-nested-blocks",
+  "too-many-return-statements",
+  "too-many-statements",
+  "useless-object-inheritance"
 ]
 
 [tool.pytest.ini_options]

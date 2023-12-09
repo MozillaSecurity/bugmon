@@ -185,9 +185,9 @@ class EnhancedBug(Bug):
         return self._central_version
 
     @property
-    def commands(self) -> Dict[str, Optional[str]]:
+    def commands(self) -> Dict[str, str | None]:
         """Attempt to extract commands from whiteboard"""
-        commands = {}
+        commands: dict[str, str | None] = {}
         if self._bug["whiteboard"]:
             match = re.search(r"(?<=\[bugmon:)[^]]+", self._bug["whiteboard"])
             if match is not None:
