@@ -2,6 +2,19 @@
 
 <!--next-version-placeholder-->
 
+## v3.5.0 (2023-12-09)
+
+### Feature
+
+* Check that affected branches have also been verified ([`3e426fc`](https://github.com/MozillaSecurity/bugmon/commit/3e426fcc1907c2dfed7b8f654f051e266d2cb273))
+* Verify bugs which still have affected versions associated ([`9a82264`](https://github.com/MozillaSecurity/bugmon/commit/9a82264c03196ca6221a62e8b3d8997185ffa599))
+
+### Fix
+
+* Use headless in windows ([`0480b83`](https://github.com/MozillaSecurity/bugmon/commit/0480b8359cbd1c4d0cbf86964002fa2d91096f4a))
+* Update autobisect ([`08ee05e`](https://github.com/MozillaSecurity/bugmon/commit/08ee05efccd3e31c4b95628f00f84c85898b382c))
+* Continue iterating over branches even if a patch can't be identified ([`cc9f676`](https://github.com/MozillaSecurity/bugmon/commit/cc9f6761568b36b7cbd54ee22edf254878f320bc))
+
 ## v3.4.3 (2023-12-04)
 
 ### Fix
