@@ -140,7 +140,7 @@ def test_bugmon_pernosco_x86(bugmon):
     bugmon._pernosco()
 
     assert len(bugmon.queue) == 1
-    assert bugmon.queue[0] == "Pernosco is only supported for x86_64 bugs."
+    assert bugmon.queue[0] == "Pernosco is only supported for Linux x86_64 bugs."
     assert "pernosco" not in bugmon.bug.commands
     assert "pernosco-wanted" not in bugmon.bug.keywords
 
