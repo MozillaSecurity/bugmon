@@ -53,17 +53,17 @@ tests-no-zope = ["cloudpickle", "hypothesis", "mypy (>=1.1.1)", "pympler", "pyte
 
 [[package]]
 name = "autobisect"
-version = "7.4.1"
+version = "7.4.3"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "autobisect-7.4.1-py3-none-any.whl", hash = "sha256:e53cedddb8e6f874e6c68ef042b7f5555e13e13af7f8b2a3d7331c1601ae8351"},
-    {file = "autobisect-7.4.1.tar.gz", hash = "sha256:3a17da2ef61d13fed7143ec419f8832610e0999c5d66024aed17c8cd245e8047"},
+    {file = "autobisect-7.4.3-py3-none-any.whl", hash = "sha256:be32607bedb64c15370c885c3e5051f36b58327bbe6e7e9a64a6ace864aeb1ec"},
+    {file = "autobisect-7.4.3.tar.gz", hash = "sha256:06ee2a8c602c9adf12ea5d7b9ab01f3cda12ebed180256b8855fafa9830a6779"},
 ]
 
 [package.dependencies]
-fuzzfetch = ">=2.4.2,<3.0.0"
+fuzzfetch = ">=2.4.3,<3.0.0"
 grizzly-framework = "0.17.0"
 lithium-reducer = ">=1.0.0,<2.0.0"
 platformdirs = ">=3.10.0,<4.0.0"
@@ -528,13 +528,13 @@ typing = ["typing-extensions (>=4.7.1)"]
 
 [[package]]
 name = "fuzzfetch"
-version = "2.4.2"
+version = "2.4.3"
 description = "Downloader for firefox/jsshell builds."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "fuzzfetch-2.4.2-py3-none-any.whl", hash = "sha256:1c0cc728ea6c0d3601b40b2b590bb48ac426958e5860bb810fb808b37fcbf8ee"},
-    {file = "fuzzfetch-2.4.2.tar.gz", hash = "sha256:71a92d6a2f503a29195b59a6ab2b4053cd578fe58debe8c46450913e40e4cf89"},
+    {file = "fuzzfetch-2.4.3-py3-none-any.whl", hash = "sha256:6f61788e5b3e6f45de8d7a37cc9237f06d3a74e42f685c599b45411cb0a41ae2"},
+    {file = "fuzzfetch-2.4.3.tar.gz", hash = "sha256:cf8cd48995ffe13f8d80f4bd76fd5e23fecc0d76b0f3ef20f4e92a86b5be2766"},
 ]
 
 [package.dependencies]
@@ -1989,4 +1989,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "25c84327bbeab890b857de1a77d3cd9ba158fdf85e820b44a3cc5f0fa6eafbca"
+content-hash = "dfd4cd3da8ffac7f31e362d76269ec6066373754cb39d66da9a1559228afb50c"
