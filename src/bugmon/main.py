@@ -3,7 +3,6 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
-
 import argparse
 import json
 import logging
@@ -11,7 +10,7 @@ import os
 import sys
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, Optional, cast
+from typing import Optional, cast, List
 
 from bugsy import Bugsy
 
@@ -24,7 +23,7 @@ from .exceptions import BugmonException
 log = logging.getLogger("bugmon")
 
 
-def parse_args(argv: Any = None) -> argparse.Namespace:
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Arg parser
 
     :param argv: Command line to use instead of sys.argv (optional)
@@ -71,7 +70,7 @@ def console_init_logging() -> None:
     logging.basicConfig(format=log_fmt, datefmt="%Y-%m-%d %H:%M:%S", level=log_level)
 
 
-def main(argv: Optional[Dict[str, Any]] = None) -> int:
+def main(argv: Optional[List[str]] = None) -> int:
     """Launch Bugmon
 
     :param argv: Command line to use instead of sys.argv (optional)
@@ -142,4 +141,4 @@ def main(argv: Optional[Dict[str, Any]] = None) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv))
