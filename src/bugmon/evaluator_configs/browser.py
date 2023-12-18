@@ -80,7 +80,7 @@ class BrowserConfiguration(BugConfiguration):
                 evaluator = BrowserEvaluator(
                     testcase,
                     env=env_variables,
-                    headless="default" if system() == "Windows" else "xvfb",
+                    headless=None if system() == "Windows" else "xvfb",
                     prefs=prefs,
                     repeat=10,
                     relaunch=1,
