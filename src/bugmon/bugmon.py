@@ -191,7 +191,8 @@ class BugMonitor:
         if isinstance(tip, ReproductionCrashed):
             if "confirmed" not in self.bug.commands:
                 self.report(f"Verified bug as reproducible on {tip.build_str}.")
-                self._bisect(config)
+                if "bisected" not in self.bug.commands:
+                    self._bisect(config)
         elif isinstance(tip, ReproductionPassed):
             bid = self.bug.initial_build_id
             orig = self._reproduce_bug(config, self.bug.branch, bid)
