@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.6.0 (2023-12-18)
+
+### Feature
+
+* Disable headless when running on windows ([`e5ccdf5`](https://github.com/MozillaSecurity/bugmon/commit/e5ccdf5e32ac9fe2585c38d1c36df35119c7b5a8))
+
 ## v3.5.3 (2023-12-09)
 
 ### Fix
