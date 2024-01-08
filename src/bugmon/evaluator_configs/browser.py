@@ -23,7 +23,7 @@ def identify_prefs(attachment_dir: Path) -> Union[Path, None]:
     prefs_path = None
     for file in attachment_dir.rglob("*"):
         if file.suffix == ".js":
-            if "user_pref" in file.read_text():
+            if "user_pref" in file.read_text(encoding="utf-8"):
                 prefs_path = file
 
     return prefs_path
