@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.6.2 (2024-01-08)
+
+### Fix
+
+* Specify encoding when reading file contents ([`0a12a4e`](https://github.com/MozillaSecurity/bugmon/commit/0a12a4e20fd3f976dbbd426c50d89203faa77383))
+
 ## v3.6.1 (2024-01-02)
 
 ### Fix
