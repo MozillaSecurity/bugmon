@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.7.0 (2024-03-11)
+
+### Feature
+
+* Local sources are no longer required for pernosco traces ([`87f0b9a`](https://github.com/MozillaSecurity/bugmon/commit/87f0b9a1961531704641f1131f049202a93de051))
+
 ## v3.6.2 (2024-01-08)
 
 ### Fix
