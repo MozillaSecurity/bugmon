@@ -25,9 +25,7 @@ from .evaluator_configs import BugConfigs, BugConfiguration
 from .exceptions import BugmonException
 from .utils import (
     PernoscoCreds,
-    download_zip_archive,
     get_pernosco_trace,
-    get_source_url,
     is_pernosco_available,
     submit_pernosco,
 )
@@ -281,16 +279,12 @@ class BugMonitor:
                         log.error("Pernosco creds required for submitting traces!")
                         return None
 
-                    source_archive_url = get_source_url(branch, rev)
-                    log.info("Downloading and unpacking source archive...")
-                    with download_zip_archive(source_archive_url) as source_dir:
-                        log.info("Uploading pernosco session...")
-                        submit_pernosco(
-                            latest_trace,
-                            source_dir,
-                            self.bug.id,
-                            self.pernosco_creds,
-                        )
+                    log.info("Uploading pernosco session...")
+                    submit_pernosco(
+                        latest_trace,
+                        self.bug.id,
+                        self.pernosco_creds,
+                    )
 
                 self.report(
                     "Successfully recorded a pernosco session.  "

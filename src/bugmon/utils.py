@@ -137,14 +137,12 @@ def get_pernosco_trace(log_path: Path) -> Optional[Path]:
 
 def submit_pernosco(
     trace_dir: Path,
-    source_dir: Path,
     bug_id: int,
     creds: PernoscoCreds,
 ) -> None:
     """Submit pernosco trace
 
     :param trace_dir: Path to trace directory
-    :param source_dir: Path to source snapshot directory
     :param bug_id: Bug number
     :param creds: Pernosco credentials
     :raises BugmonException: If subprocess call fails
@@ -154,9 +152,9 @@ def submit_pernosco(
         PERNOSCO,
         "upload",
         trace_dir,
-        source_dir,
         "--title",
         bug_id,
+        "--no-local-sources",
         "--consent-to-current-privacy-policy",
     ]
 
