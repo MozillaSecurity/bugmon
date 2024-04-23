@@ -25,9 +25,9 @@ from requests.models import Response
 from bugmon.exceptions import BugmonException
 
 HTTP_SESSION = requests.Session()
-HTTP_ADAPTER = HTTPAdapter(max_retries=Retry(connect=3, backoff_factor=0.5))
-HTTP_SESSION.mount("http://", HTTP_ADAPTER)
-HTTP_SESSION.mount("https://", HTTP_ADAPTER)
+HTTP_RETRIES = Retry(total=5, read=3, connect=3, backoff_factor=1)
+HTTP_SESSION.mount("http://", HTTPAdapter(max_retries=HTTP_RETRIES))
+HTTP_SESSION.mount("https://", HTTPAdapter(max_retries=HTTP_RETRIES))
 
 HG_BASE = "https://hg.mozilla.org"
 MILESTONE = f"{HG_BASE}/mozilla-central/raw-file/tip/config/milestone.txt"
