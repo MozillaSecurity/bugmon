@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v3.8.0 (2024-04-23)
+
+### Feature
+
+* Set explicit retries and increase backoff_factor ([`75341de`](https://github.com/MozillaSecurity/bugmon/commit/75341de8a0f89ad643cab0d435d44e7d2cc512f5))
+
+### Fix
+
+* Remove unnecessary check for pre py3.8 versions ([`dec0b50`](https://github.com/MozillaSecurity/bugmon/commit/dec0b5080b6687e1fa578399636a4b99e3fcfbd3))
+
 ## v3.7.0 (2024-03-11)
 
 ### Feature
