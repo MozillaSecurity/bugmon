@@ -6,9 +6,8 @@ import json
 import logging
 import platform
 import re
-import sys
 from datetime import datetime
-from typing import Any, Dict, List, NoReturn, Optional, Type, Union, cast
+from typing import Any, Dict, List, NoReturn, Optional, Type, TypedDict, Union, cast
 
 import requests
 from autobisect import JSEvaluator
@@ -18,11 +17,6 @@ from fuzzfetch import BuildFlags, BuildSearchOrder, Fetcher, FetcherException, P
 from .utils import HG_BASE, _get_milestone, _get_rev
 
 log = logging.getLogger(__name__)
-
-if sys.version_info >= (3, 8):
-    from typing import TypedDict
-else:
-    from typing_extensions import TypedDict
 
 REV_MATCH = r"([a-f0-9]{12}|[a-f0-9]{40})"
 BID_MATCH = r"([0-9]{8}-)([a-f0-9]{12})"
