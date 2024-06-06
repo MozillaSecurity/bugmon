@@ -1,7 +1,7 @@
 fail_fast: true
 repos:
-  - repo: https://github.com/MozillaSecurity/orion
-    rev: v0.0.6
+  - repo: https://github.com/MozillaSecurity/orion-ci
+    rev: v0.0.8
     hooks:
       - id: orion_ci
   - repo: https://github.com/marco-c/taskcluster_yml_validator
