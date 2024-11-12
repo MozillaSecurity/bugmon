@@ -38,7 +38,7 @@ classifiers = [
   "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.9",
   "Topic :: Security",
   "Topic :: Software Development :: Testing"
@@ -54,7 +54,7 @@ name = "bugmon"
 packages = [{from = "src", include = "bugmon"}]
 readme = "README.md"
 repository = "https://github.com/MozillaSecurity/bugmon"
-version = "3.8.0"
+version = "3.9.0"
 
 [tool.poetry.dependencies]
 autobisect = "^7.5.0"
