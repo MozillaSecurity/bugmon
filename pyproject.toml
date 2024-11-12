@@ -54,13 +54,13 @@ name = "bugmon"
 packages = [{from = "src", include = "bugmon"}]
 readme = "README.md"
 repository = "https://github.com/MozillaSecurity/bugmon"
-version = "3.9.0"
+version = "3.8.0"
 
 [tool.poetry.dependencies]
 autobisect = "^7.5.0"
 bugsy = {git = "https://github.com/AutomatedTester/Bugsy.git"}
 fuzzfetch = "^2.4.2"
-python = "^3.8.1"
+python = "^3.9.0"
 typing-extensions = "^4.2.0"
 
 [tool.poetry.group.dev.dependencies]
