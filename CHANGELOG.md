@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.1.0 (2024-11-12)
+
+### Feature
+
+* Check return code of pernosco-submit to determine availability ([`efd7f47`](https://github.com/MozillaSecurity/bugmon/commit/efd7f47ee2922a0e6aff57a41013cc9bba26326a))
+
 ## v4.0.0 (2024-11-12)
 
 ### Feature
