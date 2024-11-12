@@ -1,29 +1,27 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+import subprocess
+
 import pytest
 
 import bugmon.utils as utils
 
 
-@pytest.mark.parametrize("binary", [True, False])
-@pytest.mark.parametrize("library", [True, False])
-def test_is_pernosco_available(binary, library, mocker, tmp_path):
-    """Verify that is_pernosco_available returns true if both conditions are true"""
-    bin_path = "/usr/bin/pernosco-submit" if binary else None
-    mocker.patch("bugmon.utils.PERNOSCO", bin_path)
+@pytest.mark.parametrize("returncode, expected", [(0, True), (1, False)])
+def test_is_pernosco_available(mocker, returncode, expected):
+    """Test is_pernosco_available with mocked subprocess.run."""
+    mock_run = mocker.patch("bugmon.utils.subprocess.run")
+    mock_run.return_value.returncode = returncode
 
-    if library:
-        pernosco_shared = tmp_path / "pernoscoshared"
-        pernosco_shared.mkdir()
-
-    mocker.patch(
-        "bugmon.utils.sysconfig.get_path",
-        return_value=tmp_path,
+    # Call the function and assert that it returns the expected result
+    assert utils.is_pernosco_available() == expected
+    mock_run.assert_called_once_with(
+        ["pernosco-submit", "--help"],
+        check=False,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
-
-    expected = binary and library
-    assert utils.is_pernosco_available() is expected
 
 
 def test_get_pernosco_trace_match(tmp_path):
