@@ -2,6 +2,20 @@
 
 <!--next-version-placeholder-->
 
+## v4.0.0 (2024-11-12)
+
+### Feature
+
+* Drop support for python 3.8 ([`e418478`](https://github.com/MozillaSecurity/bugmon/commit/e418478849ab52a80e63099eb233945cd2db43f3))
+
+### Fix
+
+* Revert version and set python minimum version ([`2bb6a47`](https://github.com/MozillaSecurity/bugmon/commit/2bb6a47356e187d3344e4831d3f9e5d1aade12fe))
+
+### Breaking
+
+* Sets minimum python to version 3.9. ([`e418478`](https://github.com/MozillaSecurity/bugmon/commit/e418478849ab52a80e63099eb233945cd2db43f3))
+
 ## v3.8.0 (2024-04-23)
 
 ### Feature
