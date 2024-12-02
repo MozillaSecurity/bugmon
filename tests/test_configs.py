@@ -30,7 +30,7 @@ def test_bug_configuration_iter_build_flags_001(bug_data):
     # Check that all results are BuildFlags
     assert all(isinstance(x, BuildFlags) for x in build_flags)
     # Check for duplicates
-    assert len(build_flags) == len(set(build_flags))
+    assert build_flags[0] != build_flags[1]
 
 
 def test_bug_configuration_iter_build_flags_002(bug_data):
@@ -45,7 +45,9 @@ def test_bug_configuration_iter_build_flags_002(bug_data):
     # Check that all results are BuildFlags
     assert all(isinstance(x, BuildFlags) for x in build_flags)
     # Check for duplicates
-    assert len(build_flags) == len(set(build_flags))
+    for i in range(len(build_flags)):
+        for j in range(i + 1, len(build_flags)):
+            assert build_flags[i] != build_flags[j]
 
 
 def test_bug_configuration_iter_tests_001():

@@ -3,8 +3,10 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 import itertools
 from abc import ABC, abstractmethod
+from copy import copy
+from dataclasses import fields
 from pathlib import Path
-from typing import Any, Dict, Iterator, Tuple
+from typing import Any, Dict, Iterator, Tuple, cast
 
 from autobisect import Evaluator
 from fuzzfetch import BuildFlags
@@ -34,7 +36,7 @@ class BugConfiguration(ABC):
         """
         yielded = []
         # Ignore opt builds and non-fuzzing enabled builds
-        is_opt = all(flag is False for flag in bug.build_flags)
+        is_opt = all(cast(bool, flag) is False for flag in fields(bug.build_flags))
         if not is_opt and bug.build_flags.fuzzing:
             yielded.append(bug.build_flags)
             yield bug.build_flags
@@ -49,17 +51,16 @@ class BugConfiguration(ABC):
             if not asan and not debug:
                 continue
 
-            raw_flags = dict.fromkeys(bug.build_flags._asdict(), False)
+            new_flags = copy(bug.build_flags)
             if asan:
-                raw_flags["asan"] = asan
+                new_flags.asan = True
 
             if debug:
-                raw_flags["debug"] = debug
+                new_flags.debug = True
 
             if fuzzing:
-                raw_flags["fuzzing"] = fuzzing
+                new_flags.fuzzing = True
 
-            new_flags = BuildFlags(**raw_flags)
             if not any(flags == new_flags for flags in yielded):
                 yield new_flags
 
