@@ -274,10 +274,11 @@ class EnhancedBug(Bug):
                 creation_time = self.creation_time.split("T")[0]
                 try:
                     instance = Fetcher(
-                        self.branch,
-                        creation_time,
-                        self.build_flags,
-                        self.platform,
+                        branch=self.branch,
+                        build=creation_time,
+                        flags=self.build_flags,
+                        targets=[],
+                        platform=self.platform,
                         nearest=BuildSearchOrder.ASC,
                     )
                     self._initial_build_id = instance.changeset

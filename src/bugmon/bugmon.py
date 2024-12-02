@@ -245,7 +245,7 @@ class BugMonitor:
             log.info("Attempting to record a pernosco session...")
 
             # Update config to use no-opt
-            config.build_flags = config.build_flags._replace(no_opt=True)
+            config.build_flags.no_opt = True
             # Update evaluator settings
             config.evaluator.logs = self.log_dir
             config.evaluator.pernosco = True
@@ -422,6 +422,7 @@ class BugMonitor:
                 branch,
                 bid,
                 config.build_flags,
+                config.evaluator.target,
                 self.bug.platform,
                 nearest=direction,
             )

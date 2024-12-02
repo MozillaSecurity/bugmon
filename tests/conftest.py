@@ -213,17 +213,7 @@ def bugmon(tmp_path, request, bug, bugsy):
 
 @pytest.fixture
 def build_flags():
-    return BuildFlags(
-        asan=False,
-        tsan=False,
-        debug=False,
-        fuzzing=False,
-        coverage=False,
-        valgrind=False,
-        no_opt=False,
-        fuzzilli=False,
-        nyx=False,
-    )
+    return BuildFlags()
 
 
 @pytest.fixture
