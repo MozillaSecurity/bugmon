@@ -419,11 +419,11 @@ class BugMonitor:
                 direction = None
 
             build = Fetcher(
-                branch,
-                bid,
-                config.build_flags,
-                config.evaluator.target,
-                self.bug.platform,
+                branch=branch,
+                build=bid,
+                flags=config.build_flags,
+                targets=[config.evaluator.target],
+                platform=self.bug.platform,
                 nearest=direction,
             )
         except FetcherException as e:
