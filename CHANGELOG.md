@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.2.0 (2024-12-03)
+
+### Feature
+
+* Update autobisect and fuzzfetch ([`d48703f`](https://github.com/MozillaSecurity/bugmon/commit/d48703f16912fb5b8920bbeb1d6c3a57e3530427))
+
 ## v4.1.0 (2024-11-12)
 
 ### Feature
