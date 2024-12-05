@@ -253,3 +253,10 @@ def js_evaluator(tmp_path):
 def js_config(build_flags, js_evaluator):
     """returns a JSConfiguration instance"""
     return JSConfiguration(build_flags, js_evaluator)
+
+
+@pytest.fixture(scope="module")
+def vcr_config():
+    return {
+        "decode_compressed_response": True,
+    }

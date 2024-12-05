@@ -82,6 +82,7 @@ def test_bugmon_pernosco_disallow_js_config(mocker, tmp_path, bugmon, js_config)
     assert "pernosco" not in bugmon.bug.commands
 
 
+@pytest.mark.vcr()
 def test_bugmon_pernosco_browser_bug_crashed(mocker, bugmon, build, browser_config):
     """Verify that bugmon correctly reports a successful pernosco session"""
     bugmon.add_command("pernosco")
@@ -102,6 +103,7 @@ def test_bugmon_pernosco_browser_bug_crashed(mocker, bugmon, build, browser_conf
     assert "pernosco" not in bugmon.bug.commands
 
 
+@pytest.mark.vcr()
 def test_bugmon_pernosco_browser_bug_failure(
     mocker,
     tmp_path,
@@ -129,8 +131,13 @@ def test_bugmon_pernosco_browser_bug_failure(
     assert "pernosco" not in bugmon.bug.commands
 
 
+@pytest.mark.vcr()
 def test_bugmon_pernosco_failed_to_find_trace(
-    caplog, mocker, browser_config, bugmon, build
+    caplog,
+    mocker,
+    browser_config,
+    bugmon,
+    build,
 ):
     mocker.patch.object(bugmon, "detect_config", return_value=browser_config)
     result = ReproductionCrashed(build)
@@ -140,6 +147,7 @@ def test_bugmon_pernosco_failed_to_find_trace(
     assert caplog.messages[-1] == "Unable to identify a pernosco trace!"
 
 
+@pytest.mark.vcr()
 def test_bugmon_pernosco_x86(bugmon):
     """Verify bugmon reports that pernosco is not supported for x86 bugs"""
     bugmon.add_command("pernosco")
@@ -154,6 +162,7 @@ def test_bugmon_pernosco_x86(bugmon):
     assert "pernosco-wanted" not in bugmon.bug.keywords
 
 
+@pytest.mark.vcr()
 def test_bugmon_pernosco_no_creds(browser_config, bugmon, build, caplog, mocker):
     bugmon.dry_run = False
     mocker.patch.object(bugmon, "detect_config", return_value=browser_config)
@@ -168,6 +177,7 @@ def test_bugmon_pernosco_no_creds(browser_config, bugmon, build, caplog, mocker)
     assert caplog.messages[-1] == "Pernosco creds required for submitting traces!"
 
 
+@pytest.mark.vcr()
 def test_bugmon_add_command(bugmon):
     """Test that add_command updates the whiteboard"""
     bugmon.bug.whiteboard = "[some-command]"
