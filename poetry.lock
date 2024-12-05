@@ -41,17 +41,17 @@ typing-extensions = {version = ">=4.0.0", markers = "python_version < \"3.11\""}
 
 [[package]]
 name = "autobisect"
-version = "8.0.0"
+version = "8.0.1"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "autobisect-8.0.0-py3-none-any.whl", hash = "sha256:abf1e99c15a7b0f08e8138730a84644ac07011f858e9a2e865f10abbb9c6ea7a"},
-    {file = "autobisect-8.0.0.tar.gz", hash = "sha256:8ba0ea58dca00a0aa91212a80d7c6d0e04191010f144c577338d09d98574ed67"},
+    {file = "autobisect-8.0.1-py3-none-any.whl", hash = "sha256:7a6604917cdf8e6f102419dee70a62ef2eb34ad13c46b5beef2f5ec13529431e"},
+    {file = "autobisect-8.0.1.tar.gz", hash = "sha256:a72dfb4b48d363a83080fd1ecfe0c871484ba910286155d09f4d2e93d8895e39"},
 ]
 
 [package.dependencies]
-fuzzfetch = ">=10.0.0,<11.0.0"
+fuzzfetch = ">=10.0.1,<11.0.0"
 grizzly-framework = ">=0.21.0,<0.22.0"
 lithium-reducer = ">=4.0.0,<5.0.0"
 platformdirs = ">=4.2.2,<5.0.0"
@@ -676,13 +676,13 @@ setuptools = "*"
 
 [[package]]
 name = "fuzzfetch"
-version = "10.0.0"
+version = "10.0.1"
 description = "Downloader for firefox/jsshell builds."
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "fuzzfetch-10.0.0-py3-none-any.whl", hash = "sha256:59e6d4f6a70597bdf5e3a3f513341b61fd708b387597c8a222e5ce2fa48d3e43"},
-    {file = "fuzzfetch-10.0.0.tar.gz", hash = "sha256:ada07a71206988bba113652cd59d94e824f4401439d16ab97480f640d881b69f"},
+    {file = "fuzzfetch-10.0.1-py3-none-any.whl", hash = "sha256:7300d60d1f6acfeb22d90537c21d8495eacd07c3ce244e97f709c70cb30e4858"},
+    {file = "fuzzfetch-10.0.1.tar.gz", hash = "sha256:4fbaaa4b318d31036687c2f21b1405f618cf54d7e729ce2c21327e1721e14330"},
 ]
 
 [package.dependencies]
@@ -1975,4 +1975,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9.0"
-content-hash = "c2c36e59184c015911df512e51a854847128790d64c922dfb06d44a9d143373e"
+content-hash = "5a80153ce05963e5cfd33760a942f0107fb6c65212d68400d2bbc5b2e18e4972"
