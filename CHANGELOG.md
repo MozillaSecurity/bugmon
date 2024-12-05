@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v4.2.2 (2024-12-05)
+
+### Bug Fixes
+
+- Update fuzzfetch and autobisect to latest
+  ([`f4390c2`](https://github.com/MozillaSecurity/bugmon/commit/f4390c2f27eddc5b62e4cfe2cb4513bef8271f78))
+
+### Testing
+
+- Record network requests using pytest-recording
+  ([`7f48694`](https://github.com/MozillaSecurity/bugmon/commit/7f48694980498256a46bb1fd4d1f73a7899a842e))
+
+
 ## v4.2.1 (2024-12-03)
 
 ### Bug Fixes
