@@ -382,7 +382,12 @@ class EnhancedBug(Bug):
         if "flags" not in self._bug:
             self._bug["flags"] = []
 
-        request = {"name": "needinfo", "status": "?", "requestee": user}
+        request = {
+            "is_multiplicable": True,
+            "name": "needinfo",
+            "status": "?",
+            "requestee": user,
+        }
         for flag in self._bug["flags"]:
             # Don't insert needinfo flag if one already exists
             if request.items() < flag.items():
