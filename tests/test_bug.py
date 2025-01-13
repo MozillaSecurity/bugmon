@@ -332,5 +332,10 @@ def test_bug_add_needinfo(bug_data):
     bug = EnhancedBug(bugsy=None, **data)
     bug.add_needinfo("abc@mozilla.com")
 
-    expected = {"name": "needinfo", "status": "?", "requestee": "abc@mozilla.com"}
+    expected = {
+        "is_multiplicable": True,
+        "name": "needinfo",
+        "requestee": "abc@mozilla.com",
+        "status": "?",
+    }
     assert bug.flags[0] == expected
