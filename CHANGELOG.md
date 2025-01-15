@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v4.2.3 (2025-01-15)
+
+### Bug Fixes
+
+- Add a needinfo instead of redirecting
+  ([`e0bc179`](https://github.com/MozillaSecurity/bugmon/commit/e0bc179ff65c4f1be6e668e0efac854cd29d82a2))
+
+
 ## v4.2.2 (2024-12-05)
 
 ### Bug Fixes
