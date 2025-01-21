@@ -41,6 +41,13 @@ class BrowserConfiguration(BugConfiguration):
         self.params["use_harness"] = evaluator.use_harness
         self.params["env_variables"] = evaluator.env_vars
 
+    @classmethod
+    def iter_tests(cls, working_dir: Path) -> Iterator[Path]:
+        for testcase in super().iter_tests(working_dir):
+            if testcase.name == "test_info.json":
+                testcase = testcase.parent
+            yield testcase
+
     @staticmethod
     def iter_env(bug: EnhancedBug) -> Iterator[Dict[str, str]]:
         """Iterate over possible env variable settings

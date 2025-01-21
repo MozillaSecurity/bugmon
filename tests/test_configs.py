@@ -76,6 +76,19 @@ def test_browser_configuration_iter_tests_001():
         assert Path(tmp_path / "2.xml") in tests
 
 
+def test_browser_configuration_iter_tests_002():
+    """Test BrowserConfiguration.iter_tests() with test_info.json"""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_path = Path(tmp_dir)
+        Path(tmp_path / "test_info.json").touch()
+        Path(tmp_path / "testcase.html").touch()
+        Path(tmp_path / "frame.html").touch()
+
+        tests = list(BrowserConfiguration.iter_tests(tmp_path))
+        assert len(tests) == 3
+        assert Path(tmp_path) in tests
+
+
 def test_browser_configuration_env_iter_001(bug_data):
     """Test BugConfiguration.env_iter() with Accessibility component"""
     bug = copy.deepcopy(bug_data)
