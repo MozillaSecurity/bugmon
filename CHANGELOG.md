@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v4.3.0 (2025-01-22)
+
+### Features
+
+- Use test_info first if it exists
+  ([`9922526`](https://github.com/MozillaSecurity/bugmon/commit/9922526d31c65e896eb7d7714ec5c755211d10b1))
+
+
 ## v4.2.4 (2025-01-21)
 
 ### Bug Fixes
