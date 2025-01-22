@@ -43,10 +43,19 @@ class BrowserConfiguration(BugConfiguration):
 
     @classmethod
     def iter_tests(cls, working_dir: Path) -> Iterator[Path]:
-        for testcase in super().iter_tests(working_dir):
-            if testcase.name == "test_info.json":
-                testcase = testcase.parent
-            yield testcase
+        """Iterate over possible testcases.
+
+        :param working_dir: Path to iterate over.
+        """
+        testcases = list(super().iter_tests(working_dir))
+        for i, path in enumerate(testcases):
+            # If test_info exists, prefer it and use the parent directory
+            if path.name == "test_info.json":
+                new_path = testcases.pop(i).parent
+                testcases.insert(0, new_path)
+                break
+
+        yield from testcases
 
     @staticmethod
     def iter_env(bug: EnhancedBug) -> Iterator[Dict[str, str]]:

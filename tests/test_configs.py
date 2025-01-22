@@ -80,13 +80,13 @@ def test_browser_configuration_iter_tests_002():
     """Test BrowserConfiguration.iter_tests() with test_info.json"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_path = Path(tmp_dir)
-        Path(tmp_path / "test_info.json").touch()
         Path(tmp_path / "testcase.html").touch()
+        Path(tmp_path / "test_info.json").touch()
         Path(tmp_path / "frame.html").touch()
 
         tests = list(BrowserConfiguration.iter_tests(tmp_path))
         assert len(tests) == 3
-        assert Path(tmp_path) in tests
+        assert tests[0] == tmp_path
 
 
 def test_browser_configuration_env_iter_001(bug_data):
