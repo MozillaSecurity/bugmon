@@ -96,7 +96,7 @@ class BrowserConfiguration(BugConfiguration):
                 evaluator = BrowserEvaluator(
                     testcase,
                     env=env_variables,
-                    headless=None if system() == "Windows" else "xvfb",
+                    display="default" if system() == "Windows" else "xvfb",
                     prefs=prefs,
                     repeat=10,
                     relaunch=1,
