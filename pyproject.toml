@@ -119,8 +119,13 @@ disable = [
 log_level = "DEBUG"
 
 [tool.semantic_release]
-build_command = "pip install poetry && poetry build"
+build_command = """
+  pip install poetry
+  poetry build
+"""
 commit_subject = "chore(release): {version} [skip ci]"
 upload_to_pypi = false
 upload_to_release = false
-version_variable = "pyproject.toml:tool.poetry.version"
+version_toml = [
+  "pyproject.toml:tool.poetry.version"
+]
