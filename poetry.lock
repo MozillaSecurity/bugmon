@@ -41,18 +41,18 @@ typing-extensions = {version = ">=4.0.0", markers = "python_version < \"3.11\""}
 
 [[package]]
 name = "autobisect"
-version = "8.1.1"
+version = "8.2.0"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "autobisect-8.1.1-py3-none-any.whl", hash = "sha256:e1d02d3a3b2e772dcbc8cead788a755d56bb436d2c35025f312dc1442a39e4d5"},
-    {file = "autobisect-8.1.1.tar.gz", hash = "sha256:97993faa9854abe69f3e41a2982e55d8d4afc7c9a2c6d92590ec4f727e835e43"},
+    {file = "autobisect-8.2.0-py3-none-any.whl", hash = "sha256:d3df17f411f6877712afce53e3870dc2f350cb8bc0c3e631571112692e447de0"},
+    {file = "autobisect-8.2.0.tar.gz", hash = "sha256:86efa60b810c68a5de876fc6a2528402387287a32d3b52a8ca6c60725b9a5cf5"},
 ]
 
 [package.dependencies]
 fuzzfetch = ">=10.0.1,<11.0.0"
-grizzly-framework = "0.22.0"
+grizzly-framework = "0.22.1"
 lithium-reducer = ">=4.0.0,<5.0.0"
 platformdirs = ">=4.2.2,<5.0.0"
 twine = ">=6.1.0,<7.0.0"
@@ -611,13 +611,13 @@ files = [
 
 [[package]]
 name = "ffpuppet"
-version = "0.16.2"
+version = "0.16.3"
 description = "A Python module that aids in the automation of Firefox at the process level"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "ffpuppet-0.16.2-py3-none-any.whl", hash = "sha256:20329734991cf5be39c607bce7bbf32bf37e00064f0933abddf2569f4abe05f2"},
-    {file = "ffpuppet-0.16.2.tar.gz", hash = "sha256:91cf211681bb4c875761b5776e0ec4ab8f83ff9c040880eb6fc76d09fe7a387f"},
+    {file = "ffpuppet-0.16.3-py3-none-any.whl", hash = "sha256:55961f823a1e2d48b104030673aa0f6cb2e98e0392ad5f512732238772fb2c41"},
+    {file = "ffpuppet-0.16.3.tar.gz", hash = "sha256:f2353e0471d482f709068de38263ad6b6f7e99fabf79488c567246fa980e6acf"},
 ]
 
 [package.dependencies]
@@ -802,20 +802,20 @@ test = ["coverage[toml]", "ddt (>=1.1.1,!=1.4.3)", "mock", "mypy", "pre-commit",
 
 [[package]]
 name = "grizzly-framework"
-version = "0.22.0"
+version = "0.22.1"
 description = "A framework for developing and running browser fuzzers"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "grizzly_framework-0.22.0-py3-none-any.whl", hash = "sha256:1d97d14ba137c26c9d797b7173e0122d5d15eade3923e5d0e5a64f07a17b35dd"},
-    {file = "grizzly_framework-0.22.0.tar.gz", hash = "sha256:5026e47571d1029128593a4f95556b38b3d5582c9be0dde9e3897f65a4261b50"},
+    {file = "grizzly_framework-0.22.1-py3-none-any.whl", hash = "sha256:f17223114064fa9a8dec062c4316121b261aff0458be3edeefc000bacbb9f336"},
+    {file = "grizzly_framework-0.22.1.tar.gz", hash = "sha256:1616bf3b5040900a27fa2b16bb0421e42cd4cc816458a5f7925f0303146ece5c"},
 ]
 
 [package.dependencies]
 bugsy = "*"
 cryptography = "*"
 cssbeautifier = "*"
-ffpuppet = ">=0.16.0"
+ffpuppet = ">=0.16.3"
 FuzzManager = "*"
 jsbeautifier = "*"
 lithium-reducer = ">=3.0.0"
@@ -2695,4 +2695,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9.0"
-content-hash = "cdb5dc4dd777091693cd162d40f223937f1f0f24a33a4eb99674aef8ea06cf70"
+content-hash = "89499d99e94b566b31fafb1b2ee355ced9faf0e1c49a2cb6bb38ac058cff5b27"
