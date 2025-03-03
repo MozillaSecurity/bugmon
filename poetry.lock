@@ -41,18 +41,18 @@ typing-extensions = {version = ">=4.0.0", markers = "python_version < \"3.11\""}
 
 [[package]]
 name = "autobisect"
-version = "8.3.0"
+version = "8.4.0"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "autobisect-8.3.0-py3-none-any.whl", hash = "sha256:8737a1810096061f52173553a08edd755842bb6639983038abc49dfcada7a544"},
-    {file = "autobisect-8.3.0.tar.gz", hash = "sha256:b142bc8c50b717ffb3a68575b9a9df046e32684360c7cfe05b19838ee2f84901"},
+    {file = "autobisect-8.4.0-py3-none-any.whl", hash = "sha256:946df6b10745c1d027bb82f4c92ae3216d3d8a4677b29b0f905ef92e701e4629"},
+    {file = "autobisect-8.4.0.tar.gz", hash = "sha256:d93205aafe45b721d21d9bacf1b64c88fbd9b2edae79dcce90f7c3e9f8b2264d"},
 ]
 
 [package.dependencies]
 fuzzfetch = ">=10.0.1,<11.0.0"
-grizzly-framework = "0.22.1"
+grizzly-framework = "0.22.2"
 lithium-reducer = ">=4.0.0,<5.0.0"
 platformdirs = ">=4.2.2,<5.0.0"
 twine = ">=6.1.0,<7.0.0"
@@ -802,19 +802,20 @@ test = ["coverage[toml]", "ddt (>=1.1.1,!=1.4.3)", "mock", "mypy", "pre-commit",
 
 [[package]]
 name = "grizzly-framework"
-version = "0.22.1"
+version = "0.22.2"
 description = "A framework for developing and running browser fuzzers"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "grizzly_framework-0.22.1-py3-none-any.whl", hash = "sha256:f17223114064fa9a8dec062c4316121b261aff0458be3edeefc000bacbb9f336"},
-    {file = "grizzly_framework-0.22.1.tar.gz", hash = "sha256:1616bf3b5040900a27fa2b16bb0421e42cd4cc816458a5f7925f0303146ece5c"},
+    {file = "grizzly_framework-0.22.2-py3-none-any.whl", hash = "sha256:8305f48db72ac1bbdf9aaba81ae188f48df1e5680b11c6f34ff6f8b7ef215267"},
+    {file = "grizzly_framework-0.22.2.tar.gz", hash = "sha256:d18debe0fd6a84b575e66e0b9715d195c4132b2ef804dbfe7cd086dbb43964f9"},
 ]
 
 [package.dependencies]
 bugsy = "*"
 cryptography = "*"
 cssbeautifier = "*"
+fasteners = "*"
 ffpuppet = ">=0.16.3"
 FuzzManager = "*"
 jsbeautifier = "*"
@@ -2695,4 +2696,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9.0"
-content-hash = "45cc3f6be294cafb79d9bada338c9381283c4fd822f2e921ef51bf2740875278"
+content-hash = "147ef11382dc2a737677c6e77bbb0137add22716ad5c4e1eae96ce7819154350"
