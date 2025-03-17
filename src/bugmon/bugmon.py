@@ -514,6 +514,8 @@ class BugMonitor:
             return False
         if "bisect" in self.bug.commands:
             return True
+        if len(self.bug.regressed_by) != 0:
+            return False
 
         return False
 
