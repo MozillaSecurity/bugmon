@@ -522,10 +522,11 @@ class BugMonitor:
     def needs_confirm(self) -> bool:
         """Helper function to determine eligibility for 'confirm'"""
         confirmable = self.bug.status in ("ASSIGNED", "NEW", "UNCONFIRMED", "REOPENED")
-        if confirmable and "analyze" in self.bug.commands:
-            return True
-        if confirmable and "confirmed" not in self.bug.commands:
-            return True
+        if confirmable:
+            if "analyze" in self.bug.commands:
+                return True
+            if "confirmed" not in self.bug.commands:
+                return True
 
         return False
 
