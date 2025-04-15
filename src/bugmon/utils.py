@@ -29,7 +29,7 @@ HTTP_SESSION.mount("http://", HTTPAdapter(max_retries=HTTP_RETRIES))
 HTTP_SESSION.mount("https://", HTTPAdapter(max_retries=HTTP_RETRIES))
 
 HG_BASE = "https://hg.mozilla.org"
-MILESTONE = f"{HG_BASE}/mozilla-central/raw-file/tip/config/milestone.txt"
+MILESTONE = "https://product-details.mozilla.org/1.0/firefox_versions.json"
 
 PERNOSCO = shutil.which("pernosco-submit")
 
@@ -53,9 +53,9 @@ def _get_url(url: str) -> Response:
 
 def _get_milestone() -> int:
     """Fetch current milestone"""
-    milestone = _get_url(MILESTONE)
-    version = milestone.text.splitlines()[-1]
-    return int(version.split(".", 1)[0])
+    resp = _get_url(MILESTONE)
+    json = resp.json()
+    return int(json["FIREFOX_NIGHTLY"].split(".")[0])
 
 
 def _get_rev(branch: str, rev: str) -> Response:
