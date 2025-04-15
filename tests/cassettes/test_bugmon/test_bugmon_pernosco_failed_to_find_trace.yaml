@@ -11,121 +11,45 @@ interactions:
       User-Agent:
       - python-requests/2.32.3
     method: GET
-    uri: https://hg.mozilla.org/mozilla-central/raw-file/tip/config/milestone.txt
-  response:
-    body:
-      string: '# Holds the current milestone.
-
-        # Should be in the format of
-
-        #
-
-        #    x.x.x
-
-        #    x.x.x.x
-
-        #    x.x.x+
-
-        #
-
-        # Referenced by build/moz.configure/init.configure.
-
-        # Hopefully I''ll be able to automate replacement of *all*
-
-        # hardcoded milestones in the tree from these two files.
-
-        #--------------------------------------------------------
-
-
-        135.0a1
-
-        '
-    headers:
-      Access-Control-Allow-Origin:
-      - '*'
-      Cache-Control:
-      - no-cache
-      Connection:
-      - Keep-Alive
-      Content-Disposition:
-      - inline; filename="milestone.txt"
-      Content-Security-Policy:
-      - 'default-src ''none''; connect-src ''self'' https://bugzilla.mozilla.org/;
-        img-src ''self''; script-src https://hg.mozilla.org/static/ ''nonce-ceg9r2ZOTB-gvkQwjCOIAQ'';
-        style-src ''self'' ''unsafe-inline''; upgrade-insecure-requests; frame-ancestors
-        https:'
-      Content-Type:
-      - text/plain; charset="UTF-8"
-      Date:
-      - Thu, 05 Dec 2024 14:39:08 GMT
-      Server:
-      - Apache
-      Strict-Transport-Security:
-      - max-age=31536000
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Accept-Encoding
-      X-Cache-Info:
-      - 'not cacheable; response specified "Cache-Control: no-cache"'
-      X-Content-Type-Options:
-      - nosniff
-      content-length:
-      - '334'
-    status:
-      code: 200
-      message: Script output follows
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.32.3
-    method: GET
     uri: https://product-details.mozilla.org/1.0/firefox_versions.json
   response:
     body:
-      string: "{\n    \"FIREFOX_AURORA\": \"\",\n    \"FIREFOX_DEVEDITION\": \"134.0b5\",\n
-        \   \"FIREFOX_ESR\": \"128.5.1esr\",\n    \"FIREFOX_ESR115\": \"115.18.0esr\",\n
-        \   \"FIREFOX_ESR_NEXT\": \"\",\n    \"FIREFOX_NIGHTLY\": \"135.0a1\",\n    \"LAST_MERGE_DATE\":
-        \"2024-11-25\",\n    \"LAST_RELEASE_DATE\": \"2024-11-26\",\n    \"LAST_SOFTFREEZE_DATE\":
-        \"2024-11-21\",\n    \"LAST_STRINGFREEZE_DATE\": \"2024-11-22\",\n    \"LATEST_FIREFOX_DEVEL_VERSION\":
-        \"134.0b5\",\n    \"LATEST_FIREFOX_OLDER_VERSION\": \"3.6.28\",\n    \"LATEST_FIREFOX_RELEASED_DEVEL_VERSION\":
-        \"134.0b5\",\n    \"LATEST_FIREFOX_VERSION\": \"133.0\",\n    \"NEXT_MERGE_DATE\":
-        \"2025-01-06\",\n    \"NEXT_RELEASE_DATE\": \"2025-01-07\",\n    \"NEXT_SOFTFREEZE_DATE\":
-        \"2025-01-02\",\n    \"NEXT_STRINGFREEZE_DATE\": \"2025-01-03\"\n}"
+      string: "{\n    \"FIREFOX_AURORA\": \"\",\n    \"FIREFOX_DEVEDITION\": \"138.0b7\",\n
+        \   \"FIREFOX_ESR\": \"128.9.0esr\",\n    \"FIREFOX_ESR115\": \"115.22.0esr\",\n
+        \   \"FIREFOX_ESR_NEXT\": \"\",\n    \"FIREFOX_NIGHTLY\": \"139.0a1\",\n    \"LAST_MERGE_DATE\":
+        \"2025-03-31\",\n    \"LAST_RELEASE_DATE\": \"2025-04-01\",\n    \"LAST_SOFTFREEZE_DATE\":
+        \"2025-03-27\",\n    \"LAST_STRINGFREEZE_DATE\": \"2025-03-28\",\n    \"LATEST_FIREFOX_DEVEL_VERSION\":
+        \"138.0b7\",\n    \"LATEST_FIREFOX_OLDER_VERSION\": \"3.6.28\",\n    \"LATEST_FIREFOX_RELEASED_DEVEL_VERSION\":
+        \"138.0b7\",\n    \"LATEST_FIREFOX_VERSION\": \"137.0.2\",\n    \"NEXT_MERGE_DATE\":
+        \"2025-04-28\",\n    \"NEXT_RELEASE_DATE\": \"2025-04-29\",\n    \"NEXT_SOFTFREEZE_DATE\":
+        \"2025-04-24\",\n    \"NEXT_STRINGFREEZE_DATE\": \"2025-04-25\"\n}"
     headers:
       Age:
-      - '84'
+      - '187'
       Cache-Control:
       - max-age=300
       Connection:
       - keep-alive
       Content-Length:
-      - '709'
+      - '711'
       Content-Type:
       - application/json
       Date:
-      - Thu, 05 Dec 2024 14:38:07 GMT
+      - Tue, 15 Apr 2025 13:58:57 GMT
       ETag:
-      - '"cce9365f7f316218d2434fbc41cf5d58"'
+      - '"e7d6ff9bb35cbbabd7ad5719fdf7a296"'
       Last-Modified:
-      - Wed, 04 Dec 2024 22:06:38 GMT
+      - Tue, 15 Apr 2025 13:11:46 GMT
       Server:
       - AmazonS3
       Vary:
       - Accept-Encoding
       Via:
-      - 1.1 21d442c62385cffc7e5d8a1f4f6922a8.cloudfront.net (CloudFront)
+      - 1.1 9a4db88100eedbac8fa654a670e94d4c.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - 0THsCTuDg5BPKSrC26LnyKsHw_0Vx7ppYYGlkzGOpt5HpQqSiWhRhA==
+      - SrnBJESe_MZ47AL9TiEw6aoSRNMXJfKUcit4chOdj_AC2o7_GkHUjQ==
       X-Amz-Cf-Pop:
-      - ATL58-P5
+      - MIA50-P4
       X-Cache:
       - Hit from cloudfront
       access-control-allow-origin:
@@ -156,42 +80,108 @@ interactions:
     uri: https://product-details.mozilla.org/1.0/firefox_versions.json
   response:
     body:
-      string: "{\n    \"FIREFOX_AURORA\": \"\",\n    \"FIREFOX_DEVEDITION\": \"134.0b5\",\n
-        \   \"FIREFOX_ESR\": \"128.5.1esr\",\n    \"FIREFOX_ESR115\": \"115.18.0esr\",\n
-        \   \"FIREFOX_ESR_NEXT\": \"\",\n    \"FIREFOX_NIGHTLY\": \"135.0a1\",\n    \"LAST_MERGE_DATE\":
-        \"2024-11-25\",\n    \"LAST_RELEASE_DATE\": \"2024-11-26\",\n    \"LAST_SOFTFREEZE_DATE\":
-        \"2024-11-21\",\n    \"LAST_STRINGFREEZE_DATE\": \"2024-11-22\",\n    \"LATEST_FIREFOX_DEVEL_VERSION\":
-        \"134.0b5\",\n    \"LATEST_FIREFOX_OLDER_VERSION\": \"3.6.28\",\n    \"LATEST_FIREFOX_RELEASED_DEVEL_VERSION\":
-        \"134.0b5\",\n    \"LATEST_FIREFOX_VERSION\": \"133.0\",\n    \"NEXT_MERGE_DATE\":
-        \"2025-01-06\",\n    \"NEXT_RELEASE_DATE\": \"2025-01-07\",\n    \"NEXT_SOFTFREEZE_DATE\":
-        \"2025-01-02\",\n    \"NEXT_STRINGFREEZE_DATE\": \"2025-01-03\"\n}"
+      string: "{\n    \"FIREFOX_AURORA\": \"\",\n    \"FIREFOX_DEVEDITION\": \"138.0b7\",\n
+        \   \"FIREFOX_ESR\": \"128.9.0esr\",\n    \"FIREFOX_ESR115\": \"115.22.0esr\",\n
+        \   \"FIREFOX_ESR_NEXT\": \"\",\n    \"FIREFOX_NIGHTLY\": \"139.0a1\",\n    \"LAST_MERGE_DATE\":
+        \"2025-03-31\",\n    \"LAST_RELEASE_DATE\": \"2025-04-01\",\n    \"LAST_SOFTFREEZE_DATE\":
+        \"2025-03-27\",\n    \"LAST_STRINGFREEZE_DATE\": \"2025-03-28\",\n    \"LATEST_FIREFOX_DEVEL_VERSION\":
+        \"138.0b7\",\n    \"LATEST_FIREFOX_OLDER_VERSION\": \"3.6.28\",\n    \"LATEST_FIREFOX_RELEASED_DEVEL_VERSION\":
+        \"138.0b7\",\n    \"LATEST_FIREFOX_VERSION\": \"137.0.2\",\n    \"NEXT_MERGE_DATE\":
+        \"2025-04-28\",\n    \"NEXT_RELEASE_DATE\": \"2025-04-29\",\n    \"NEXT_SOFTFREEZE_DATE\":
+        \"2025-04-24\",\n    \"NEXT_STRINGFREEZE_DATE\": \"2025-04-25\"\n}"
     headers:
       Age:
-      - '84'
+      - '187'
       Cache-Control:
       - max-age=300
       Connection:
       - keep-alive
       Content-Length:
-      - '709'
+      - '711'
       Content-Type:
       - application/json
       Date:
-      - Thu, 05 Dec 2024 14:38:07 GMT
+      - Tue, 15 Apr 2025 13:58:57 GMT
       ETag:
-      - '"cce9365f7f316218d2434fbc41cf5d58"'
+      - '"e7d6ff9bb35cbbabd7ad5719fdf7a296"'
       Last-Modified:
-      - Wed, 04 Dec 2024 22:06:38 GMT
+      - Tue, 15 Apr 2025 13:11:46 GMT
       Server:
       - AmazonS3
       Vary:
       - Accept-Encoding
       Via:
-      - 1.1 3c790b7740916e9710f9e5f1b3e1dd0a.cloudfront.net (CloudFront)
+      - 1.1 97ea587719e76773be703c114ffeb2d2.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - 5aD_3uw3CQXQlNmkaLP9ceX1wt7bnXU__EGZuLiPtWwNCWehnSBTZg==
+      - vjUBYZmxnX2gq_c1T0MkKLGOeuo40rvGkDv7yNKk4rmgHIE5eSUT8Q==
       X-Amz-Cf-Pop:
-      - ATL58-P5
+      - MIA50-P4
+      X-Cache:
+      - Hit from cloudfront
+      access-control-allow-origin:
+      - '*'
+      strict-transport-security:
+      - max-age=31536000
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://product-details.mozilla.org/1.0/firefox_versions.json
+  response:
+    body:
+      string: "{\n    \"FIREFOX_AURORA\": \"\",\n    \"FIREFOX_DEVEDITION\": \"138.0b7\",\n
+        \   \"FIREFOX_ESR\": \"128.9.0esr\",\n    \"FIREFOX_ESR115\": \"115.22.0esr\",\n
+        \   \"FIREFOX_ESR_NEXT\": \"\",\n    \"FIREFOX_NIGHTLY\": \"139.0a1\",\n    \"LAST_MERGE_DATE\":
+        \"2025-03-31\",\n    \"LAST_RELEASE_DATE\": \"2025-04-01\",\n    \"LAST_SOFTFREEZE_DATE\":
+        \"2025-03-27\",\n    \"LAST_STRINGFREEZE_DATE\": \"2025-03-28\",\n    \"LATEST_FIREFOX_DEVEL_VERSION\":
+        \"138.0b7\",\n    \"LATEST_FIREFOX_OLDER_VERSION\": \"3.6.28\",\n    \"LATEST_FIREFOX_RELEASED_DEVEL_VERSION\":
+        \"138.0b7\",\n    \"LATEST_FIREFOX_VERSION\": \"137.0.2\",\n    \"NEXT_MERGE_DATE\":
+        \"2025-04-28\",\n    \"NEXT_RELEASE_DATE\": \"2025-04-29\",\n    \"NEXT_SOFTFREEZE_DATE\":
+        \"2025-04-24\",\n    \"NEXT_STRINGFREEZE_DATE\": \"2025-04-25\"\n}"
+    headers:
+      Age:
+      - '187'
+      Cache-Control:
+      - max-age=300
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '711'
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 15 Apr 2025 13:58:57 GMT
+      ETag:
+      - '"e7d6ff9bb35cbbabd7ad5719fdf7a296"'
+      Last-Modified:
+      - Tue, 15 Apr 2025 13:11:46 GMT
+      Server:
+      - AmazonS3
+      Vary:
+      - Accept-Encoding
+      Via:
+      - 1.1 72effd5076df8f62aaf006d6a0074238.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - Fb_kMT4eAfpl6cdYzuI--cGSvaw4qqxwaOY4iGCt8Nqou47G8kwgTw==
+      X-Amz-Cf-Pop:
+      - MIA50-P4
       X-Cache:
       - Hit from cloudfront
       access-control-allow-origin:
