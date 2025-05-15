@@ -3,7 +3,6 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 import itertools
 from abc import ABC, abstractmethod
-from copy import copy
 from dataclasses import fields
 from pathlib import Path
 from typing import Any, Dict, Iterator, Tuple, cast
@@ -41,25 +40,16 @@ class BugConfiguration(ABC):
             yielded.append(bug.build_flags)
             yield bug.build_flags
 
-        fuzzing = True
-        for asan, debug in itertools.product([True, None], repeat=2):
-            # Avoid asan-debug builds because they're not used for fuzzing
-            if asan and debug:
-                continue
-
+        for asan, debug in itertools.product([True, False], repeat=2):
             # Avoid opt builds
             if not asan and not debug:
                 continue
 
-            new_flags = copy(bug.build_flags)
-            if asan:
-                new_flags.asan = True
+            # Avoid asan-debug builds because they're not used for fuzzing
+            if asan and debug:
+                continue
 
-            if debug:
-                new_flags.debug = True
-
-            if fuzzing:
-                new_flags.fuzzing = True
+            new_flags = BuildFlags(fuzzing=True, asan=asan, debug=debug)
 
             if not any(flags == new_flags for flags in yielded):
                 yield new_flags
