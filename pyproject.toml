@@ -118,9 +118,6 @@ disable = [
 [tool.pytest.ini_options]
 log_level = "DEBUG"
 
-[tool.semantic_relase.publish]
-upload_to_vcs_release = false
-
 [tool.semantic_release]
 build_command = "poetry build"
 commit_message = "chore(release): {version} [skip ci]"
