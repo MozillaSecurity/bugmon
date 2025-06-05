@@ -105,6 +105,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install Python
         uses: actions/setup-python@v5
@@ -117,6 +119,9 @@ jobs:
       - name: Run semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run:
+        run: |
+          git config --global user.email "bugmon@mozilla.com"
+          git config --global user.name "semantic-release"
           poetry run semantic-release -v version --no-changelog
           poetry run semantic-release publish
+
