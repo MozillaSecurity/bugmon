@@ -114,10 +114,9 @@ jobs:
       - name: Install Poetry
         uses: ./.github/actions/setup-poetry
 
-      - name: Install dependencies
-        run: poetry install
-
       - name: Run semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: poetry run semantic-release publish
+        run:
+          poetry run semantic-release -v version --no-changelog
+          poetry run semantic-release publish
