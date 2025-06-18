@@ -195,7 +195,7 @@ class EnhancedBug(Bug):
         return commands
 
     @commands.setter
-    def commands(self, value: Dict[str, str]) -> None:
+    def commands(self, value: Dict[str, Union[str, None]]) -> None:
         parts = ",".join([f"{k}={v}" if v is not None else k for k, v in value.items()])
         if len(parts) != 0:
             if re.search(r"(?<=\[bugmon:)([^]]*)", self._bug["whiteboard"]):
