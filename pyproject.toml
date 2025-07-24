@@ -122,5 +122,5 @@ log_level = "DEBUG"
 build_command = "poetry build"
 commit_message = "chore(release): {version} [skip ci]"
 version_toml = [
-  "pyproject.toml:tool.poetry.version"
+  "pyproject.toml:project.version"
 ]
