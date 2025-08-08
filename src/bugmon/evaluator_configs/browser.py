@@ -39,6 +39,7 @@ class BrowserConfiguration(BugConfiguration):
         super().__init__(build_flags, evaluator)
         self.params["entry_point"] = evaluator.testcase
         self.params["use_harness"] = evaluator.use_harness
+        self.params["use_prefs"] = bool(evaluator.prefs)
         self.params["env_variables"] = evaluator.env_vars
 
     @classmethod
@@ -93,14 +94,16 @@ class BrowserConfiguration(BugConfiguration):
                 continue
 
             for use_harness in [True, False]:
-                evaluator = BrowserEvaluator(
-                    testcase,
-                    env=env_variables,
-                    display="default" if system() == "Windows" else "xvfb",
-                    prefs=prefs,
-                    repeat=10,
-                    relaunch=1,
-                    use_harness=use_harness,
-                )
+                # Don't always use prefs if they exist as they might be invalid
+                for pref_path in [prefs, None] if prefs is not None else [None]:
+                    evaluator = BrowserEvaluator(
+                        testcase,
+                        env=env_variables,
+                        display="default" if system() == "Windows" else "xvfb",
+                        prefs=pref_path,
+                        repeat=10,
+                        relaunch=1,
+                        use_harness=use_harness,
+                    )
 
-                yield cls(build_flags, evaluator)
+                    yield cls(build_flags, evaluator)
