@@ -251,7 +251,10 @@ class BugMonitor:
             config.evaluator.pernosco = True
             config.evaluator.repeat = 100
             config.evaluator.relaunch = 1
-            config.evaluator.time_limit = 300
+            if config.evaluator.use_harness:
+                config.evaluator.time_limit = 300
+            else:
+                config.evaluator.timeout = 300
 
             result = self._reproduce_bug(
                 config,
