@@ -103,6 +103,7 @@ class BrowserConfiguration(BugConfiguration):
                         prefs=pref_path,
                         repeat=10,
                         relaunch=1,
+                        scan_dir=True,
                         use_harness=use_harness,
                     )
 

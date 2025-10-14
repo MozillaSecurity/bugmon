@@ -102,14 +102,14 @@ files = [
 
 [[package]]
 name = "autobisect"
-version = "8.7.0"
+version = "8.7.1"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 optional = false
 python-versions = "<4.0,>=3.9"
 groups = ["main"]
 files = [
-    {file = "autobisect-8.7.0-py3-none-any.whl", hash = "sha256:772f6120def484f2fb5465eaf5afd9d89c08df6dda260ab29bed726acd3891d6"},
-    {file = "autobisect-8.7.0.tar.gz", hash = "sha256:9c2f2665ff6c8bfa3c7e96dd83cb4b155a41247e639c166b98159c241425de11"},
+    {file = "autobisect-8.7.1-py3-none-any.whl", hash = "sha256:eeb09725b2a2d4340ad971133af5018ff511f8b8a300d61158ed7cbf6445c743"},
+    {file = "autobisect-8.7.1.tar.gz", hash = "sha256:2e4bf0e2c657e077373a2b0109f04795cccdceab6cec184b47057837171f9fb5"},
 ]
 
 [package.dependencies]
@@ -3306,4 +3306,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<4.0"
-content-hash = "c360ed5c189c42bc7170276a6e5ae7a11569416dd2fc0ba6c30d9725e0226b20"
+content-hash = "e52b7deaf0d9672399974c1b3ef03f6d1dacc34504fd2a6590d6f2eb4f1b1df4"
