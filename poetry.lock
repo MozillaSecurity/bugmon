@@ -102,19 +102,19 @@ files = [
 
 [[package]]
 name = "autobisect"
-version = "8.7.1"
+version = "8.8.0"
 description = "Automatic bisection utility for Mozilla Firefox and SpiderMonkey"
 optional = false
 python-versions = "<4.0,>=3.9"
 groups = ["main"]
 files = [
-    {file = "autobisect-8.7.1-py3-none-any.whl", hash = "sha256:eeb09725b2a2d4340ad971133af5018ff511f8b8a300d61158ed7cbf6445c743"},
-    {file = "autobisect-8.7.1.tar.gz", hash = "sha256:2e4bf0e2c657e077373a2b0109f04795cccdceab6cec184b47057837171f9fb5"},
+    {file = "autobisect-8.8.0-py3-none-any.whl", hash = "sha256:acfc6e0a11408b1081bbac1e97af6b73529ee7f9c7863c2f9e3a89f5970a668a"},
+    {file = "autobisect-8.8.0.tar.gz", hash = "sha256:9d0c5c90664c927739156fe603e881897b64326c8ad6751042bb46ae89aaa187"},
 ]
 
 [package.dependencies]
-fuzzfetch = ">=11.0.0,<12.0.0"
-grizzly-framework = ">=0.23.0,<0.24.0"
+fuzzfetch = ">=13.0.0,<14.0.0"
+grizzly-framework = ">=0.24.0,<0.25.0"
 lithium-reducer = ">=4.0.0,<5.0.0"
 platformdirs = ">=4.2.2,<5.0.0"
 twine = ">=6.1.0,<7.0.0"
@@ -913,14 +913,14 @@ setuptools = "*"
 
 [[package]]
 name = "fuzzfetch"
-version = "11.0.1"
+version = "13.0.0"
 description = "Downloader for firefox/jsshell builds."
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "fuzzfetch-11.0.1-py3-none-any.whl", hash = "sha256:82ecdc4f3e36c5054cc78b0f9c79199e4a46b70fe98a65fe1f4fe7e0c1eaab9a"},
-    {file = "fuzzfetch-11.0.1.tar.gz", hash = "sha256:5458ff5fd608b77505bd6c22bd6654d0dc6befb15a49d124f3eec93281f6b62e"},
+    {file = "fuzzfetch-13.0.0-py3-none-any.whl", hash = "sha256:c8f6e71c069e11fabd56d522eba8c304ffddb7bf25df68972bba2d09e50cecbe"},
+    {file = "fuzzfetch-13.0.0.tar.gz", hash = "sha256:4f9ec92cc6add6587a8eaedf9a44679c78608f6d080f96d2dd59f6866754f277"},
 ]
 
 [package.dependencies]
@@ -929,6 +929,7 @@ requests = "*"
 
 [package.extras]
 dev = ["pre-commit", "tox"]
+sentry = ["psutil", "sentry_sdk"]
 
 [[package]]
 name = "fuzzmanager"
@@ -945,6 +946,27 @@ files = [
 [package.dependencies]
 fasteners = ">=0.14.1"
 requests = ">=2.20.1"
+
+[[package]]
+name = "fxpoppet"
+version = "0.3.5"
+description = "A Python module that enables the automation of Firefox on Android"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "fxpoppet-0.3.5-py3-none-any.whl", hash = "sha256:77d84310e2a06573b39e5f52f83b82151c1d947f88dd44b92e16eb2b76f07c72"},
+    {file = "fxpoppet-0.3.5.tar.gz", hash = "sha256:b88db0aaba9efba22e9154fb9141cf250377bd7f5923f5dbb57f4075fc1b8e2b"},
+]
+
+[package.dependencies]
+ffpuppet = ">=0.16.0"
+fuzzfetch = "*"
+PyYAML = "*"
+xvfbwrapper = "*"
+
+[package.extras]
+dev = ["pre-commit", "tox"]
 
 [[package]]
 name = "gitdb"
@@ -1027,14 +1049,14 @@ test = ["coverage[toml]", "ddt (>=1.1.1,!=1.4.3)", "mock ; python_version < \"3.
 
 [[package]]
 name = "grizzly-framework"
-version = "0.23.0"
+version = "0.24.0"
 description = "A framework for developing and running browser fuzzers"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "grizzly_framework-0.23.0-py3-none-any.whl", hash = "sha256:d83ace2f1f3e921534b53c02f20ab5cc1362b8840a8c4add39451923fd3629cb"},
-    {file = "grizzly_framework-0.23.0.tar.gz", hash = "sha256:e21effc24f089553b62f74e94735f970e29a21bb25c4f9fea7dacc83ca51db22"},
+    {file = "grizzly_framework-0.24.0-py3-none-any.whl", hash = "sha256:191910d4d7ad2e1bd859a442412e76bf3fa90090f6c7639228c006356ef921e2"},
+    {file = "grizzly_framework-0.24.0.tar.gz", hash = "sha256:344d31ce74c050fa39ef0441e7fdb17e37daeaf0e87dd65f2950a1c1bda4b7de"},
 ]
 
 [package.dependencies]
@@ -1043,8 +1065,9 @@ bugsy = "*"
 cryptography = "*"
 cssbeautifier = "*"
 fasteners = "*"
-ffpuppet = ">=0.16.3"
+ffpuppet = ">=0.17.0"
 FuzzManager = "*"
+fxpoppet = ">=0.3.0"
 jsbeautifier = "*"
 lithium-reducer = ">=3.0.0"
 prefpicker = ">=1.23.0"
@@ -3157,7 +3180,6 @@ description = "Manage headless displays with Xvfb (X virtual framebuffer)"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "sys_platform == \"linux\""
 files = [
     {file = "xvfbwrapper-0.2.14-py3-none-any.whl", hash = "sha256:e5ec86870455fd3dd38cdccb72b4362cdf0272d9de282e73f58cba03439321b9"},
     {file = "xvfbwrapper-0.2.14.tar.gz", hash = "sha256:f6e42ae827e308c211f60db3c9301be6d6849701f2de1060954c9dc53d9ebf6b"},
@@ -3306,4 +3328,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<4.0"
-content-hash = "e52b7deaf0d9672399974c1b3ef03f6d1dacc34504fd2a6590d6f2eb4f1b1df4"
+content-hash = "f6dfb59eb9cda2d512eee5b9f61b8e51cd0798b00a13b2c88bceceaa37c34422"
