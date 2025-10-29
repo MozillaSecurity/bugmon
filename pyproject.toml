@@ -35,7 +35,7 @@ packages = [{from = "src", include = "bugmon"}]
 readme = "README.md"
 repository = "https://github.com/MozillaSecurity/bugmon"
 requires-python = ">=3.9,<4.0"
-version = "4.12.1"
+version = "4.13.0"
 
 [project.scripts]
 bugmon = "bugmon.main:main"
