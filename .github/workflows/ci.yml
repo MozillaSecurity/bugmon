@@ -65,11 +65,14 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install python ${{ matrix.python-version }}
+        id: setup-python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
-      - run: echo "PIPX_DEFAULT_PYTHON=$(which python)" >> $GITHUB_ENV
+      - name: Export PIPX_DEFAULT_PYTHON
+        shell: bash
+        run: echo "PIPX_DEFAULT_PYTHON=${{ steps.setup-python.outputs.python-path }}" >> $GITHUB_ENV
 
       - name: Install poetry
         run: pipx install poetry
