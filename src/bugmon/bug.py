@@ -128,7 +128,7 @@ class EnhancedBug(Bug):
 
             for alias in ["esr-next", "esr-stable"]:
                 try:
-                    release = Fetcher.resolve_esr(alias)
+                    release = Fetcher.resolve_esr(alias, "firefox")
                     if release is not None:
                         version = int(release.strip("esr"))
                         self._branches[release] = version
