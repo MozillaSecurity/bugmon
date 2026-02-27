@@ -16,19 +16,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install python
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
+          enable-cache: true
           python-version: "3.12"
 
-      - name: Install poetry
-        run: pipx install poetry
-
       - name: Install package
-        run: poetry install
+        run: uv sync --group dev
 
       - name: Run linters
-        run: poetry run pre-commit run -a
+        run: uv run pre-commit run -a
 
   test:
     name: Python ${{ matrix.python-version }} (${{ matrix.platform }})
@@ -41,57 +39,40 @@ jobs:
         include:
           - python-version: "3.10"
             platform: ubuntu-latest
-            toxenv: py310
           - python-version: "3.11"
             platform: ubuntu-latest
-            toxenv: py311
           - python-version: "3.12"
             platform: ubuntu-latest
-            toxenv: py312
           - python-version: "3.13"
             platform: ubuntu-latest
-            toxenv: py313
           - python-version: "3.14"
             platform: ubuntu-latest
-            toxenv: py314
           - python-version: "3.12"
             platform: macos-latest
-            toxenv: py312
           - python-version: "3.12"
             platform: windows-latest
-            toxenv: py312
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install python ${{ matrix.python-version }}
-        id: setup-python
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
+          enable-cache: true
           python-version: ${{ matrix.python-version }}
 
-      - name: Export PIPX_DEFAULT_PYTHON
-        shell: bash
-        run: echo "PIPX_DEFAULT_PYTHON=${{ steps.setup-python.outputs.python-path }}" >> $GITHUB_ENV
-
-      - name: Install poetry
-        run: pipx install poetry
-
-      - name: Install tox
-        run: pipx install tox
-
-      - name: Install package
-        run: poetry install
+      - name: Install dependencies
+        run: uv sync --group dev
 
       - name: Run tests
-        run: tox -e ${{ matrix.toxenv }}
+        run: uv run pytest --cache-clear --cov=src --cov-config=pyproject.toml --cov-report=term-missing --disable-pytest-warnings
 
       - name: Run codecov
         env:
-          CODECOV_TOKEN:
-            ${{ secrets.CODECOV_TOKEN }}
-        run: tox -e codecov
-
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          uv run coverage xml --ignore-errors
+          uv run codecov upload-process
 
   release:
     runs-on: ubuntu-latest
@@ -103,16 +84,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install python
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
+          enable-cache: true
           python-version: "3.12"
 
-      - name: Install poetry
-        run: pipx install poetry
-
       - name: Install package
-        run: poetry install
+        run: uv sync --group dev
 
       - name: Run semantic-release
         env:
@@ -120,6 +99,5 @@ jobs:
         run: |
           git config --global user.email "bugmon@mozilla.com"
           git config --global user.name "semantic-release"
-          poetry run semantic-release -v version --no-changelog
-          poetry run semantic-release publish
-
+          uv run semantic-release -v version --no-changelog
+          uv run semantic-release publish
