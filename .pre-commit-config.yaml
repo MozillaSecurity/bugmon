@@ -4,35 +4,35 @@ repos:
     hooks:
       - id: black
         name: black
-        entry: poetry run black --check --diff
+        entry: uv run black --check --diff
         language: system
         types: [ python ]
       - id: flake8
         name: flake8
-        entry: poetry run flake8
+        entry: uv run flake8
         language: system
         types: [ python ]
         require_serial: true
       - id: gitlint
         name: gitlint
-        entry: poetry run gitlint
+        entry: uv run gitlint
         language: system
         args: [--contrib=contrib-title-conventional-commits, --ignore=body-is-missing, --msg-filename]
         stages: [commit-msg]
       - id: mypy
         name: mypy
-        entry: poetry run mypy src
+        entry: uv run mypy src
         language: system
         pass_filenames: false
         types: [ python ]
       - id: pylint
         name: pylint
-        entry: poetry run pylint -j 0 src
+        entry: uv run pylint -j 0 src
         language: system
         pass_filenames: false
         types: [ python ]
-      - id: toml-sort
-        name: toml-sort
-        entry: poetry run toml-sort --check -a
+      - id: pyproject-fmt
+        name: pyproject-fmt
+        entry: uv run pyproject-fmt --check
         files: "^pyproject\\.toml$"
         language: system
