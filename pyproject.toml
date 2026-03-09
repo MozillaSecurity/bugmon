@@ -4,7 +4,7 @@ requires = [ "hatchling" ]
 
 [project]
 name = "bugmon"
-version = "5.0.1"
+version = "5.1.0"
 description = "A python module for analyzing SpiderMonkey and Firefox bugs"
 readme = "README.md"
 keywords = [ "bisection", "fuzz", "fuzzing", "security", "test", "testing" ]
