@@ -326,6 +326,42 @@ def test_bug_assignee(bug_data, has_assignee):
     assert bug.assignee == data[f"{expected}_detail"]
 
 
+@pytest.mark.parametrize(
+    "flag, suffix",
+    [
+        ("spectre-mitigations", ""),  # no value
+        ("baseline-warmup-threshold", "=1000"),  # digits
+        ("ion-regalloc", "=backtracking"),  # letters
+        ("ion-regalloc", "=lsra-backtracking"),  # hyphen
+        ("baseline-warmup-threshold", "=1_000"),  # underscore
+        ("ion-regalloc", "=back_tracking-v2"),  # mixed
+    ],
+)
+def test_bug_runtime_opts(mocker, bug_data, flag, suffix):
+    """Test that runtime_opts correctly parses runtime flags"""
+    data = copy.deepcopy(bug_data)
+    data["comments"][0]["text"] = f"--{flag}{suffix}"
+    bug = EnhancedBug(bugsy=None, **data)
+    bug._initial_build_id = "72f0cfd2cd42"
+
+    mocker.patch("bugmon.bug.JSEvaluator.get_valid_flags", return_value=[flag])
+
+    assert bug.runtime_opts == [f"--{flag}{suffix}"]
+
+
+def test_bug_runtime_opts_not_present(mocker, bug_data):
+    """Test that runtime_opts returns empty list when flag is absent"""
+    bug = EnhancedBug(bugsy=None, **bug_data)
+    bug._initial_build_id = "72f0cfd2cd42"
+
+    mocker.patch(
+        "bugmon.bug.JSEvaluator.get_valid_flags",
+        return_value=["baseline-warmup-threshold"],
+    )
+
+    assert bug.runtime_opts == []
+
+
 def test_bug_add_needinfo(bug_data):
     """Test that needinfo can be added to a bug"""
     data = copy.deepcopy(bug_data)
