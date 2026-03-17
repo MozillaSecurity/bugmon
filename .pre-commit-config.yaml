@@ -1,5 +1,10 @@
 fail_fast: true
 repos:
+  - repo: https://github.com/jorisroovers/gitlint
+    rev: v0.19.1
+    hooks:
+      - id: gitlint
+        args: [--contrib=contrib-title-conventional-commits, --ignore=body-is-missing]
   - repo: local
     hooks:
       - id: black
@@ -13,12 +18,6 @@ repos:
         language: system
         types: [ python ]
         require_serial: true
-      - id: gitlint
-        name: gitlint
-        entry: uv run gitlint
-        language: system
-        args: [--contrib=contrib-title-conventional-commits, --ignore=body-is-missing, --msg-filename]
-        stages: [commit-msg]
       - id: mypy
         name: mypy
         entry: uv run mypy src

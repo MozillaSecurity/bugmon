@@ -45,7 +45,6 @@ dev = [
   "flake8>=7.2",
   "flake8-isort>=6",
   "flake8-quotes>=3.3.2",
-  "gitlint>=0.19.1",
   "mypy>=1.16.1",
   "pre-commit>=4.2",
   "pylint>=3.3.7",
