@@ -185,7 +185,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "autobisect", specifier = ">=9.2.0,<10" },
+    { name = "autobisect", specifier = ">=9.2,<10" },
     { name = "bugsy", git = "https://github.com/AutomatedTester/Bugsy.git" },
     { name = "fuzzfetch", specifier = ">=16.1,<17" },
     { name = "typing-extensions", specifier = ">=4.2,<5" },
@@ -1410,14 +1410,14 @@ wheels = [
 
 [[package]]
 name = "prefpicker"
-version = "2.20.0"
+version = "2.21.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pyyaml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3f/ab/2a067f6576241fd4109d4bf98638aa3039388f6973d471d03487e309b056/prefpicker-2.20.0.tar.gz", hash = "sha256:072f6250d5a21de806db5feca0123f885e947d7737fc16b1643206f19779f3af", size = 26371, upload-time = "2026-02-17T18:24:05.187Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/de/09/2b3930849d0de3a9ef512a167d5785ff7b1843ae7ef86af4d383f54a2e9e/prefpicker-2.21.0.tar.gz", hash = "sha256:5f50f57f6584ba53b5946e93b8395335288ae7de63d63c2343605d1d88a4e732", size = 26377, upload-time = "2026-03-17T20:17:21.654Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7d/f2/27579efab1b0828bc91f9debaa58818c35d341cf0394db814e248ece3e1a/prefpicker-2.20.0-py3-none-any.whl", hash = "sha256:6af854fbfb1d764e543e07d361ae26a35fd67b0b878a2dee792fe3ddd5c49d4a", size = 23896, upload-time = "2026-02-17T18:24:03.768Z" },
+    { url = "https://files.pythonhosted.org/packages/68/1a/94a6c7c10d7eda3870c11308d243adeec0035975ca3bd19e08dceeeaab9f/prefpicker-2.21.0-py3-none-any.whl", hash = "sha256:1e910430d4ded6766be3f3918c789fd265238e5a4c7cc520c45dc4f42feeb2c8", size = 23870, upload-time = "2026-03-17T20:17:20.776Z" },
 ]
 
 [[package]]
