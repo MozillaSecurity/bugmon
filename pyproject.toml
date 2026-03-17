@@ -28,7 +28,7 @@ classifiers = [
   "Topic :: Software Development :: Testing",
 ]
 dependencies = [
-  "autobisect>=9,<10",
+  "autobisect>=9.2,<10",
   "bugsy @ git+https://github.com/AutomatedTester/Bugsy.git",
   "fuzzfetch>=16.1,<17",
   "typing-extensions>=4.2,<5",
@@ -95,6 +95,12 @@ messages_control.disable = [
   "useless-object-inheritance"
 ]
 
+[tool.mypy]
+disallow_subclassing_any = "False"
+ignore_missing_imports = "True"
+implicit_reexport = "True"
+strict = "True"
+
 [tool.pytest]
 ini_options.log_level = "DEBUG"
 
@@ -102,12 +108,6 @@ ini_options.log_level = "DEBUG"
 run.omit = [ "*/.egg/*", "*/build/*", "*/dist/*", "*/setup.py", "*/tests/*" ]
 run.source_pkgs = [ "bugmon" ]
 report.exclude_lines = [ "pragma: no cover" ]
-
-[tool.mypy]
-disallow_subclassing_any = "False"
-ignore_missing_imports = "True"
-implicit_reexport = "True"
-strict = "True"
 
 [tool.semantic_release]
 build_command = "uv build"
