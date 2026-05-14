@@ -14,7 +14,7 @@ from .base import BugConfiguration
 class JSConfiguration(BugConfiguration):
     """Simple Browser Evaluator Configuration"""
 
-    ALLOWED = ("*.js", "*")
+    ALLOWED = ("*.js",)
 
     def __init__(self, build_flags: BuildFlags, evaluator: JSEvaluator):
         super().__init__(build_flags, evaluator)
