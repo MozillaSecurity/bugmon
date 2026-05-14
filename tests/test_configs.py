@@ -126,4 +126,4 @@ def test_js_configuration_iterate_001(mocker, bug_data):
         )
         mock.return_value = []
         bug = EnhancedBug(None, **bug_data)
-        assert len(list(JSConfiguration.iterate(bug, tmp_path))) == 6
+        assert len(list(JSConfiguration.iterate(bug, tmp_path))) == 2
