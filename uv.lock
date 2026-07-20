@@ -139,7 +139,7 @@ wheels = [
 
 [[package]]
 name = "bugmon"
-version = "5.2.1"
+version = "5.3.0"
 source = { editable = "." }
 dependencies = [
     { name = "autobisect" },
@@ -1375,14 +1375,14 @@ wheels = [
 
 [[package]]
 name = "prefpicker"
-version = "2.22.0"
+version = "2.25.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pyyaml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f1/e0/6a4a36db12c80a2a2d7573e103821053b1357b11a093f0bae77648b66a68/prefpicker-2.22.0.tar.gz", hash = "sha256:7e1c468e00f93ecfb1a292f0be430b055aa12c37a2e6d1a11b195e0f3fa381f6", size = 27401, upload-time = "2026-03-24T23:43:46.72Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/87/9a/8714dfe24cec24943fcc46845cc065e9b55efec399be5583c6624e9bb273/prefpicker-2.25.0.tar.gz", hash = "sha256:6852109464a9a39c0dff6e072b4829b303afb9cd26626590556828b7c70d2a2d", size = 27438, upload-time = "2026-07-20T17:45:15.393Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/58/21/281fa3e08ae768f668a044ab89fa7869eef54e96013332b46426e33da7a4/prefpicker-2.22.0-py3-none-any.whl", hash = "sha256:c5d7d05660fe3f881fcb0be8c366dc061551b98e2f355e86e0d18a82b6aac4bf", size = 24995, upload-time = "2026-03-24T23:43:45.694Z" },
+    { url = "https://files.pythonhosted.org/packages/26/ae/934d75056ece7adb19798d17b4ec9a09b24ef832d3142a688a79f2809a0d/prefpicker-2.25.0-py3-none-any.whl", hash = "sha256:121bc3136aaa6ffb4ce9e3b8c8b7bc5110065717b2d0a640f67ad0b46ad5d5a8", size = 25122, upload-time = "2026-07-20T17:45:13.996Z" },
 ]
 
 [[package]]
