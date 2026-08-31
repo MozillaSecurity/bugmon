@@ -27,6 +27,7 @@ from .utils import (
     PernoscoCreds,
     get_pernosco_trace,
     is_pernosco_available,
+    sanitize_attachment_path,
     submit_pernosco,
 )
 
@@ -501,15 +502,22 @@ class BugMonitor:
                 try:
                     with zipfile.ZipFile(io.BytesIO(data)) as z:
                         for filename in z.namelist():
-                            if (self.test_dir / filename).exists():
-                                log.warning("Duplicate filename: %s", filename)
-                            z.extract(filename, self.test_dir)
+                            # Skip directory entries
+                            if filename.endswith("/"):
+                                continue
+                            dest = sanitize_attachment_path(self.test_dir, filename)
+                            if dest.exists():
+                                log.warning("Duplicate filename: %s", dest)
+                            dest.parent.mkdir(parents=True, exist_ok=True)
+                            dest.write_bytes(z.read(filename))
                 except zipfile.BadZipFile as e:
                     log.warning("Failed to decompress attachment: %s", e)
                     continue
 
             else:
-                Path(self.test_dir, attachment.file_name).write_bytes(data)
+                dest = sanitize_attachment_path(self.test_dir, attachment.file_name)
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                dest.write_bytes(data)
 
     def needs_bisect(self) -> bool:
         """Helper function to determine eligibility for 'bisect'"""
