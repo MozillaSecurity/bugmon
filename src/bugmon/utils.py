@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 import zipfile
 from contextlib import contextmanager
-from pathlib import Path, PurePosixPath
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from urllib.parse import urlparse
 
 try:
@@ -18,6 +18,7 @@ except ImportError:
     from typing_extensions import TypedDict
 
 import requests
+from pathvalidate import sanitize_filename
 from requests.adapters import HTTPAdapter, Retry
 from requests.models import Response
 
@@ -34,6 +35,46 @@ MILESTONE = "https://product-details.mozilla.org/1.0/firefox_versions.json"
 PERNOSCO = shutil.which("pernosco-submit")
 
 log = logging.getLogger(__name__)
+
+
+def sanitize_attachment_path(base_dir: Path, file_name: str) -> Path:
+    """Build a sanitized destination path for an attachment within base_dir.
+
+    Each path component is sanitized individually with "universal" rules so
+    that characters grizzly's TestCase loader rejects (e.g. ':') are stripped
+    everywhere - including the leading component, which sanitize_filepath would
+    otherwise preserve as a Windows drive letter. Subdirectory structure is
+    kept, while paths containing traversal ('..'), current-dir ('.'), or
+    absolute ('/') components raise ValueError.
+
+    :param base_dir: Directory the attachment should be written to.
+    :param file_name: Original attachment or archive member name.
+    :return: Sanitized path within base_dir.
+    :raises ValueError: If file_name is empty, absolute, contains path traversal,
+        or has a component without a valid sanitized name.
+    """
+
+    displayed_name = repr(file_name)
+    if len(displayed_name) > 100:
+        displayed_name = f"{displayed_name[:97]}..."
+
+    windows_path = PureWindowsPath(file_name)
+    raw_parts = [part for part in file_name.replace("\\", "/").split("/") if part]
+    if (
+        windows_path.drive
+        or windows_path.root
+        or not raw_parts
+        or any(part in (".", "..") for part in raw_parts)
+    ):
+        raise ValueError(f"Unsafe attachment path: {displayed_name}")
+
+    # Sanitization can normalize names like ".. " into "..", so the sanitized
+    # components must be re-checked before they are used.
+    parts = [sanitize_filename(part, platform="universal") for part in raw_parts]
+    if any(part in ("", ".", "..") for part in parts):
+        raise ValueError(f"Unsafe attachment path: {displayed_name}")
+
+    return base_dir.joinpath(*parts)
 
 
 class PernoscoCreds(TypedDict):

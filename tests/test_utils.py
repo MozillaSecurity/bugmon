@@ -36,6 +36,51 @@ def test_get_pernosco_trace_none_match(tmp_path):
     assert utils.get_pernosco_trace(tmp_path) is None
 
 
+@pytest.mark.parametrize(
+    "file_name, expected",
+    [
+        ("test.js", "test.js"),
+        ("subdir/test.js", "subdir/test.js"),
+        ("foo:bar.js", "foobar.js"),
+        (r"subdir\\test.js", "subdir/test.js"),
+    ],
+)
+def test_sanitize_attachment_path(tmp_path, file_name, expected):
+    """Verify attachment paths are sanitized and remain relative."""
+    assert utils.sanitize_attachment_path(tmp_path, file_name) == tmp_path / expected
+
+
+@pytest.mark.parametrize(
+    "file_name",
+    [
+        "",
+        ".",
+        "..",
+        "../..",
+        "../outside.js",
+        ".. /outside.js",
+        "..\x00/outside.js",
+        "nested/./test.js",
+        "nested/../test.js",
+        "/absolute/path.js",
+        "C:\\absolute\\path.js",
+    ],
+)
+def test_sanitize_attachment_path_rejects_unsafe_paths(tmp_path, file_name):
+    """Verify unsafe paths raise instead of being normalized."""
+    with pytest.raises(ValueError, match="Unsafe attachment path"):
+        utils.sanitize_attachment_path(tmp_path, file_name)
+
+
+def test_sanitize_attachment_path_limits_error_length(tmp_path):
+    """Verify unsafe filenames cannot produce excessively long errors."""
+    with pytest.raises(ValueError) as exc_info:
+        utils.sanitize_attachment_path(tmp_path, f"../{'x' * 1000}.js")
+
+    assert len(str(exc_info.value)) <= 125
+    assert str(exc_info.value).endswith("...")
+
+
 def test_has_pernosco_creds_all(pernosco_creds):
     """Verify that has_pernosco_creds returns True when all creds present"""
     assert utils.has_pernosco_creds(pernosco_creds) is True

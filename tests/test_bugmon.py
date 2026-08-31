@@ -2,6 +2,10 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License,
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
+import base64
+import io
+import zipfile
+
 import pytest
 from autobisect.bisect import BisectionResult
 from fuzzfetch import Platform
@@ -9,6 +13,16 @@ from fuzzfetch import Platform
 from bugmon import BugMonitor, ReproductionCrashed, ReproductionPassed
 from bugmon.bug import EnhancedBug
 from bugmon.exceptions import BugmonException
+
+
+def _attachment(file_name, data, creation_time="2020-06-30T12:40:45Z"):
+    attachment = type("Attachment", (), {})()
+    attachment.file_name = file_name
+    attachment.data = base64.b64encode(data).decode()
+    attachment.creation_time = creation_time
+    attachment.content_type = "text/plain"
+    attachment.is_obsolete = False
+    return attachment
 
 
 def test_bugmon_need_info_on_bisect_fix(mocker, bugmon, build):
@@ -44,6 +58,41 @@ def test_bugmon_throws_without_pernosco_submit(
     expected = "pernosco-submit is not properly configured!"
     with pytest.raises(BugmonException, match=expected):
         BugMonitor(bugsy, bug, working_dir, pernosco_creds, False)
+
+
+def test_bugmon_fetch_attachments_preserves_nested_paths(mocker, bugmon):
+    """Verify valid ZIP and regular attachments preserve nested paths."""
+    archive_data = io.BytesIO()
+    with zipfile.ZipFile(archive_data, "w") as archive:
+        archive.writestr("nested/test.js", b"nested")
+        archive.writestr("nested/", b"")
+
+    attachments = [
+        _attachment("attachments.zip", archive_data.getvalue()),
+        _attachment("other/regular.js", b"regular", "2020-07-01T12:40:45Z"),
+    ]
+    mocker.patch("bugmon.bug.EnhancedBug.get_attachments", return_value=attachments)
+
+    bugmon.fetch_attachments()
+
+    assert (bugmon.test_dir / "nested/test.js").read_bytes() == b"nested"
+    assert (bugmon.test_dir / "other/regular.js").read_bytes() == b"regular"
+
+
+def test_bugmon_fetch_attachments_rejects_unsafe_path(mocker, bugmon):
+    """Verify unsafe attachment paths raise instead of being normalized."""
+    archive_data = io.BytesIO()
+    with zipfile.ZipFile(archive_data, "w") as archive:
+        archive.writestr("../escaped.js", b"escaped")
+
+    attachments = [_attachment("attachments.zip", archive_data.getvalue())]
+    mocker.patch("bugmon.bug.EnhancedBug.get_attachments", return_value=attachments)
+
+    with pytest.raises(ValueError, match="Unsafe attachment path"):
+        bugmon.fetch_attachments()
+
+    assert not (bugmon.test_dir / "escaped.js").exists()
+    assert not (bugmon.test_dir.parent / "escaped.js").exists()
 
 
 def test_bugmon_no_need_pernosco_with_pernosco_failed(bugmon):
