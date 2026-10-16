@@ -43,6 +43,13 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         help="Force bug confirmation regardless of status",
     )
 
+    parser.add_argument(
+        "--disable-pernosco",
+        action="store_true",
+        default=os.getenv("DISABLE_PERNOSCO") == "1",
+        help="Defer Pernosco recording and submission (also DISABLE_PERNOSCO=1)",
+    )
+
     # Bug selection
     bugs = parser.add_mutually_exclusive_group(required=True)
     bugs.add_argument("--bugs", nargs="+", help="Space separated list of bug numbers")
@@ -126,6 +133,7 @@ def main(argv: Optional[List[str]] = None) -> int:
                     working_dir,
                     pernosco_creds,
                     args.dry_run,
+                    disable_pernosco=args.disable_pernosco,
                 )
                 log.info(
                     f"Analyzing bug {bug.id} "
