@@ -72,6 +72,7 @@ class BugMonitor:
         working_dir: Path,
         pernosco_creds: Optional[PernoscoCreds] = None,
         dry_run: Optional[bool] = False,
+        disable_pernosco: bool = False,
     ) -> None:
         """Initializes new BugMonitor instance
 
@@ -80,6 +81,7 @@ class BugMonitor:
         :param working_dir: Path to working directory
         :param pernosco_creds: Optional pernosco credentials.
         :param dry_run: Boolean indicating if changes should be made to the bug
+        :param disable_pernosco: Defer pernosco recording and submission
         :raises BugmonException: If pernosco_creds is supplied but pernosco is not configured
         """
         self.bugsy = bugsy
@@ -92,7 +94,12 @@ class BugMonitor:
 
         self.dry_run = dry_run
         self.pernosco_creds = pernosco_creds
-        if pernosco_creds is not None and not is_pernosco_available():
+        self.disable_pernosco = disable_pernosco
+        if (
+            not disable_pernosco
+            and pernosco_creds is not None
+            and not is_pernosco_available()
+        ):
             if not dry_run:
                 raise BugmonException("pernosco-submit is not properly configured!")
 
@@ -542,7 +549,11 @@ class BugMonitor:
         return False
 
     def needs_pernosco(self) -> bool:
-        """Helper function to determine eligibility for 'pernosco'"""
+        """Helper function to determine eligibility for pernosco"""
+        return not self.disable_pernosco and self._has_pernosco_request()
+
+    def _has_pernosco_request(self) -> bool:
+        """Determine whether a pernosco request is pending, even while disabled."""
         if "pernosco-failed" in self.bug.commands:
             return False
 
@@ -651,6 +662,10 @@ class BugMonitor:
         # Pernosco sessions can be recorded at any time
         if self.needs_pernosco():
             self._pernosco()
+        elif self.disable_pernosco and self._has_pernosco_request():
+            # Keep the request queued without posting the close-out comment.
+            self._close_bug = False
+            log.info("Deferring Pernosco request while Pernosco is disabled")
 
         # Post updates and comments
         self.commit()

@@ -297,3 +297,101 @@ def test_bugmon_already_verified_but_not_branches(bugmon):
         "release": 78,
     }
     assert bugmon.needs_verify() is True
+
+
+@pytest.mark.parametrize("request_kind", ["command", "keyword"])
+@pytest.mark.parametrize("action", ["confirm", "verify", "bisect", None])
+def test_disabled_pernosco_preserves_pending_work(
+    bugmon, mocker, request_kind, action, caplog
+):
+    """Deferred recording preserves requests and suppresses close-out comments."""
+    bugmon.disable_pernosco = True
+    if request_kind == "command":
+        bugmon.add_command("pernosco")
+    else:
+        bugmon.bug.keywords.append("pernosco-wanted")
+    mocker.patch.object(bugmon, "is_supported", return_value=True)
+    for candidate in ("verify", "confirm", "bisect"):
+        mocker.patch.object(
+            bugmon, f"needs_{candidate}", return_value=candidate == action
+        )
+
+    def finish_analysis():
+        bugmon._close_bug = True
+        bugmon.report("Analysis completed.")
+
+    methods = {
+        "confirm": "_confirm_open",
+        "verify": "_verify_fixed",
+        "bisect": "_bisect",
+    }
+    analysis = None
+    if action is not None:
+        analysis = mocker.patch.object(
+            bugmon, methods[action], side_effect=finish_analysis
+        )
+    record = mocker.patch.object(bugmon, "_pernosco")
+    submit = mocker.patch("bugmon.bugmon.submit_pernosco")
+    bugmon.process()
+
+    record.assert_not_called()
+    submit.assert_not_called()
+    assert "bugmon" in bugmon.bug.keywords
+    assert "pernosco-failed" not in bugmon.bug.commands
+    if request_kind == "command":
+        assert "pernosco" in bugmon.bug.commands
+    else:
+        assert "pernosco-wanted" in bugmon.bug.keywords
+    diff = bugmon.bug.diff()
+    if action is not None:
+        analysis.assert_called_once_with()
+        assert diff["comment"]["body"] == "Analysis completed."
+    else:
+        assert "comment" not in diff
+    assert "Removing bugmon" not in caplog.text
+    assert not bugmon.needs_pernosco()
+    bugmon.disable_pernosco = False
+    assert bugmon.needs_pernosco()
+    bugmon.process()
+    record.assert_called_once_with()
+
+
+@pytest.mark.parametrize("terminal", ["unsupported", "failed"])
+def test_disabled_pernosco_retains_terminal_cleanup(bugmon, mocker, terminal):
+    """Requests that cannot be fulfilled do not prevent normal cleanup."""
+    bugmon.disable_pernosco = True
+    bugmon.add_command("pernosco")
+    if terminal == "failed":
+        bugmon.add_command("pernosco-failed")
+    bugmon._close_bug = True
+    mocker.patch.object(bugmon, "is_supported", return_value=terminal != "unsupported")
+    for action in ("verify", "confirm", "bisect"):
+        mocker.patch.object(bugmon, f"needs_{action}", return_value=False)
+    record = mocker.patch.object(bugmon, "_pernosco")
+    bugmon.process()
+    record.assert_not_called()
+    assert "bugmon" not in bugmon.bug.keywords
+    assert "Removing bugmon keyword" in bugmon.bug.diff()["comment"]["body"]
+
+
+def test_disabled_pernosco_skips_submit_validation(
+    bug, bugsy, working_dir, pernosco_creds, mocker
+):
+    """Disabled recording does not require an installed submit utility."""
+    available = mocker.patch("bugmon.bugmon.is_pernosco_available", return_value=False)
+    monitor = BugMonitor(bugsy, bug, working_dir, pernosco_creds, disable_pernosco=True)
+    available.assert_not_called()
+    assert monitor.needs_pernosco() is False
+
+
+@pytest.mark.parametrize(
+    "resolution", ["DUPLICATE", "INVALID", "WORKSFORME", "WONTFIX"]
+)
+def test_disabled_pernosco_cleans_up_terminal_resolution(bugmon, resolution):
+    """Terminal resolutions retain normal cleanup despite a pending request."""
+    bugmon.disable_pernosco = True
+    bugmon.add_command("pernosco")
+    bugmon.bug.resolution = resolution
+    bugmon.process()
+    assert "bugmon" not in bugmon.bug.keywords
+    assert "Removing bugmon keyword" in bugmon.bug.diff()["comment"]["body"]
