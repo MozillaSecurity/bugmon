@@ -139,12 +139,12 @@ wheels = [
 
 [[package]]
 name = "bugmon"
-version = "5.3.2"
+version = "5.4.0"
 source = { editable = "." }
 dependencies = [
     { name = "autobisect" },
-    { name = "bugsy" },
     { name = "fuzzfetch" },
+    { name = "mozsec-bugsy" },
     { name = "pathvalidate" },
     { name = "typing-extensions" },
 ]
@@ -174,8 +174,8 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "autobisect", specifier = ">=9.2,<10" },
-    { name = "bugsy", git = "https://github.com/MozillaSecurity/Bugsy.git" },
     { name = "fuzzfetch", specifier = ">=16.1,<17" },
+    { name = "mozsec-bugsy", specifier = ">=1,<2" },
     { name = "pathvalidate", specifier = ">=3,<4" },
     { name = "typing-extensions", specifier = ">=4.2,<5" },
 ]
@@ -204,10 +204,14 @@ dev = [
 
 [[package]]
 name = "bugsy"
-version = "0.13.0"
-source = { git = "https://github.com/MozillaSecurity/Bugsy.git#2cb08ec9edf4b97b4ba6fe456827b9384959e33d" }
+version = "0.12.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e5/d0/610e2f68f515238f98f920d9fe0a9b4bbc56436e6cfc64c5b64dc20b1459/bugsy-0.12.0.tar.gz", hash = "sha256:2d49af1cb4a2841e3d677ac535b054c51f457a5d124ad106c43a8fc3847fb26e", size = 17841, upload-time = "2020-07-13T18:47:24.272Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/50/e6/a99aa6ab1ae7842011ca6d50d159a5e5a500717d13fc2ae42f39131741e3/bugsy-0.12.0-py2.py3-none-any.whl", hash = "sha256:b5df82ff0e708cca73a517bfa80494a43b1b97267d5778a5cba62f7a9d04e9da", size = 27223, upload-time = "2020-07-13T18:47:23.232Z" },
 ]
 
 [[package]]
@@ -1245,6 +1249,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/d6/54/cfe61301667036ec958cb99bd3efefba235e65cdeb9c84d24a8293ba1d90/mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba", size = 8729, upload-time = "2022-08-14T12:40:10.846Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8", size = 9979, upload-time = "2022-08-14T12:40:09.779Z" },
+]
+
+[[package]]
+name = "mozsec-bugsy"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6b/be/3e64778cdb65336c201a1ccb3306ecdef8d4c64213a33531335ba6e17e67/mozsec_bugsy-1.0.0.tar.gz", hash = "sha256:07e35f09d5735f8d1fbba26f814a7c547b7e0b0bb89b354610f2325a30b96b99", size = 20991, upload-time = "2026-10-15T16:54:33.146Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7b/1d/d0c4a4349c7b6ee7b76614d8a8e0b4dfa66ea9fbe1beb0f9c946b66d2d00/mozsec_bugsy-1.0.0-py2.py3-none-any.whl", hash = "sha256:0c82b60d014f4cb1834c7a2b2f8863ea18ca31ff5a56a51b4665e7d0277d9e4a", size = 15038, upload-time = "2026-10-15T16:54:31.915Z" },
 ]
 
 [[package]]
