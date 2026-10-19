@@ -29,8 +29,8 @@ classifiers = [
 ]
 dependencies = [
   "autobisect>=9.2,<10",
-  "bugsy @ git+https://github.com/MozillaSecurity/Bugsy.git",
   "fuzzfetch>=16.1,<17",
+  "mozsec-bugsy>=1,<2",
   "pathvalidate>=3,<4",
   "typing-extensions>=4.2,<5",
 ]
