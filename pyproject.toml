@@ -28,7 +28,7 @@ classifiers = [
   "Topic :: Software Development :: Testing",
 ]
 dependencies = [
-  "autobisect>=9.2,<10",
+  "autobisect>=9.2.3,<10",
   "fuzzfetch>=16.1,<17",
   "mozsec-bugsy>=1,<2",
   "pathvalidate>=3,<4",

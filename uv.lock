@@ -67,7 +67,7 @@ wheels = [
 
 [[package]]
 name = "autobisect"
-version = "9.2.0"
+version = "9.2.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fuzzfetch" },
@@ -75,9 +75,9 @@ dependencies = [
     { name = "lithium-reducer" },
     { name = "platformdirs" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/16/77/5a3ab6c931d9d2e19942b81ec3be87d43f29c4d25ed642973999c42ea06d/autobisect-9.2.0.tar.gz", hash = "sha256:de1aa2e44a99e9f1b33210560894aa20e2c0675dd29789e95c3babd7240668fe", size = 927921, upload-time = "2026-03-17T19:47:03.715Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d0/81/384935c9fabf1fd669da0324c706ad9c6a37c4889454fa6df81b88cfa620/autobisect-9.2.3.tar.gz", hash = "sha256:0d68f15dce8be3658b6e1ec99b8781a91df08d46128ee2776078adec2aeb2a74", size = 929581, upload-time = "2026-10-19T18:25:32.381Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/62/b5/4e387b4a7f563d37f791a7507c70fed5cae7220a0d0d217f3f18fb404502/autobisect-9.2.0-py3-none-any.whl", hash = "sha256:42f0d7acb2f9c0a1f27272a6accaae0e6e517d889caf5911347065cd817a620c", size = 29647, upload-time = "2026-03-17T19:47:02.445Z" },
+    { url = "https://files.pythonhosted.org/packages/7b/26/2015bcf5f067ad476d539cbaf1de9e10aa5f4b3315811746afd0396e2ef9/autobisect-9.2.3-py3-none-any.whl", hash = "sha256:355555ffdf032d5715998e823f15ee7e749b14e1d1b449e9bfc6fd2282da3ec7", size = 30276, upload-time = "2026-10-19T18:25:30.96Z" },
 ]
 
 [[package]]
@@ -139,7 +139,7 @@ wheels = [
 
 [[package]]
 name = "bugmon"
-version = "5.4.0"
+version = "5.4.1"
 source = { editable = "." }
 dependencies = [
     { name = "autobisect" },
@@ -173,7 +173,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "autobisect", specifier = ">=9.2,<10" },
+    { name = "autobisect", specifier = ">=9.2.3,<10" },
     { name = "fuzzfetch", specifier = ">=16.1,<17" },
     { name = "mozsec-bugsy", specifier = ">=1,<2" },
     { name = "pathvalidate", specifier = ">=3,<4" },
@@ -200,18 +200,6 @@ dev = [
     { name = "pytest-recording", specifier = ">=0.13.2" },
     { name = "python-semantic-release", specifier = ">=10.1" },
     { name = "types-requests", specifier = ">=2.31.0.10" },
-]
-
-[[package]]
-name = "bugsy"
-version = "0.12.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/e5/d0/610e2f68f515238f98f920d9fe0a9b4bbc56436e6cfc64c5b64dc20b1459/bugsy-0.12.0.tar.gz", hash = "sha256:2d49af1cb4a2841e3d677ac535b054c51f457a5d124ad106c43a8fc3847fb26e", size = 17841, upload-time = "2020-07-13T18:47:24.272Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/50/e6/a99aa6ab1ae7842011ca6d50d159a5e5a500717d13fc2ae42f39131741e3/bugsy-0.12.0-py2.py3-none-any.whl", hash = "sha256:b5df82ff0e708cca73a517bfa80494a43b1b97267d5778a5cba62f7a9d04e9da", size = 27223, upload-time = "2020-07-13T18:47:23.232Z" },
 ]
 
 [[package]]
@@ -732,15 +720,15 @@ wheels = [
 
 [[package]]
 name = "ffpuppet"
-version = "0.19.0"
+version = "1.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "psutil" },
     { name = "xvfbwrapper", marker = "sys_platform == 'linux'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3c/b3/5f339578d87244edb2470854020128afe956fa78428d4c4d3d993f899853/ffpuppet-0.19.0.tar.gz", hash = "sha256:db2e6b1f9a2415d391eaf92736d26ddca8e8163a939eab8a8f68fbd1eb1cd96d", size = 88005, upload-time = "2026-02-18T21:16:28.027Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/75/31/19ad540e6854f5a3ed4ef297fecf37cdb43f53b5d7d66ea43c96b87ce542/ffpuppet-1.1.0.tar.gz", hash = "sha256:1359237b8f136bc234848789b2bfe4f09580f232181a50213c7550037278ac79", size = 90033, upload-time = "2026-07-29T20:43:28.257Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3a/0e/fcd0690b7025d955fc2394730beda58eaa0100c94eac7a106c9af9a0023a/ffpuppet-0.19.0-py3-none-any.whl", hash = "sha256:c388d8ea998b805c73e98da537f3ffc2779871281b6186ce8f675f3dbe2bc014", size = 101081, upload-time = "2026-02-18T21:16:25.132Z" },
+    { url = "https://files.pythonhosted.org/packages/e4/1e/3ff3454ffaec010cbe915d92894b68ac2fe2437ef0e6ff326a5116bc604b/ffpuppet-1.1.0-py3-none-any.whl", hash = "sha256:75dfb39532d8bb483507e1aedcbce0849259fb12972366f6aaf8229899784508", size = 102716, upload-time = "2026-07-29T20:43:26.757Z" },
 ]
 
 [[package]]
@@ -856,12 +844,11 @@ wheels = [
 
 [[package]]
 name = "grizzly-framework"
-version = "0.24.2"
+version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aioquic" },
     { name = "beautifulsoup4" },
-    { name = "bugsy" },
     { name = "cryptography" },
     { name = "cssbeautifier" },
     { name = "fasteners" },
@@ -870,12 +857,14 @@ dependencies = [
     { name = "fxpoppet" },
     { name = "jsbeautifier" },
     { name = "lithium-reducer" },
+    { name = "mozsec-bugsy" },
     { name = "prefpicker" },
     { name = "psutil" },
+    { name = "six" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cf/9b/1109cf38ebf26118d6d2bc0944047c5c85b9d7330e4fcdd27ac47fe3fe14/grizzly_framework-0.24.2.tar.gz", hash = "sha256:bfbece96e50c7bcd9b63def44aae8e1f6c8e949f37e5b501cf78c24cc577d358", size = 229892, upload-time = "2025-12-19T17:44:06.922Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f4/8a/5fc43f8a4439c6ff44a0c93341fb137353b9feb0197ec5465a07641a6390/grizzly_framework-1.3.1.tar.gz", hash = "sha256:b1a2b7c66a7724653ddd1493dd9d3495a8986398f3b6d06f0898b19d735a52ce", size = 236532, upload-time = "2026-10-19T15:13:24.717Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/76/4d/781b24f53d9f00a271d93fa97108bcaf338ff03b4b09b83807df39f17a17/grizzly_framework-0.24.2-py3-none-any.whl", hash = "sha256:7126069aec94c08348330c24e89a4143c3c40c63b52444ddd566df5bd27522a0", size = 296824, upload-time = "2025-12-19T17:44:05.698Z" },
+    { url = "https://files.pythonhosted.org/packages/0b/93/8cd74d695b333c3f9f7db9755a0f1d4820b162718dd1e13514dd0008663a/grizzly_framework-1.3.1-py3-none-any.whl", hash = "sha256:5b638a63094204370d92f59c2bcbdb454fd3dde46d8b400101f4600056b9b700", size = 302894, upload-time = "2026-10-19T15:13:23.089Z" },
 ]
 
 [[package]]
