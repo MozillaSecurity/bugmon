@@ -383,7 +383,7 @@ class EnhancedBug(Bug):
             self._bug["flags"] = []
 
         request = {
-            "is_multiplicable": True,
+            "new": True,
             "name": "needinfo",
             "status": "?",
             "requestee": user,

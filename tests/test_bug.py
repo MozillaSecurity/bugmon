@@ -369,7 +369,7 @@ def test_bug_add_needinfo(bug_data):
     bug.add_needinfo("abc@mozilla.com")
 
     expected = {
-        "is_multiplicable": True,
+        "new": True,
         "name": "needinfo",
         "requestee": "abc@mozilla.com",
         "status": "?",
